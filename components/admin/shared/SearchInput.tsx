@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 
 interface SearchInputProps {
@@ -12,14 +13,15 @@ interface SearchInputProps {
 export function SearchInput({
   value,
   onChange,
-  placeholder = "Search...",
+  placeholder,
 }: SearchInputProps) {
+  const t = useTranslations("dashboard.admin");
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
       <Input
         type="text"
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("search")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="pl-10 pr-10 bg-zinc-900/50 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-violet-500 focus:ring-violet-500/20"
@@ -36,4 +38,3 @@ export function SearchInput({
     </div>
   );
 }
-

@@ -1,7 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
 import { ArrowLeft, BookOpen, Play, Tag } from "lucide-react";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "@/i18n/navigation";
 import { TIER_STYLES } from "@/lib/constants";
 import type { COURSE_WITH_MODULES_QUERYResult } from "@/sanity.types";
 
@@ -10,7 +11,13 @@ type Course = NonNullable<COURSE_WITH_MODULES_QUERYResult>;
 
 type CourseHeroProps = Pick<
   Course,
-  "title" | "description" | "tier" | "thumbnail" | "category" | "moduleCount" | "lessonCount"
+  | "title"
+  | "description"
+  | "tier"
+  | "thumbnail"
+  | "category"
+  | "moduleCount"
+  | "lessonCount"
 >;
 
 export function CourseHero({
@@ -22,6 +29,7 @@ export function CourseHero({
   moduleCount,
   lessonCount,
 }: CourseHeroProps) {
+  const t = useTranslations("common.course");
   const displayTier = tier ?? "free";
   const styles = TIER_STYLES[displayTier];
 
@@ -33,7 +41,7 @@ export function CourseHero({
         className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors mb-8"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to dashboard
+        {t("backToDashboard")}
       </Link>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -72,7 +80,7 @@ export function CourseHero({
           </div>
 
           <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-4 text-white">
-            {title ?? "Untitled Course"}
+            {title ?? t("untitledCourse")}
           </h1>
 
           {description && (
@@ -84,11 +92,11 @@ export function CourseHero({
           <div className="flex items-center gap-6 text-sm text-zinc-500">
             <span className="flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
-              {moduleCount ?? 0} modules
+              {moduleCount ?? 0} {t("modules")}
             </span>
             <span className="flex items-center gap-2">
               <Play className="w-4 h-4" />
-              {lessonCount ?? 0} lessons
+              {lessonCount ?? 0} {t("lessons")}
             </span>
           </div>
         </div>
@@ -96,4 +104,3 @@ export function CourseHero({
     </div>
   );
 }
-

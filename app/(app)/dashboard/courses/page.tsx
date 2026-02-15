@@ -1,12 +1,14 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { BookOpen } from "lucide-react";
-import { Header } from "@/components/Header";
+import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { CourseCard } from "@/components/courses";
+import { Header } from "@/components/Header";
 import { sanityFetch } from "@/sanity/lib/live";
 import { DASHBOARD_COURSES_QUERY } from "@/sanity/lib/queries";
 
 export default async function MyCoursesPage() {
+  const t = await getTranslations("dashboard");
   const user = await currentUser();
 
   if (!user) {
@@ -73,18 +75,16 @@ export default async function MyCoursesPage() {
       {/* Main Content */}
       <main className="relative z-10 px-6 lg:px-12 py-12 max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">My Courses</h1>
-          <p className="text-zinc-400">
-            Courses you&apos;ve started learning. Pick up where you left off.
-          </p>
+          <h1 className="text-3xl font-bold mb-2">{t("myCourses")}</h1>
+          <p className="text-zinc-400">{t("myCoursesDescription")}</p>
         </div>
 
         {startedCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {startedCourses.map((course) => (
               <CourseCard
-                key={course.slug!.current!}
-                slug={{ current: course.slug!.current! }}
+                key={course._id}
+                slug={course.slug ? { current: course.slug.current ?? "" } : null}
                 title={course.title}
                 description={course.description}
                 tier={course.tier}
@@ -103,11 +103,10 @@ export default async function MyCoursesPage() {
               <BookOpen className="w-8 h-8 text-zinc-500" />
             </div>
             <h3 className="text-xl font-semibold mb-2">
-              No courses started yet
+              {t("noCoursesStarted")}
             </h3>
             <p className="text-zinc-400 max-w-md mx-auto">
-              Browse our course catalog and start learning. Your progress will
-              appear here once you complete your first lesson.
+              {t("noCoursesStartedDesc")}
             </p>
           </div>
         )}

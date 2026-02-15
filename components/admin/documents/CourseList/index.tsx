@@ -1,18 +1,20 @@
 "use client";
 
-import { Suspense, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import {
-  useApplyDocumentActions,
   createDocument,
   createDocumentHandle,
+  useApplyDocumentActions,
 } from "@sanity/sdk-react";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Suspense, useState, useTransition } from "react";
 import { ListPageHeader, SearchInput } from "@/components/admin/shared";
 import { DocumentGridSkeleton } from "@/components/admin/shared/DocumentSkeleton";
 import { CourseGrid } from "./CourseGrid";
 import type { CourseListProps } from "./types";
 
 export function CourseList({ projectId, dataset }: CourseListProps) {
+  const t = useTranslations("dashboard.admin.courseList");
   const router = useRouter();
   const [isCreating, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,9 +35,9 @@ export function CourseList({ projectId, dataset }: CourseListProps) {
   return (
     <div className="space-y-6">
       <ListPageHeader
-        title="Courses"
-        description="Manage your courses and their content"
-        actionLabel="New course"
+        title={t("title")}
+        description={t("description")}
+        actionLabel={t("new")}
         onAction={handleCreateCourse}
         isLoading={isCreating}
       />
@@ -43,7 +45,7 @@ export function CourseList({ projectId, dataset }: CourseListProps) {
       <SearchInput
         value={searchQuery}
         onChange={setSearchQuery}
-        placeholder="Search courses..."
+        placeholder={t("search")}
       />
 
       <Suspense fallback={<DocumentGridSkeleton count={4} />}>

@@ -1,10 +1,11 @@
 "use client";
 
+import { CheckCircle2, Layers, Lock, Play } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { Lock, Play, Layers, CheckCircle2 } from "lucide-react";
-import { TIER_STYLES } from "@/lib/constants";
+import { useTranslations } from "next-intl";
 import { Progress } from "@/components/ui/progress";
+import { Link } from "@/i18n/navigation";
+import { TIER_STYLES } from "@/lib/constants";
 import type { DASHBOARD_COURSES_QUERYResult } from "@/sanity.types";
 
 // Infer Sanity course fields from query result
@@ -42,6 +43,7 @@ export function CourseCard({
   isLocked = false,
   showProgress = false,
 }: CourseCardProps) {
+  const t = useTranslations("common.course");
   const displayTier = tier ?? "free";
   const styles = TIER_STYLES[displayTier];
   const totalLessons = lessonCount ?? 0;
@@ -74,7 +76,7 @@ export function CourseCard({
           {isCompleted ? (
             <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/90 text-white">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              Completed
+              {t("completed")}
             </div>
           ) : (
             <div
@@ -92,7 +94,7 @@ export function CourseCard({
                   <Lock className="w-5 h-5 text-zinc-400" />
                 </div>
                 <span className="text-xs text-zinc-400 font-medium">
-                  Upgrade to unlock
+                  {t("upgradeToUnlock")}
                 </span>
               </div>
             </div>
@@ -102,7 +104,7 @@ export function CourseCard({
         {/* Course content */}
         <div className="p-5">
           <h3 className="text-lg font-bold mb-2 text-white group-hover:text-violet-400 transition-colors line-clamp-2">
-            {title ?? "Untitled Course"}
+            {title ?? t("untitledCourse")}
           </h3>
 
           {description && (
@@ -114,11 +116,11 @@ export function CourseCard({
           <div className="flex items-center gap-4 text-sm text-zinc-500">
             <span className="flex items-center gap-1.5">
               <Layers className="w-4 h-4" />
-              {moduleCount ?? 0} modules
+              {moduleCount ?? 0} {t("modules")}
             </span>
             <span className="flex items-center gap-1.5">
               <Play className="w-4 h-4" />
-              {lessonCount ?? 0} lessons
+              {lessonCount ?? 0} {t("lessons")}
             </span>
           </div>
 
@@ -127,7 +129,7 @@ export function CourseCard({
             <div className="mt-4 pt-4 border-t border-zinc-800">
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-zinc-400">
-                  {completed}/{totalLessons} lessons
+                  {completed}/{totalLessons} {t("lessons")}
                 </span>
                 <span className="text-zinc-500">
                   {Math.round(progressPercent)}%

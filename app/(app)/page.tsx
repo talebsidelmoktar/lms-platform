@@ -1,26 +1,30 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Header } from "@/components/Header";
-import { CourseCard } from "@/components/courses";
+import { currentUser } from "@clerk/nextjs/server";
 import {
   ArrowRight,
-  Play,
   BookOpen,
-  Code2,
-  Rocket,
-  Crown,
   CheckCircle2,
-  Star,
-  Users,
-  Trophy,
-  Sparkles,
+  Code2,
+  Crown,
   LayoutDashboard,
+  Play,
+  Rocket,
+  Sparkles,
+  Star,
+  Trophy,
+  Users,
 } from "lucide-react";
+import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { CourseCard } from "@/components/courses";
+import { Header } from "@/components/Header";
+import { Button } from "@/components/ui/button";
 import { sanityFetch } from "@/sanity/lib/live";
 import { FEATURED_COURSES_QUERY, STATS_QUERY } from "@/sanity/lib/queries";
-import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
+  const t = await getTranslations("common.home");
+  const pricingT = await getTranslations("common.pricing");
+  const tiersT = await getTranslations("common.tiers");
   // Fetch featured courses, stats, and check auth status
   const [{ data: courses }, { data: stats }, user] = await Promise.all([
     sanityFetch({ query: FEATURED_COURSES_QUERY }),
@@ -29,6 +33,59 @@ export default async function Home() {
   ]);
 
   const isSignedIn = !!user;
+  const tierCards = [
+    {
+      tier: tiersT("free"),
+      icon: Rocket,
+      color: "emerald",
+      gradient: "from-emerald-500 to-teal-600",
+      bgGlow: "bg-emerald-500/10",
+      borderColor: "border-emerald-500/20",
+      description: t("tiers.free.description"),
+      features: t.raw("tiers.free.features") as string[],
+    },
+    {
+      tier: tiersT("pro"),
+      icon: Crown,
+      color: "violet",
+      gradient: "from-violet-500 to-fuchsia-600",
+      bgGlow: "bg-violet-500/10",
+      borderColor: "border-violet-500/30",
+      description: t("tiers.pro.description"),
+      features: t.raw("tiers.pro.features") as string[],
+      popular: true,
+    },
+    {
+      tier: tiersT("ultra"),
+      icon: Trophy,
+      color: "cyan",
+      gradient: "from-cyan-400 to-blue-600",
+      bgGlow: "bg-cyan-500/10",
+      borderColor: "border-cyan-500/20",
+      description: t("tiers.ultra.description"),
+      features: t.raw("tiers.ultra.features") as string[],
+    },
+  ];
+  const testimonials = [
+    {
+      name: t("testimonials.0.name"),
+      role: t("testimonials.0.role"),
+      content: t("testimonials.0.content"),
+      avatar: "🧑‍💻",
+    },
+    {
+      name: t("testimonials.1.name"),
+      role: t("testimonials.1.role"),
+      content: t("testimonials.1.content"),
+      avatar: "👩‍💼",
+    },
+    {
+      name: t("testimonials.2.name"),
+      role: t("testimonials.2.role"),
+      content: t("testimonials.2.content"),
+      avatar: "🎓",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">
@@ -67,7 +124,7 @@ export default async function Home() {
             >
               <Sparkles className="w-4 h-4 text-violet-400" />
               <span className="text-sm text-violet-300">
-                Learn to code with real-world projects
+                {t("learnRealProjects")}
               </span>
             </div>
 
@@ -76,9 +133,9 @@ export default async function Home() {
               className="text-5xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight leading-[0.95] mb-8 animate-fade-in"
               style={{ animationDelay: "0.2s" }}
             >
-              <span className="block text-white">Master coding</span>
+              <span className="block text-white">{t("masterCoding")}</span>
               <span className="block bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">
-                the modern way
+                {t("modernWay")}
               </span>
             </h1>
 
@@ -87,10 +144,7 @@ export default async function Home() {
               className="text-lg md:text-xl text-zinc-400 max-w-2xl mb-10 leading-relaxed animate-fade-in"
               style={{ animationDelay: "0.3s" }}
             >
-              Join Sonny&apos;s Academy and learn from expertly crafted courses,
-              modules, and hands-on lessons. From free fundamentals to{" "}
-              <span className="text-fuchsia-400">Pro exclusives</span> and{" "}
-              <span className="text-cyan-400">Ultra gems</span>.
+              {t("subtitle")}
             </p>
 
             {/* CTA Buttons */}
@@ -106,7 +160,7 @@ export default async function Home() {
                       className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-xl shadow-violet-600/30 px-8 h-12 text-base font-semibold"
                     >
                       <LayoutDashboard className="w-4 h-4 mr-2" />
-                      Go to Dashboard
+                      {t("goDashboard")}
                     </Button>
                   </Link>
                   <Link href="/dashboard/courses">
@@ -116,7 +170,7 @@ export default async function Home() {
                       className="border-zinc-700 bg-white/5 text-white px-8 h-12 text-base hover:bg-white/10 hover:text-white"
                     >
                       <BookOpen className="w-4 h-4 mr-2" />
-                      My Courses
+                      {t("myCourses")}
                     </Button>
                   </Link>
                 </>
@@ -128,7 +182,7 @@ export default async function Home() {
                       className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-xl shadow-violet-600/30 px-8 h-12 text-base font-semibold"
                     >
                       <Play className="w-4 h-4 mr-2 fill-white" />
-                      Start Learning Free
+                      {t("startLearningFree")}
                     </Button>
                   </Link>
                   <Link href="/dashboard">
@@ -138,7 +192,7 @@ export default async function Home() {
                       className="border-zinc-700 bg-white/5 text-white px-8 h-12 text-base hover:bg-white/10 hover:text-white"
                     >
                       <BookOpen className="w-4 h-4 mr-2" />
-                      Browse Courses
+                      {t("browseCourses")}
                     </Button>
                   </Link>
                 </>
@@ -153,15 +207,15 @@ export default async function Home() {
               {[
                 {
                   value: stats?.courseCount ?? 0,
-                  label: "Courses",
+                  label: t("courses"),
                   icon: BookOpen,
                 },
                 {
                   value: stats?.lessonCount ?? 0,
-                  label: "Lessons",
+                  label: t("lessons"),
                   icon: Play,
                 },
-                { value: "10K+", label: "Students", icon: Users },
+                { value: "10K+", label: t("students"), icon: Users },
               ].map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center">
                   <div className="flex items-center gap-2 mb-1">
@@ -180,61 +234,14 @@ export default async function Home() {
         {/* Tiers Preview */}
         <section className="px-6 lg:px-12 py-20 max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                tier: "Free",
-                icon: Rocket,
-                color: "emerald",
-                gradient: "from-emerald-500 to-teal-600",
-                bgGlow: "bg-emerald-500/10",
-                borderColor: "border-emerald-500/20",
-                description: "Start your journey with foundational courses",
-                features: [
-                  "Core fundamentals",
-                  "Community access",
-                  "Basic projects",
-                ],
-              },
-              {
-                tier: "Pro",
-                icon: Crown,
-                color: "violet",
-                gradient: "from-violet-500 to-fuchsia-600",
-                bgGlow: "bg-violet-500/10",
-                borderColor: "border-violet-500/30",
-                description: "Level up with advanced, production-ready content",
-                features: [
-                  "All Free content",
-                  "Advanced courses",
-                  "Priority support",
-                  "Certificates",
-                ],
-                popular: true,
-              },
-              {
-                tier: "Ultra",
-                icon: Trophy,
-                color: "cyan",
-                gradient: "from-cyan-400 to-blue-600",
-                bgGlow: "bg-cyan-500/10",
-                borderColor: "border-cyan-500/20",
-                description:
-                  "Unlock the real gems - AI tutor & exclusive content",
-                features: [
-                  "Everything in Pro",
-                  "AI Learning Assistant",
-                  "Exclusive content",
-                  "1-on-1 sessions",
-                ],
-              },
-            ].map((plan) => (
+            {tierCards.map((plan) => (
               <div
                 key={plan.tier}
                 className={`relative p-8 rounded-2xl ${plan.bgGlow} border ${plan.borderColor} ${plan.popular ? "ring-2 ring-violet-500/50" : ""} transition-all duration-300 hover:scale-[1.02]`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-xs font-semibold">
-                    Most Popular
+                    {t("mostPopular")}
                   </div>
                 )}
                 <div
@@ -266,22 +273,23 @@ export default async function Home() {
         <section id="courses" className="px-6 lg:px-12 py-20 max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Courses built for{" "}
+              {t("coursesBuiltFor")}{" "}
               <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                real results
+                {t("realResults")}
               </span>
             </h2>
             <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-              Each course is packed with modules and lessons designed to take
-              you from zero to job-ready.
+              {t("featuredDescription")}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {courses.map((course) => (
               <CourseCard
-                key={course.slug!.current!}
-                slug={{ current: course.slug!.current! }}
+                key={course._id}
+                slug={
+                  course.slug ? { current: course.slug.current ?? "" } : null
+                }
                 title={course.title}
                 description={course.description}
                 tier={course.tier}
@@ -298,7 +306,7 @@ export default async function Home() {
                 variant="outline"
                 className="border-zinc-700 bg-white/5 text-white hover:bg-white/10 hover:text-white"
               >
-                View All Courses
+                {t("viewAllCourses")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -312,37 +320,15 @@ export default async function Home() {
         >
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Students{" "}
+              {t("studentsLoveIt")}{" "}
               <span className="bg-gradient-to-r from-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">
-                love it
+                {t("studentsLoveIt")}
               </span>
             </h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Alex Chen",
-                role: "Junior Developer",
-                content:
-                  "Sonny's teaching style is incredible. I went from knowing nothing to landing my first dev job in 6 months!",
-                avatar: "🧑‍💻",
-              },
-              {
-                name: "Sarah Miller",
-                role: "Freelancer",
-                content:
-                  "The Ultra tier is worth every penny. The exclusive content and 1-on-1 sessions transformed my career.",
-                avatar: "👩‍💼",
-              },
-              {
-                name: "James Wilson",
-                role: "CS Student",
-                content:
-                  "Best investment I've made. The Pro courses filled gaps my university courses never covered.",
-                avatar: "🎓",
-              },
-            ].map((testimonial) => (
+            {testimonials.map((testimonial) => (
               <div
                 key={testimonial.name}
                 className="p-6 rounded-2xl bg-zinc-900/30 border border-zinc-800"
@@ -383,18 +369,17 @@ export default async function Home() {
                 <Rocket className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-3xl md:text-5xl font-bold mb-6">
-                Ready to level up your skills?
+                {t("readyToLevelUp")}
               </h2>
               <p className="text-zinc-400 text-lg max-w-xl mx-auto mb-10">
-                Start with free courses or unlock everything with Pro and Ultra.
-                Your coding journey begins now.
+                {t("journeyBegins")}
               </p>
               <Link href="/pricing">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-xl shadow-violet-600/30 px-10 h-14 text-lg font-semibold"
                 >
-                  View Pricing
+                  {t("viewPricing")}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -409,22 +394,20 @@ export default async function Home() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center">
                 <Code2 className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold">Sonny&apos;s Academy</span>
+              <span className="font-bold">{pricingT("brand")}</span>
             </div>
             <div className="flex items-center gap-8 text-sm text-zinc-500">
               <Link href="#" className="hover:text-white transition-colors">
-                Privacy
+                {pricingT("privacy")}
               </Link>
               <Link href="#" className="hover:text-white transition-colors">
-                Terms
+                {pricingT("terms")}
               </Link>
               <Link href="#" className="hover:text-white transition-colors">
-                Contact
+                {pricingT("contact")}
               </Link>
             </div>
-            <p className="text-sm text-zinc-600">
-              © 2024 Sonny&apos;s Academy. All rights reserved.
-            </p>
+            <p className="text-sm text-zinc-600">{pricingT("copyright")}</p>
           </div>
         </footer>
       </main>

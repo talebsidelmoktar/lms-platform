@@ -1,7 +1,7 @@
 import { BlockContentIcon, BookIcon, PlayIcon, TagIcon } from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
 
-export const structure: StructureResolver = (S, context) =>
+export const structure: StructureResolver = (S, _context) =>
   S.list()
     .title("LMS Content")
     .items([
@@ -19,6 +19,15 @@ export const structure: StructureResolver = (S, context) =>
         .child(S.documentTypeList("lesson").title("Lesson")),
       S.divider(),
       S.listItem()
+        .title("Payment Requests")
+        .icon(TagIcon)
+        .child(
+          S.documentTypeList("paymentRequest")
+            .title("Payment Requests")
+            .defaultOrdering([{ field: "submittedAt", direction: "desc" }]),
+        ),
+      S.divider(),
+      S.listItem()
         .title("Category")
         .icon(TagIcon)
         .child(
@@ -32,7 +41,9 @@ export const structure: StructureResolver = (S, context) =>
                     .title("Category Details")
                     .icon(TagIcon)
                     .child(
-                      S.document().schemaType("category").documentId(categoryId)
+                      S.document()
+                        .schemaType("category")
+                        .documentId(categoryId),
                     ),
                   S.listItem()
                     .title("Course in Category")
@@ -41,11 +52,11 @@ export const structure: StructureResolver = (S, context) =>
                       S.documentList()
                         .title("Course")
                         .filter(
-                          '_type == "course" && category._ref == $categoryId'
+                          '_type == "course" && category._ref == $categoryId',
                         )
-                        .params({ categoryId })
+                        .params({ categoryId }),
                     ),
-                ])
-            )
+                ]),
+            ),
         ),
     ]);

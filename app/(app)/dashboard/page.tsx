@@ -1,14 +1,16 @@
-import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
+import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BookOpen, Sparkles, ArrowRight } from "lucide-react";
-import { Header } from "@/components/Header";
+import { getTranslations } from "next-intl/server";
 import { CourseList } from "@/components/courses";
+import { Header } from "@/components/Header";
+import { getUserTier } from "@/lib/course-access";
 import { sanityFetch } from "@/sanity/lib/live";
 import { DASHBOARD_COURSES_QUERY } from "@/sanity/lib/queries";
-import { getUserTier } from "@/lib/course-access";
 
 export default async function DashboardPage() {
+  const t = await getTranslations("dashboard");
   const user = await currentUser();
 
   if (!user) {
@@ -57,7 +59,7 @@ export default async function DashboardPage() {
         <div className="mb-12">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-              Welcome back,{" "}
+              {t("welcomeBack")},{" "}
               <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">
                 {firstName}
               </span>
@@ -66,17 +68,14 @@ export default async function DashboardPage() {
               <Sparkles className="w-4 h-4 text-violet-400" />
               <span className="text-sm text-violet-300">
                 {userTier === "ultra"
-                  ? "Ultra Member"
+                  ? t("member.ultra")
                   : userTier === "pro"
-                    ? "Pro Member"
-                    : "Free Member"}
+                    ? t("member.pro")
+                    : t("member.free")}
               </span>
             </div>
           </div>
-          <p className="text-lg text-zinc-400 max-w-2xl">
-            Pick up where you left off or discover something new. Your learning
-            journey continues here.
-          </p>
+          <p className="text-lg text-zinc-400 max-w-2xl">{t("intro")}</p>
         </div>
 
         {/* Quick Stats */}
@@ -88,7 +87,7 @@ export default async function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{courses.length}</p>
-                <p className="text-sm text-zinc-500">Available Courses</p>
+                <p className="text-sm text-zinc-500">{t("availableCourses")}</p>
               </div>
             </div>
           </div>
@@ -100,7 +99,7 @@ export default async function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold capitalize">{userTier}</p>
-                <p className="text-sm text-zinc-500">Current Plan</p>
+                <p className="text-sm text-zinc-500">{t("currentPlan")}</p>
               </div>
             </div>
           </div>
@@ -113,12 +112,12 @@ export default async function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-lg font-semibold text-white group-hover:text-violet-300 transition-colors">
-                    Upgrade to {userTier === "free" ? "Pro" : "Ultra"}
+                    {t("upgradeTo")} {userTier === "free" ? "Pro" : "Ultra"}
                   </p>
                   <p className="text-sm text-zinc-400">
                     {userTier === "pro"
-                      ? "Get AI Learning Assistant & exclusive content"
-                      : "Unlock more courses & features"}
+                      ? t("upgradeProDescription")
+                      : t("upgradeFreeDescription")}
                   </p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-violet-400 group-hover:translate-x-1 transition-transform" />
@@ -129,12 +128,12 @@ export default async function DashboardPage() {
 
         {/* Course List */}
         <div>
-          <h2 className="text-2xl font-bold mb-6">All Courses</h2>
+          <h2 className="text-2xl font-bold mb-6">{t("allCourses")}</h2>
           <CourseList
             courses={courses}
             showFilters
             showSearch
-            emptyMessage="No courses available yet. Check back soon!"
+            emptyMessage={t("noCoursesAvailable")}
           />
         </div>
       </main>

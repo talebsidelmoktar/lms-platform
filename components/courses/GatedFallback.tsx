@@ -1,6 +1,9 @@
-import Link from "next/link";
-import { Lock, Sparkles, CheckCircle2 } from "lucide-react";
+"use client";
+
+import { CheckCircle2, Lock, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { TIER_FEATURES, TIER_STYLES, type Tier } from "@/lib/constants";
 
 // Muted gradient variants for background overlays
@@ -15,6 +18,7 @@ interface GatedFallbackProps {
 }
 
 export function GatedFallback({ requiredTier }: GatedFallbackProps) {
+  const t = useTranslations("common.gated");
   const displayTier = requiredTier ?? "pro";
   const styles = TIER_STYLES[displayTier];
   const gradientMuted = TIER_GRADIENT_MUTED[displayTier];
@@ -44,17 +48,16 @@ export function GatedFallback({ requiredTier }: GatedFallbackProps) {
 
         {/* Title */}
         <h2 className="text-2xl md:text-3xl font-bold mb-4">
-          Upgrade to{" "}
+          {t("upgradeTo")}{" "}
           <span className={styles.text}>
             {displayTier.charAt(0).toUpperCase() + displayTier.slice(1)}
           </span>{" "}
-          to unlock this content
+          {t("unlockContent")}
         </h2>
 
         {/* Description */}
         <p className="text-zinc-400 mb-8 max-w-md mx-auto">
-          This course requires a {displayTier} subscription. Upgrade your plan
-          to access this content and unlock all the features below.
+          {t("description", { tier: displayTier })}
         </p>
 
         {/* Features list */}
@@ -63,7 +66,7 @@ export function GatedFallback({ requiredTier }: GatedFallbackProps) {
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className={`w-4 h-4 ${styles.text}`} />
               <span className={`text-sm font-semibold ${styles.text}`}>
-                {tierFeatures.tier} includes:
+                {tierFeatures.tier} {t("includes")}
               </span>
             </div>
             <ul className="space-y-3">
@@ -89,7 +92,7 @@ export function GatedFallback({ requiredTier }: GatedFallbackProps) {
             className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-xl shadow-violet-600/30 px-8"
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            View Pricing Plans
+            {t("viewPricingPlans")}
           </Button>
         </Link>
       </div>

@@ -1,18 +1,20 @@
 "use client";
 
-import { Suspense, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import {
-  useApplyDocumentActions,
   createDocument,
   createDocumentHandle,
+  useApplyDocumentActions,
 } from "@sanity/sdk-react";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Suspense, useState, useTransition } from "react";
 import { ListPageHeader, SearchInput } from "@/components/admin/shared";
 import { HierarchicalListSkeleton } from "@/components/admin/shared/DocumentSkeleton";
 import { LessonListContent } from "./LessonListContent";
 import type { LessonListProps } from "./types";
 
 export function LessonList({ projectId, dataset }: LessonListProps) {
+  const t = useTranslations("dashboard.admin.lessonList");
   const router = useRouter();
   const [isCreating, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,9 +35,9 @@ export function LessonList({ projectId, dataset }: LessonListProps) {
   return (
     <div className="space-y-6">
       <ListPageHeader
-        title="Lessons"
-        description="Manage lessons organized by course and module"
-        actionLabel="New lesson"
+        title={t("title")}
+        description={t("description")}
+        actionLabel={t("new")}
         onAction={handleCreateLesson}
         isLoading={isCreating}
       />
@@ -43,7 +45,7 @@ export function LessonList({ projectId, dataset }: LessonListProps) {
       <SearchInput
         value={searchQuery}
         onChange={setSearchQuery}
-        placeholder="Search lessons..."
+        placeholder={t("search")}
       />
 
       <Suspense fallback={<HierarchicalListSkeleton />}>

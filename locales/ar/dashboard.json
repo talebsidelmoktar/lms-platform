@@ -1,0 +1,127 @@
+{
+  "welcomeBack": "مرحباً بعودتك",
+  "intro": "واصل من حيث توقفت أو اكتشف شيئاً جديداً. رحلتك التعليمية مستمرة هنا.",
+  "availableCourses": "الدورات المتاحة",
+  "currentPlan": "الخطة الحالية",
+  "upgradeTo": "قم بالترقية إلى",
+  "upgradeProDescription": "احصل على مساعد الذكاء الاصطناعي ومحتوى حصري",
+  "upgradeFreeDescription": "افتح المزيد من الدورات والميزات",
+  "allCourses": "كل الدورات",
+  "noCoursesAvailable": "لا توجد دورات متاحة حالياً. عد لاحقاً!",
+  "myCourses": "دوراتي",
+  "myCoursesDescription": "الدورات التي بدأت تعلمها. تابع من حيث توقفت.",
+  "noCoursesStarted": "لم تبدأ أي دورة بعد",
+  "noCoursesStartedDesc": "تصفح قائمة الدورات وابدأ التعلم. سيظهر تقدمك هنا بعد إكمال أول درس.",
+  "member": {
+    "free": "عضو مجاني",
+    "pro": "عضو برو",
+    "ultra": "عضو ألترا"
+  },
+  "admin": {
+    "loading": "جارٍ تحميل لوحة تحكم الإدارة...",
+    "creating": "جارٍ الإنشاء...",
+    "search": "بحث...",
+    "title": "لوحة التحكم",
+    "subtitle": "أدر الدورات والوحدات والدروس والفئات",
+    "openStudio": "فتح الاستوديو",
+    "cards": {
+      "courses": "الدورات",
+      "modules": "الوحدات",
+      "lessons": "الدروس",
+      "categories": "الفئات"
+    },
+    "quickActions": {
+      "title": "إجراءات سريعة",
+      "manageCourses": "إدارة الدورات",
+      "manageCoursesDesc": "عرض وتعديل الدورات",
+      "manageModules": "إدارة الوحدات",
+      "manageModulesDesc": "تنظيم وحدات الدورات",
+      "manageLessons": "إدارة الدروس",
+      "manageLessonsDesc": "تعديل محتوى الدروس",
+      "manageCategories": "إدارة الفئات",
+      "manageCategoriesDesc": "تنظيم المحتوى",
+      "reviewPayments": "مراجعة المدفوعات",
+      "reviewPaymentsDesc": "قبول طلبات Pro/Ultra"
+    },
+    "health": {
+      "title": "حالة المحتوى",
+      "checkCourses": "تم إنشاء دورات",
+      "checkModules": "تم إنشاء وحدات",
+      "checkLessons": "تم إنشاء دروس",
+      "checkCategories": "تم إنشاء فئات"
+    },
+    "tips": {
+      "title": "نصائح احترافية لإنشاء المحتوى",
+      "item1": "ابدأ بإنشاء الفئات لتنظيم الدورات حسب الموضوع.",
+      "item2": "أنشئ الدروس أولاً ثم اجمعها داخل وحدات.",
+      "item3": "أخيراً أنشئ دورة وأضف الوحدات إليها.",
+      "item4": "استخدم نظام الخطط (مجاني، برو، ألترا) للتحكم في الوصول."
+    },
+    "courseList": {
+      "title": "الدورات",
+      "description": "إدارة الدورات ومحتواها",
+      "new": "دورة جديدة",
+      "search": "ابحث عن الدورات...",
+      "empty": "لا توجد دورات",
+      "createFirst": "أنشئ أول دورة"
+    },
+    "moduleList": {
+      "title": "الوحدات",
+      "description": "إدارة وحدات الدورات حسب كل دورة",
+      "new": "وحدة جديدة",
+      "search": "ابحث عن الوحدات...",
+      "empty": "لا توجد وحدات",
+      "createFirst": "أنشئ أول وحدة"
+    },
+    "lessonList": {
+      "title": "الدروس",
+      "description": "إدارة الدروس حسب الدورة والوحدة",
+      "new": "درس جديد",
+      "search": "ابحث عن الدروس...",
+      "empty": "لا توجد دروس",
+      "createFirst": "أنشئ أول درس",
+      "legend": {
+        "video": "فيديو",
+        "content": "محتوى",
+        "slug": "الرابط"
+      }
+    },
+    "categoryList": {
+      "title": "الفئات",
+      "description": "نظم الدورات حسب الفئة"
+    },
+    "documentList": {
+      "untitled": "بدون عنوان",
+      "noneFound": "لا يوجد {type}",
+      "createFirst": "أنشئ أول {type}",
+      "newItem": "{type} جديد",
+      "creating": "جارٍ الإنشاء...",
+      "search": "ابحث عن {type}..."
+    },
+    "paymentRequests": {
+      "title": "طلبات الدفع",
+      "description": "راجع إثباتات الدفع وامنح Pro/Ultra يدوياً.",
+      "failedToReview": "فشل مراجعة الطلب.",
+      "empty": "لا توجد طلبات دفع حتى الآن.",
+      "status": {
+        "pending": "قيد الانتظار",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "submittedAt": "تم الإرسال: {value}",
+      "user": "المستخدم",
+      "unknown": "غير معروف",
+      "noEmail": "لا يوجد بريد",
+      "clerkId": "معرف Clerk",
+      "requestedTier": "الخطة المطلوبة",
+      "method": "الطريقة",
+      "reference": "المرجع",
+      "notes": "ملاحظات",
+      "proofAlt": "صورة إثبات الدفع",
+      "noScreenshot": "لا توجد صورة مرفوعة",
+      "reviewNotePlaceholder": "ملاحظة إدارية اختيارية",
+      "approve": "قبول وتعيين الخطة",
+      "reject": "رفض"
+    }
+  }
+}

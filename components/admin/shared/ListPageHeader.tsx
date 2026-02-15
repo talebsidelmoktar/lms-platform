@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ListPageHeaderProps {
   title: string;
@@ -17,6 +18,7 @@ export function ListPageHeader({
   onAction,
   isLoading = false,
 }: ListPageHeaderProps) {
+  const t = useTranslations("dashboard.admin");
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -37,10 +39,9 @@ export function ListPageHeader({
           ) : (
             <Plus className="h-4 w-4" />
           )}
-          {isLoading ? "Creating..." : actionLabel}
+          {isLoading ? t("creating") : actionLabel}
         </button>
       )}
     </div>
   );
 }
-

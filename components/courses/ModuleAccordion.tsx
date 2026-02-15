@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
-import Link from "next/link";
 import { Play, CheckCircle2, Circle, BookOpen } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   Accordion,
   AccordionContent,
@@ -11,7 +12,6 @@ import {
 import { Progress } from "@/components/ui/progress";
 import type { COURSE_WITH_MODULES_QUERYResult } from "@/sanity.types";
 
-// Infer types from Sanity query result
 type Module = NonNullable<
   NonNullable<COURSE_WITH_MODULES_QUERYResult>["modules"]
 >[number];
@@ -23,11 +23,13 @@ interface ModuleAccordionProps {
 }
 
 export function ModuleAccordion({ modules, userId }: ModuleAccordionProps) {
+  const t = useTranslations("common.course");
+
   if (!modules || modules.length === 0) {
     return (
       <div className="text-center py-12 text-zinc-500">
         <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
-        <p>No modules available yet.</p>
+        <p>{t("noModules")}</p>
       </div>
     );
   }
@@ -50,7 +52,7 @@ export function ModuleAccordion({ modules, userId }: ModuleAccordionProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold mb-6">Course Content</h2>
+      <h2 className="text-2xl font-bold mb-6">{t("courseContent")}</h2>
 
       <Accordion type="multiple" className="space-y-3">
         {modules.map((module, index) => {
@@ -71,23 +73,22 @@ export function ModuleAccordion({ modules, userId }: ModuleAccordionProps) {
                   <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs text-zinc-500 uppercase tracking-wider">
-                        Module
+                        {t("module")}
                       </span>
                     </div>
                     <h3 className="font-semibold text-white">
-                      {module.title ?? "Untitled Module"}
+                      {module.title ?? t("untitledModule")}
                     </h3>
                     <p className="text-sm text-zinc-500 mt-1">
-                      {total} {total === 1 ? "lesson" : "lessons"}
+                      {total} {total === 1 ? t("lesson") : t("lessonsWord")}
                       {userId && total > 0 && (
                         <span className="ml-2">
-                          • {completed}/{total} completed
+                          - {completed}/{total} {t("completedWord")}
                         </span>
                       )}
                     </p>
                   </div>
 
-                  {/* Progress bar */}
                   {userId && total > 0 && (
                     <div className="hidden sm:flex items-center gap-3 shrink-0 w-36">
                       <Progress
@@ -106,14 +107,14 @@ export function ModuleAccordion({ modules, userId }: ModuleAccordionProps) {
 
               <AccordionContent className="px-5 pb-4 pt-2">
                 <div className="ml-4 border-l-2 border-zinc-800 pl-3 space-y-1">
-                  {module.lessons?.map((lesson, lessonIndex) => {
+                  {module.lessons?.map((lesson) => {
                     const completed = isLessonCompleted(lesson);
                     const hasVideo = !!lesson.video?.asset?.playbackId;
 
                     return (
                       <Link
                         key={lesson._id}
-                        href={`/lessons/${lesson.slug!.current!}`}
+                        href={`/lessons/${lesson.slug?.current ?? ""}`}
                         className="flex items-center gap-2.5 pl-2 pr-3 py-2 rounded-lg hover:bg-zinc-800/50 transition-colors group"
                       >
                         {completed ? (
@@ -127,7 +128,7 @@ export function ModuleAccordion({ modules, userId }: ModuleAccordionProps) {
                             completed ? "text-zinc-400" : "text-zinc-300"
                           } group-hover:text-white transition-colors`}
                         >
-                          {lesson.title ?? "Untitled Lesson"}
+                          {lesson.title ?? t("untitledLesson")}
                         </span>
 
                         {hasVideo && (

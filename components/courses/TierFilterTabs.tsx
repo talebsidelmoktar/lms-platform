@@ -1,8 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import type { Tier } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 export type TierFilter = Tier | "all";
 
@@ -12,18 +13,14 @@ interface TierFilterTabsProps {
   className?: string;
 }
 
-const FILTER_OPTIONS: { value: TierFilter; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "free", label: "Free" },
-  { value: "pro", label: "Pro" },
-  { value: "ultra", label: "Ultra" },
-];
+const FILTER_OPTION_VALUES: TierFilter[] = ["all", "free", "pro", "ultra"];
 
 export function TierFilterTabs({
   activeFilter,
   onFilterChange,
   className,
 }: TierFilterTabsProps) {
+  const t = useTranslations("common.tiers");
   return (
     <div
       className={cn(
@@ -31,20 +28,20 @@ export function TierFilterTabs({
         className,
       )}
     >
-      {FILTER_OPTIONS.map((option) => (
+      {FILTER_OPTION_VALUES.map((value) => (
         <Button
-          key={option.value}
+          key={value}
           variant="ghost"
           size="sm"
-          onClick={() => onFilterChange(option.value)}
+          onClick={() => onFilterChange(value)}
           className={cn(
             "px-4 py-2 text-sm font-medium rounded-md transition-all duration-200",
-            activeFilter === option.value
+            activeFilter === value
               ? "bg-violet-600 text-white shadow-lg shadow-violet-500/25 hover:bg-violet-500"
               : "text-zinc-400 hover:text-white hover:bg-zinc-800",
           )}
         >
-          {option.label}
+          {t(value)}
         </Button>
       ))}
     </div>

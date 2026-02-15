@@ -1,4 +1,12 @@
-<!-- 4e8a9c07-d155-41bd-a300-e6f934678edb e5f51901-4d9b-4d2d-904f-45f4c500898a -->
+---
+name: Udemy LMS AI Clone Build Plan (Revised)
+overview: ""
+todos:
+  - id: 9d1bbbf8-faac-4214-a26a-fdf983d1c5df
+    content: Integrate AgentKit with Sanity MCP for AI-powered learning assistant
+    status: pending
+---
+
 # Udemy LMS AI Clone Build Plan (Revised)
 
 ## Phase 1: Foundation & Simplified Schema (Weeks 1-2)
@@ -52,7 +60,7 @@ Create simplified schema with reference-based structure:
 
 **Key Structure:**
 
-```
+````javascript
 Course (document)
   └─ modules: [Reference → Module, Reference → Module]
       
@@ -201,9 +209,9 @@ Each component:
 
 - Use `DocumentEditor` component
 - Tabs:
-  - **Basic Info**: title, description, thumbnail, category, tier, featured, published
-  - **Modules**: Manage module references (add/remove/reorder)
-  - **Preview**: See course structure tree
+        - **Basic Info**: title, description, thumbnail, category, tier, featured, published
+        - **Modules**: Manage module references (add/remove/reorder)
+        - **Preview**: See course structure tree
 - Display module list with expand/collapse
 - "Add Module" button → opens modal to select existing or create new
 
@@ -244,11 +252,11 @@ Each component:
 - Use `DocumentEditor` with lesson schema
 - Fields: title, description, slug, order, isFree, duration
 - **Mux Video Upload** (`MuxVideoInput.tsx`):
-  - Upload button triggers Mux direct upload
-  - Show upload progress bar
-  - Display video preview after upload
-  - "Remove Video" button
-  - Store Mux asset data in lesson document
+        - Upload button triggers Mux direct upload
+        - Show upload progress bar
+        - Display video preview after upload
+        - "Remove Video" button
+        - Store Mux asset data in lesson document
 - Rich text editor for lesson content
 - Auto-save changes
 
@@ -393,15 +401,15 @@ Functionality:
 2. Check if user already completed lesson
 3. Button states:
 
-   - "Mark as Complete" (not completed)
-   - "Mark as Incomplete" (already completed)
+            - "Mark as Complete" (not completed)
+            - "Mark as Incomplete" (already completed)
 
 4. On click:
 
-   - Use Sanity client to patch lesson document
-   - Add/remove user ID from `completedBy[]` array
-   - Optimistically update UI
-   - Show success toast
+            - Use Sanity client to patch lesson document
+            - Add/remove user ID from `completedBy[]` array
+            - Optimistically update UI
+            - Show success toast
 
 5. Check if module/course now complete → show celebration
 
@@ -552,10 +560,10 @@ Apply to AgentKit chat interface.
 - Floating chat button (bottom right, only for Ultra users)
 - Chat modal with message history
 - AI can answer questions about:
-  - Course content (via Sanity MCP)
-  - Learning recommendations
-  - Code help (if applicable)
-  - Study strategies
+        - Course content (via Sanity MCP)
+        - Learning recommendations
+        - Code help (if applicable)
+        - Study strategies
 - Context: Current course, lesson, user progress
 
 **Context for AI:**
@@ -654,28 +662,5 @@ Fix any TypeScript errors or schema issues.
 6. **Weeks 11-12:** AgentKit AI assistant (YOU-171)
 7. **Week 13:** Testing, polish, and deployment prep
 
-This approach builds from the data layer up, ensures you can create real content early, and validates the student experience with real data before adding monetization and AI features.
 
-### To-dos
-
-- [ ] Create all Sanity schema types (course, lesson, module, instructor, category, userProgress, subscriptionTier)
-- [ ] Install and configure Clerk authentication with user metadata for tiers
-- [ ] Install and configure Mux video integration with Sanity
-- [ ] Build reusable AdminDocumentEditor component using useDocument hook
-- [ ] Create all specialized admin input components (text, rich text, reference, image, array, select, Mux video)
-- [ ] Set up admin routes, layout, and navigation with role-based access
-- [ ] Build admin course list view with management features
-- [ ] Implement create new course button and flow
-- [ ] Build course editor with tabs for basic info, modules, pricing, and settings
-- [ ] Implement Mux video upload and management in lesson editor
-- [ ] Create student landing page with hero, featured courses, and categories
-- [ ] Adapt CourseList component for student view with filtering and tier badges
-- [ ] Build core student view components (course view, sidebar, lesson content, progress tracker)
-- [ ] Create main course viewing page with video player and navigation
-- [ ] Implement Mux video player component with controls and progress tracking
-- [ ] Build mark lesson as completed functionality with progress updates
-- [ ] Set up Clerk billing webhooks and tier management system
-- [ ] Create upgrade page with pricing tiers and payment integration
-- [ ] Implement course access gating based on user subscription tier
-- [ ] Gate AgentKit chat feature for Ultra tier users only
-- [ ] Integrate AgentKit with Sanity MCP for AI-powered learning assistant
+````

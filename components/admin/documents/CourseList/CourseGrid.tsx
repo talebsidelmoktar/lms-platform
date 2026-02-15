@@ -1,7 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
 import { useDocuments } from "@sanity/sdk-react";
+import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { EmptyState } from "@/components/admin/shared";
 import { DocumentCardSkeleton } from "@/components/admin/shared/DocumentSkeleton";
 import { AdminCourseItem } from "./AdminCourseItem";
@@ -21,6 +22,7 @@ export function CourseGrid({
   isCreating,
   searchQuery,
 }: CourseGridProps) {
+  const t = useTranslations("dashboard.admin.courseList");
   const { data: courses } = useDocuments({
     documentType: "course",
     projectId,
@@ -32,8 +34,8 @@ export function CourseGrid({
     return (
       <EmptyState
         emoji="📚"
-        message="No courses found"
-        actionLabel="Create your first course"
+        message={t("empty")}
+        actionLabel={t("createFirst")}
         onAction={onCreateCourse}
         isLoading={isCreating}
       />
@@ -50,4 +52,3 @@ export function CourseGrid({
     </div>
   );
 }
-

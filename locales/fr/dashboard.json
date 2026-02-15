@@ -1,0 +1,127 @@
+{
+  "welcomeBack": "Bon retour",
+  "intro": "Reprenez la ou vous vous etes arrete ou decouvrez quelque chose de nouveau. Votre parcours d'apprentissage continue ici.",
+  "availableCourses": "Cours disponibles",
+  "currentPlan": "Forfait actuel",
+  "upgradeTo": "Passez a",
+  "upgradeProDescription": "Obtenez l'assistant IA et du contenu exclusif",
+  "upgradeFreeDescription": "Debloquez plus de cours et de fonctionnalites",
+  "allCourses": "Tous les cours",
+  "noCoursesAvailable": "Aucun cours disponible pour le moment. Revenez bientot !",
+  "myCourses": "Mes cours",
+  "myCoursesDescription": "Les cours que vous avez commences. Reprenez la ou vous vous etes arrete.",
+  "noCoursesStarted": "Aucun cours commence",
+  "noCoursesStartedDesc": "Parcourez notre catalogue de cours et commencez a apprendre. Votre progression apparaitra ici apres votre premiere lecon terminee.",
+  "member": {
+    "free": "Membre Gratuit",
+    "pro": "Membre Pro",
+    "ultra": "Membre Ultra"
+  },
+  "admin": {
+    "loading": "Chargement du tableau de bord admin...",
+    "creating": "Creation...",
+    "search": "Rechercher...",
+    "title": "Tableau de bord",
+    "subtitle": "Gerez vos cours, modules, lecons et categories",
+    "openStudio": "Ouvrir Studio",
+    "cards": {
+      "courses": "Cours",
+      "modules": "Modules",
+      "lessons": "Lecons",
+      "categories": "Categories"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "manageCourses": "Gerer les cours",
+      "manageCoursesDesc": "Voir et modifier les cours",
+      "manageModules": "Gerer les modules",
+      "manageModulesDesc": "Organiser les modules des cours",
+      "manageLessons": "Gerer les lecons",
+      "manageLessonsDesc": "Modifier le contenu des lecons",
+      "manageCategories": "Gerer les categories",
+      "manageCategoriesDesc": "Organiser votre contenu",
+      "reviewPayments": "Verifier les paiements",
+      "reviewPaymentsDesc": "Approuver les demandes Pro/Ultra"
+    },
+    "health": {
+      "title": "Sante du contenu",
+      "checkCourses": "Cours crees",
+      "checkModules": "Modules crees",
+      "checkLessons": "Lecons creees",
+      "checkCategories": "Categories creees"
+    },
+    "tips": {
+      "title": "Conseils Pro pour creer du contenu",
+      "item1": "Commencez par creer des categories pour organiser vos cours par sujet.",
+      "item2": "Creez d'abord les lecons, puis regroupez-les dans des modules.",
+      "item3": "Ensuite, creez un cours et ajoutez-y vos modules.",
+      "item4": "Utilisez le systeme de niveaux (Gratuit, Pro, Ultra) pour controler l'acces."
+    },
+    "courseList": {
+      "title": "Cours",
+      "description": "Gerez vos cours et leur contenu",
+      "new": "Nouveau cours",
+      "search": "Rechercher des cours...",
+      "empty": "Aucun cours trouve",
+      "createFirst": "Creez votre premier cours"
+    },
+    "moduleList": {
+      "title": "Modules",
+      "description": "Gerez les modules de cours par cours",
+      "new": "Nouveau module",
+      "search": "Rechercher des modules...",
+      "empty": "Aucun module trouve",
+      "createFirst": "Creez votre premier module"
+    },
+    "lessonList": {
+      "title": "Lecons",
+      "description": "Gerez les lecons par cours et module",
+      "new": "Nouvelle lecon",
+      "search": "Rechercher des lecons...",
+      "empty": "Aucune lecon trouvee",
+      "createFirst": "Creez votre premiere lecon",
+      "legend": {
+        "video": "Video",
+        "content": "Contenu",
+        "slug": "Slug"
+      }
+    },
+    "categoryList": {
+      "title": "Categories",
+      "description": "Organisez les cours par categorie"
+    },
+    "documentList": {
+      "untitled": "Sans titre",
+      "noneFound": "Aucun {type} trouve",
+      "createFirst": "Creez votre premier {type}",
+      "newItem": "Nouveau {type}",
+      "creating": "Creation...",
+      "search": "Rechercher des {type}s..."
+    },
+    "paymentRequests": {
+      "title": "Demandes de paiement",
+      "description": "Verifiez les preuves de paiement et attribuez Pro/Ultra manuellement.",
+      "failedToReview": "Impossible de traiter la demande.",
+      "empty": "Aucune demande de paiement envoyee.",
+      "status": {
+        "pending": "En attente",
+        "approved": "Approuve",
+        "rejected": "Rejete"
+      },
+      "submittedAt": "Soumis: {value}",
+      "user": "Utilisateur",
+      "unknown": "Inconnu",
+      "noEmail": "Aucun email",
+      "clerkId": "ID Clerk",
+      "requestedTier": "Niveau demande",
+      "method": "Methode",
+      "reference": "Reference",
+      "notes": "Notes",
+      "proofAlt": "Capture de preuve de paiement",
+      "noScreenshot": "Aucune capture televersee",
+      "reviewNotePlaceholder": "Note admin optionnelle",
+      "approve": "Approuver et attribuer le niveau",
+      "reject": "Rejeter"
+    }
+  }
+}

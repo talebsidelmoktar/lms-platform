@@ -1,0 +1,127 @@
+{
+  "welcomeBack": "Welcome back",
+  "intro": "Pick up where you left off or discover something new. Your learning journey continues here.",
+  "availableCourses": "Available Courses",
+  "currentPlan": "Current Plan",
+  "upgradeTo": "Upgrade to",
+  "upgradeProDescription": "Get AI Learning Assistant and exclusive content",
+  "upgradeFreeDescription": "Unlock more courses and features",
+  "allCourses": "All Courses",
+  "noCoursesAvailable": "No courses available yet. Check back soon!",
+  "myCourses": "My Courses",
+  "myCoursesDescription": "Courses you've started learning. Pick up where you left off.",
+  "noCoursesStarted": "No courses started yet",
+  "noCoursesStartedDesc": "Browse our course catalog and start learning. Your progress will appear here once you complete your first lesson.",
+  "member": {
+    "free": "Free Member",
+    "pro": "Pro Member",
+    "ultra": "Ultra Member"
+  },
+  "admin": {
+    "loading": "Loading Admin Dashboard...",
+    "creating": "Creating...",
+    "search": "Search...",
+    "title": "Dashboard",
+    "subtitle": "Manage your courses, modules, lessons, and categories",
+    "openStudio": "Open Studio",
+    "cards": {
+      "courses": "Courses",
+      "modules": "Modules",
+      "lessons": "Lessons",
+      "categories": "Categories"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "manageCourses": "Manage Courses",
+      "manageCoursesDesc": "View and edit courses",
+      "manageModules": "Manage Modules",
+      "manageModulesDesc": "Organize course modules",
+      "manageLessons": "Manage Lessons",
+      "manageLessonsDesc": "Edit lesson content",
+      "manageCategories": "Manage Categories",
+      "manageCategoriesDesc": "Organize your content",
+      "reviewPayments": "Review Payments",
+      "reviewPaymentsDesc": "Approve Pro/Ultra requests"
+    },
+    "health": {
+      "title": "Content Health",
+      "checkCourses": "Courses created",
+      "checkModules": "Modules created",
+      "checkLessons": "Lessons created",
+      "checkCategories": "Categories created"
+    },
+    "tips": {
+      "title": "Pro Tips for Content Creation",
+      "item1": "Start by creating Categories to organize your courses by topic.",
+      "item2": "Build Lessons first, then group them into Modules.",
+      "item3": "Finally, create a Course and add your modules to it.",
+      "item4": "Use the tier system (Free, Pro, Ultra) to control access."
+    },
+    "courseList": {
+      "title": "Courses",
+      "description": "Manage your courses and their content",
+      "new": "New course",
+      "search": "Search courses...",
+      "empty": "No courses found",
+      "createFirst": "Create your first course"
+    },
+    "moduleList": {
+      "title": "Modules",
+      "description": "Manage course modules organized by course",
+      "new": "New module",
+      "search": "Search modules...",
+      "empty": "No modules found",
+      "createFirst": "Create your first module"
+    },
+    "lessonList": {
+      "title": "Lessons",
+      "description": "Manage lessons organized by course and module",
+      "new": "New lesson",
+      "search": "Search lessons...",
+      "empty": "No lessons found",
+      "createFirst": "Create your first lesson",
+      "legend": {
+        "video": "Video",
+        "content": "Content",
+        "slug": "Slug"
+      }
+    },
+    "categoryList": {
+      "title": "Categories",
+      "description": "Organize courses by category"
+    },
+    "documentList": {
+      "untitled": "Untitled",
+      "noneFound": "No {type}s found",
+      "createFirst": "Create your first {type}",
+      "newItem": "New {type}",
+      "creating": "Creating...",
+      "search": "Search {type}s..."
+    },
+    "paymentRequests": {
+      "title": "Payment Requests",
+      "description": "Review user payment proofs and assign Pro/Ultra manually.",
+      "failedToReview": "Failed to review request.",
+      "empty": "No payment requests submitted yet.",
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "submittedAt": "Submitted: {value}",
+      "user": "User",
+      "unknown": "Unknown",
+      "noEmail": "No email",
+      "clerkId": "Clerk ID",
+      "requestedTier": "Requested tier",
+      "method": "Method",
+      "reference": "Reference",
+      "notes": "Notes",
+      "proofAlt": "Payment proof screenshot",
+      "noScreenshot": "No screenshot uploaded",
+      "reviewNotePlaceholder": "Optional admin note",
+      "approve": "Approve and Assign Tier",
+      "reject": "Reject"
+    }
+  }
+}

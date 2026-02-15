@@ -1,25 +1,27 @@
 "use client";
 
-import { Suspense } from "react";
-import Link from "next/link";
 import { useDocuments } from "@sanity/sdk-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import {
+  AlertCircle,
+  ArrowRight,
   BookOpen,
+  CheckCircle2,
+  ExternalLink,
   Layers,
   PlayCircle,
-  Tag,
-  ArrowRight,
   Plus,
+  ReceiptText,
+  Sparkles,
+  Tag,
   TrendingUp,
   Zap,
-  ExternalLink,
-  Sparkles,
-  AlertCircle,
-  CheckCircle2,
 } from "lucide-react";
-import { projectId, dataset } from "@/sanity/env";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { dataset, projectId } from "@/sanity/env";
 
 interface StatCardProps {
   title: string;
@@ -72,41 +74,6 @@ function StatCard({
   );
 }
 
-const STAT_CARDS = [
-  {
-    title: "Courses",
-    icon: BookOpen,
-    documentType: "course",
-    href: "/admin/courses",
-    gradient: "from-violet-500 to-fuchsia-600",
-    iconColor: "text-white",
-  },
-  {
-    title: "Modules",
-    icon: Layers,
-    documentType: "module",
-    href: "/admin/modules",
-    gradient: "from-cyan-500 to-blue-600",
-    iconColor: "text-white",
-  },
-  {
-    title: "Lessons",
-    icon: PlayCircle,
-    documentType: "lesson",
-    href: "/admin/lessons",
-    gradient: "from-emerald-500 to-teal-600",
-    iconColor: "text-white",
-  },
-  {
-    title: "Categories",
-    icon: Tag,
-    documentType: "category",
-    href: "/admin/categories",
-    gradient: "from-amber-500 to-orange-600",
-    iconColor: "text-white",
-  },
-];
-
 interface QuickActionLinkProps {
   title: string;
   description: string;
@@ -146,6 +113,7 @@ function QuickActionLink({
 }
 
 function ContentHealthContent() {
+  const t = useTranslations("dashboard.admin");
   const { data: courses } = useDocuments({
     documentType: "course",
     projectId,
@@ -169,22 +137,22 @@ function ContentHealthContent() {
 
   const checks = [
     {
-      label: "Courses created",
+      label: t("health.checkCourses"),
       passed: (courses?.length || 0) > 0,
       count: courses?.length || 0,
     },
     {
-      label: "Modules created",
+      label: t("health.checkModules"),
       passed: (modules?.length || 0) > 0,
       count: modules?.length || 0,
     },
     {
-      label: "Lessons created",
+      label: t("health.checkLessons"),
       passed: (lessons?.length || 0) > 0,
       count: lessons?.length || 0,
     },
     {
-      label: "Categories created",
+      label: t("health.checkCategories"),
       passed: (categories?.length || 0) > 0,
       count: categories?.length || 0,
     },
@@ -227,17 +195,51 @@ function ContentHealthContent() {
 }
 
 export default function AdminDashboard() {
+  const t = useTranslations("dashboard.admin");
+
+  const statCards = [
+    {
+      title: t("cards.courses"),
+      icon: BookOpen,
+      documentType: "course",
+      href: "/admin/courses",
+      gradient: "from-violet-500 to-fuchsia-600",
+      iconColor: "text-white",
+    },
+    {
+      title: t("cards.modules"),
+      icon: Layers,
+      documentType: "module",
+      href: "/admin/modules",
+      gradient: "from-cyan-500 to-blue-600",
+      iconColor: "text-white",
+    },
+    {
+      title: t("cards.lessons"),
+      icon: PlayCircle,
+      documentType: "lesson",
+      href: "/admin/lessons",
+      gradient: "from-emerald-500 to-teal-600",
+      iconColor: "text-white",
+    },
+    {
+      title: t("cards.categories"),
+      icon: Tag,
+      documentType: "category",
+      href: "/admin/categories",
+      gradient: "from-amber-500 to-orange-600",
+      iconColor: "text-white",
+    },
+  ];
+
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white">
-            Dashboard
+            {t("title")}
           </h1>
-          <p className="text-zinc-400 mt-1">
-            Manage your courses, modules, lessons, and categories
-          </p>
+          <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
         <Link href="/studio" target="_blank">
           <Button
@@ -245,63 +247,70 @@ export default function AdminDashboard() {
             className="border-zinc-700 bg-zinc-900/50 text-zinc-300 hover:bg-zinc-800 hover:text-white"
           >
             <ExternalLink className="h-4 w-4 mr-2" />
-            Open Studio
+            {t("openStudio")}
           </Button>
         </Link>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {STAT_CARDS.map((card) => (
+        {statCards.map((card) => (
           <StatCard key={card.documentType} {...card} />
         ))}
       </div>
 
-      {/* Quick Actions & Content Health */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Quick Actions */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-amber-400" />
-            <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
+            <h2 className="text-lg font-semibold text-white">
+              {t("quickActions.title")}
+            </h2>
           </div>
           <div className="space-y-2">
             <QuickActionLink
-              title="Manage Courses"
-              description="View and edit courses"
+              title={t("quickActions.manageCourses")}
+              description={t("quickActions.manageCoursesDesc")}
               icon={BookOpen}
               href="/admin/courses"
               gradient="from-violet-500 to-fuchsia-600"
             />
             <QuickActionLink
-              title="Manage Modules"
-              description="Organize course modules"
+              title={t("quickActions.manageModules")}
+              description={t("quickActions.manageModulesDesc")}
               icon={Layers}
               href="/admin/modules"
               gradient="from-cyan-500 to-blue-600"
             />
             <QuickActionLink
-              title="Manage Lessons"
-              description="Edit lesson content"
+              title={t("quickActions.manageLessons")}
+              description={t("quickActions.manageLessonsDesc")}
               icon={PlayCircle}
               href="/admin/lessons"
               gradient="from-emerald-500 to-teal-600"
             />
             <QuickActionLink
-              title="Manage Categories"
-              description="Organize your content"
+              title={t("quickActions.manageCategories")}
+              description={t("quickActions.manageCategoriesDesc")}
               icon={Tag}
               href="/admin/categories"
               gradient="from-amber-500 to-orange-600"
             />
+            <QuickActionLink
+              title={t("quickActions.reviewPayments")}
+              description={t("quickActions.reviewPaymentsDesc")}
+              icon={ReceiptText}
+              href="/admin/payment-requests"
+              gradient="from-rose-500 to-pink-600"
+            />
           </div>
         </div>
 
-        {/* Content Health */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-emerald-400" />
-            <h2 className="text-lg font-semibold text-white">Content Health</h2>
+            <h2 className="text-lg font-semibold text-white">
+              {t("health.title")}
+            </h2>
           </div>
           <div className="rounded-xl bg-zinc-900/30 border border-zinc-800 p-4">
             <Suspense
@@ -323,7 +332,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Tips Section */}
       <div className="rounded-xl bg-linear-to-br from-violet-600/10 via-fuchsia-600/5 to-cyan-600/10 border border-violet-500/20 p-6">
         <div className="flex items-start gap-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br from-violet-500 to-fuchsia-600 shadow-lg shrink-0">
@@ -331,39 +339,24 @@ export default function AdminDashboard() {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white mb-2">
-              Pro Tips for Content Creation
+              {t("tips.title")}
             </h3>
             <ul className="space-y-2 text-sm text-zinc-400">
               <li className="flex items-start gap-2">
-                <span className="text-violet-400">•</span>
-                <span>
-                  Start by creating{" "}
-                  <strong className="text-zinc-300">Categories</strong> to
-                  organize your courses by topic
-                </span>
+                <span className="text-violet-400">-</span>
+                <span>{t("tips.item1")}</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-violet-400">•</span>
-                <span>
-                  Build <strong className="text-zinc-300">Lessons</strong>{" "}
-                  first, then group them into{" "}
-                  <strong className="text-zinc-300">Modules</strong>
-                </span>
+                <span className="text-violet-400">-</span>
+                <span>{t("tips.item2")}</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-violet-400">•</span>
-                <span>
-                  Finally, create a{" "}
-                  <strong className="text-zinc-300">Course</strong> and add your
-                  modules to it
-                </span>
+                <span className="text-violet-400">-</span>
+                <span>{t("tips.item3")}</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-violet-400">•</span>
-                <span>
-                  Use the <strong className="text-zinc-300">tier system</strong>{" "}
-                  (Free, Pro, Ultra) to control access
-                </span>
+                <span className="text-violet-400">-</span>
+                <span>{t("tips.item4")}</span>
               </li>
             </ul>
           </div>

@@ -1,15 +1,26 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import type { Tier } from "@/lib/constants";
+import {
+  hasTierAccess as checkTierAccess,
+  resolveTierFromMetadata,
+} from "@/lib/user-tier";
 
 /**
  * Client-side hook to get the current user's subscription tier.
- * Uses Clerk's useAuth() to check plan subscriptions.
+ * Prefers Clerk metadata tier and falls back to legacy plan checks.
  */
 export function useUserTier(): Tier {
+  const { isLoaded, user } = useUser();
   const { has } = useAuth();
 
+  if (!isLoaded) return "free";
+
+  const metadataTier = resolveTierFromMetadata(user?.publicMetadata);
+  if (metadataTier) return metadataTier;
+
+  // Backward-compatible fallback for existing Clerk billing plans.
   if (has?.({ plan: "ultra" })) return "ultra";
   if (has?.({ plan: "pro" })) return "pro";
   return "free";
@@ -24,16 +35,7 @@ export function useUserTier(): Tier {
  */
 export function hasTierAccess(
   userTier: Tier,
-  contentTier: Tier | null | undefined
+  contentTier: Tier | null | undefined,
 ): boolean {
-  // Free content or no tier = accessible to everyone
-  if (!contentTier || contentTier === "free") return true;
-
-  // Ultra content requires ultra plan
-  if (contentTier === "ultra") return userTier === "ultra";
-
-  // Pro content requires pro OR ultra plan
-  if (contentTier === "pro") return userTier === "pro" || userTier === "ultra";
-
-  return false;
+  return checkTierAccess(userTier, contentTier);
 }

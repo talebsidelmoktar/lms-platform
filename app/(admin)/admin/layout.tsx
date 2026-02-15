@@ -1,14 +1,40 @@
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import AdminHeader from "@/components/admin/layout/AdminHeader";
 import AdminBreadcrumb from "@/components/admin/layout/AdminBreadcrumb";
+import AdminHeader from "@/components/admin/layout/AdminHeader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Providers } from "@/components/Providers";
 
-function AdminLayout({ children }: { children: React.ReactNode }) {
+async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const t = await getTranslations("dashboard.admin");
+  const user = await currentUser();
+  const publicRole = user?.publicMetadata?.role;
+  const privateRole = (user?.privateMetadata as { role?: string } | undefined)
+    ?.role;
+  const unsafeRole = (user?.unsafeMetadata as { role?: string } | undefined)
+    ?.role;
+  const role =
+    typeof publicRole === "string"
+      ? publicRole
+      : typeof privateRole === "string"
+        ? privateRole
+        : typeof unsafeRole === "string"
+          ? unsafeRole
+          : undefined;
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  if (role !== "admin") {
+    redirect("/dashboard");
+  }
+
   return (
     <Providers>
       <div className="dark min-h-screen bg-[#09090b] text-white">
-        {/* Subtle noise texture overlay */}
         <div
           className="fixed inset-0 pointer-events-none opacity-[0.015]"
           style={{
@@ -17,11 +43,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
         />
         <Suspense
           fallback={
-            <LoadingSpinner
-              text="Loading Admin Dashboard..."
-              isFullScreen
-              size="lg"
-            />
+            <LoadingSpinner text={t("loading")} isFullScreen size="lg" />
           }
         >
           <AdminHeader />

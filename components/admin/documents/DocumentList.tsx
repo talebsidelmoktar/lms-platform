@@ -1,19 +1,20 @@
 "use client";
 
-import { Suspense, useState, useTransition } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
-  useDocuments,
-  useDocumentProjection,
-  useApplyDocumentActions,
   createDocument,
   createDocumentHandle,
   type DocumentHandle,
+  useApplyDocumentActions,
+  useDocumentProjection,
+  useDocuments,
 } from "@sanity/sdk-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronRight, Loader2, Plus, Search, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Suspense, useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
-import { Plus, ChevronRight, Loader2, Search, X } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DocumentListProps {
   documentType: string;
@@ -42,6 +43,7 @@ function DocumentItem({
   dataset,
   basePath,
 }: DocumentHandle & { basePath: string }) {
+  const t = useTranslations("dashboard.admin.documentList");
   const { data } = useDocumentProjection({
     documentId,
     documentType,
@@ -50,7 +52,7 @@ function DocumentItem({
     projection: "{ title, description }",
   });
 
-  const title = (data as { title?: string })?.title || "Untitled";
+  const title = (data as { title?: string })?.title || t("untitled");
   const description = (data as { description?: string })?.description;
 
   return (
@@ -85,6 +87,7 @@ function DocumentListContent({
   isCreating: boolean;
   searchQuery: string;
 }) {
+  const t = useTranslations("dashboard.admin.documentList");
   const { data: documents } = useDocuments({
     documentType,
     projectId,
@@ -95,7 +98,9 @@ function DocumentListContent({
   if (!documents || documents.length === 0) {
     return (
       <div className="p-8 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
-        <p className="text-zinc-500">No {documentType}s found</p>
+        <p className="text-zinc-500">
+          {t("noneFound", { type: documentType })}
+        </p>
         <button
           type="button"
           onClick={onCreateDocument}
@@ -107,7 +112,9 @@ function DocumentListContent({
           ) : (
             <Plus className="h-4 w-4" />
           )}
-          {isCreating ? "Creating..." : `Create your first ${documentType}`}
+          {isCreating
+            ? t("creating")
+            : t("createFirst", { type: documentType })}
         </button>
       </div>
     );
@@ -136,6 +143,7 @@ export function DocumentList({
   dataset,
   showCreateButton = true,
 }: DocumentListProps) {
+  const t = useTranslations("dashboard.admin.documentList");
   const router = useRouter();
   const [isCreating, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
@@ -174,7 +182,7 @@ export function DocumentList({
             ) : (
               <Plus className="h-4 w-4" />
             )}
-            {isCreating ? "Creating..." : `New ${documentType}`}
+            {isCreating ? t("creating") : t("newItem", { type: documentType })}
           </button>
         )}
       </div>
@@ -184,7 +192,7 @@ export function DocumentList({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
         <Input
           type="text"
-          placeholder={`Search ${documentType}s...`}
+          placeholder={t("search", { type: documentType })}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10 pr-10 bg-zinc-900/50 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-violet-500 focus:ring-violet-500/20"

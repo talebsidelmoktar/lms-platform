@@ -1,0 +1,206 @@
+{
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "fr": "French",
+    "ar": "Arabic"
+  },
+  "header": {
+    "courses": "Courses",
+    "pricing": "Pricing",
+    "reviews": "Reviews",
+    "dashboard": "Dashboard",
+    "myCourses": "My Courses",
+    "account": "Account",
+    "upgrade": "Upgrade",
+    "signIn": "Sign in",
+    "startLearning": "Start Learning"
+  },
+  "admin": {
+    "label": "Admin",
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "modules": "Modules",
+    "lessons": "Lessons",
+    "categories": "Categories",
+    "paymentRequests": "Payment Requests",
+    "openStudio": "Open Studio",
+    "openMenu": "Open menu",
+    "logout": "Logout"
+  },
+  "tiers": {
+    "all": "All",
+    "free": "Free",
+    "pro": "Pro",
+    "ultra": "Ultra"
+  },
+  "course": {
+    "searchPlaceholder": "Search courses...",
+    "clearFilters": "Clear filters",
+    "backToDashboard": "Back to dashboard",
+    "untitledCourse": "Untitled Course",
+    "modules": "modules",
+    "lessons": "lessons",
+    "completed": "Completed",
+    "upgradeToUnlock": "Upgrade to unlock",
+    "untitledModule": "Untitled Module",
+    "untitledLesson": "Untitled Lesson",
+    "courseContent": "Course Content",
+    "module": "Module",
+    "lesson": "lesson",
+    "lessonsWord": "lessons",
+    "completedWord": "completed",
+    "noModules": "No modules available yet.",
+    "lessonNotes": "Lesson Notes",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "gated": {
+    "upgradeTo": "Upgrade to",
+    "unlockContent": "to unlock this content",
+    "description": "This course requires a {tier} subscription. Upgrade your plan to access this content and unlock all the features below.",
+    "includes": "includes:",
+    "viewPricingPlans": "View Pricing Plans"
+  },
+  "pricing": {
+    "simpleTransparent": "Simple, transparent pricing",
+    "choosePath": "Choose your learning path",
+    "startFree": "Start free, upgrade when you're ready. Unlock Pro for advanced content or go Ultra for AI-powered learning, exclusive masterclasses, and 1-on-1 access.",
+    "includes": "{tier} includes:",
+    "brand": "Mauri Academy",
+    "tiers": {
+      "free": {
+        "features": [
+          "Access to foundational courses",
+          "Community Discord access",
+          "Basic projects and exercises",
+          "Email support"
+        ]
+      },
+      "pro": {
+        "features": [
+          "Everything in Free",
+          "All Pro-tier courses",
+          "Advanced real-world projects",
+          "Priority support",
+          "Course completion certificates"
+        ]
+      },
+      "ultra": {
+        "features": [
+          "Everything in Pro",
+          "AI Learning Assistant",
+          "Exclusive Ultra-only content",
+          "Monthly 1-on-1 sessions",
+          "Private Discord channel",
+          "Early access to new courses",
+          "Lifetime updates"
+        ]
+      }
+    },
+    "manualRequest": {
+      "title": "Request an upgrade manually",
+      "description": "Complete your payment externally, upload a screenshot proof, and we will activate Pro or Ultra after verification.",
+      "openButton": "Submit Payment Proof",
+      "closeModal": "Close modal",
+      "close": "Close",
+      "modalTitle": "Submit payment proof",
+      "requestedTier": "Requested tier",
+      "paymentMethod": "Payment method",
+      "paymentMethodPlaceholder": "e.g. Bank transfer, PayPal, UPI",
+      "referenceId": "Transaction / reference ID",
+      "referenceIdPlaceholder": "Enter transaction ID",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Any extra information for verification",
+      "proofImage": "Screenshot proof",
+      "chooseImage": "Choose image file (PNG/JPG/WebP/GIF)",
+      "submitting": "Submitting...",
+      "submit": "Submit Request",
+      "success": "Request submitted successfully. We will review your proof and update your tier.",
+      "errors": {
+        "uploadProofFirst": "Upload a screenshot of your payment proof first.",
+        "submitFailed": "Failed to submit request."
+      }
+    },
+    "questions": "Questions?",
+    "contactUs": "Contact us",
+    "orCheckFaq": "or check out our",
+    "faq": "FAQ",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "contact": "Contact",
+    "copyright": "2024 Mauri Academy. All rights reserved."
+  },
+  "home": {
+    "learnRealProjects": "Learn to code with real-world projects",
+    "masterCoding": "Master coding",
+    "modernWay": "the modern way",
+    "subtitle": "Join Mauri Academy and learn from expertly crafted courses, modules, and hands-on lessons. From free fundamentals to Pro exclusives and Ultra gems.",
+    "goDashboard": "Go to Dashboard",
+    "myCourses": "My Courses",
+    "startLearningFree": "Start Learning Free",
+    "browseCourses": "Browse Courses",
+    "courses": "Courses",
+    "lessons": "Lessons",
+    "students": "Students",
+    "mostPopular": "Most Popular",
+    "coursesBuiltFor": "Courses built for",
+    "realResults": "real results",
+    "featuredDescription": "Each course is packed with modules and lessons designed to take you from zero to job-ready.",
+    "viewAllCourses": "View All Courses",
+    "studentsLoveIt": "Students love it",
+    "readyToLevelUp": "Ready to level up your skills?",
+    "journeyBegins": "Start with free courses or unlock everything with Pro and Ultra. Your coding journey begins now.",
+    "viewPricing": "View Pricing",
+    "tiers": {
+      "free": {
+        "description": "Perfect for beginners. Start your coding journey with foundational courses and community support.",
+        "features": [
+          "Access to foundational courses",
+          "Community Discord access",
+          "Basic projects and exercises",
+          "Email support"
+        ]
+      },
+      "pro": {
+        "description": "Level up with advanced content, real-world projects, and priority support to accelerate your career.",
+        "features": [
+          "Everything in Free",
+          "All Pro-tier courses",
+          "Advanced real-world projects",
+          "Priority support",
+          "Course completion certificates"
+        ]
+      },
+      "ultra": {
+        "description": "The ultimate learning experience with AI assistance, exclusive content, and personalized 1-on-1 sessions.",
+        "features": [
+          "Everything in Pro",
+          "AI Learning Assistant",
+          "Exclusive Ultra-only content",
+          "Monthly 1-on-1 sessions",
+          "Private Discord channel",
+          "Early access to new courses",
+          "Lifetime updates"
+        ]
+      }
+    },
+    "testimonials": {
+      "0": {
+        "name": "Alex Chen",
+        "role": "Junior Developer",
+        "content": "Sonny's teaching style is incredible. I went from knowing nothing to landing my first dev job in 6 months!"
+      },
+      "1": {
+        "name": "Sarah Miller",
+        "role": "Freelancer",
+        "content": "The Ultra tier is worth every penny. The exclusive content and 1-on-1 sessions transformed my career."
+      },
+      "2": {
+        "name": "James Wilson",
+        "role": "CS Student",
+        "content": "Best investment I've made. The Pro courses filled gaps my university courses never covered."
+      }
+    }
+  }
+}

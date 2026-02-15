@@ -275,3 +275,39 @@ export const LESSON_NAVIGATION_QUERY = defineQuery(`*[
     }
   }
 }`);
+
+export const USER_PAYMENT_REQUESTS_QUERY = defineQuery(`*[
+  _type == "paymentRequest"
+  && clerkUserId == $userId
+] | order(submittedAt desc) {
+  _id,
+  requestedTier,
+  status,
+  submittedAt,
+  reviewedAt,
+  reviewNotes
+}[0...5]`);
+
+export const ADMIN_PAYMENT_REQUESTS_QUERY = defineQuery(`*[
+  _type == "paymentRequest"
+] | order(submittedAt desc) {
+  _id,
+  clerkUserId,
+  userEmail,
+  userName,
+  requestedTier,
+  paymentMethod,
+  referenceId,
+  notes,
+  status,
+  reviewNotes,
+  reviewedAt,
+  reviewedBy,
+  submittedAt,
+  proofImage {
+    asset->{
+      _id,
+      url
+    }
+  }
+}`);

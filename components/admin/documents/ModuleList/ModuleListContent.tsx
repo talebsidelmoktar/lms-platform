@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense } from "react";
 import { useDocuments } from "@sanity/sdk-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Accordion } from "@/components/ui/accordion";
+import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { EmptyState } from "@/components/admin/shared";
-import { ModuleItem } from "./ModuleItem";
+import { Accordion } from "@/components/ui/accordion";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CourseWithModules } from "./CourseWithModules";
+import { ModuleItem } from "./ModuleItem";
 import { OrphanModules } from "./OrphanModules";
 
 interface ModuleListContentProps {
@@ -24,6 +25,7 @@ export function ModuleListContent({
   isCreating,
   searchQuery,
 }: ModuleListContentProps) {
+  const t = useTranslations("dashboard.admin.moduleList");
   const { data: modules } = useDocuments({
     documentType: "module",
     projectId,
@@ -37,23 +39,20 @@ export function ModuleListContent({
     dataset,
   });
 
-  // Build a set of module IDs that are assigned to courses
-  // Note: This would be populated by tracking modules from course projections
   const coursesWithModules = new Set<string>();
 
   if (!modules || modules.length === 0) {
     return (
       <EmptyState
         emoji="📦"
-        message="No modules found"
-        actionLabel="Create your first module"
+        message={t("empty")}
+        actionLabel={t("createFirst")}
         onAction={onCreateModule}
         isLoading={isCreating}
       />
     );
   }
 
-  // If searching, show flat list
   if (searchQuery) {
     return (
       <div className="space-y-2">
@@ -71,7 +70,6 @@ export function ModuleListContent({
     );
   }
 
-  // Group by course when not searching
   return (
     <div className="space-y-4">
       {courses && courses.length > 0 && (

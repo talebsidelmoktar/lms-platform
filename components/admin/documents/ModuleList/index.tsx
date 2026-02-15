@@ -1,18 +1,20 @@
 "use client";
 
-import { Suspense, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import {
-  useApplyDocumentActions,
   createDocument,
   createDocumentHandle,
+  useApplyDocumentActions,
 } from "@sanity/sdk-react";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Suspense, useState, useTransition } from "react";
 import { ListPageHeader, SearchInput } from "@/components/admin/shared";
 import { ModuleListSkeleton } from "@/components/admin/shared/DocumentSkeleton";
 import { ModuleListContent } from "./ModuleListContent";
 import type { ModuleListProps } from "./types";
 
 export function ModuleList({ projectId, dataset }: ModuleListProps) {
+  const t = useTranslations("dashboard.admin.moduleList");
   const router = useRouter();
   const [isCreating, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,9 +35,9 @@ export function ModuleList({ projectId, dataset }: ModuleListProps) {
   return (
     <div className="space-y-6">
       <ListPageHeader
-        title="Modules"
-        description="Manage course modules organized by course"
-        actionLabel="New module"
+        title={t("title")}
+        description={t("description")}
+        actionLabel={t("new")}
         onAction={handleCreateModule}
         isLoading={isCreating}
       />
@@ -43,7 +45,7 @@ export function ModuleList({ projectId, dataset }: ModuleListProps) {
       <SearchInput
         value={searchQuery}
         onChange={setSearchQuery}
-        placeholder="Search modules..."
+        placeholder={t("search")}
       />
 
       <Suspense fallback={<ModuleListSkeleton />}>

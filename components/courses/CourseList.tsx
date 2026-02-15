@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { CourseCard } from "./CourseCard";
-import { TierFilterTabs, type TierFilter } from "./TierFilterTabs";
-import { useUserTier, hasTierAccess } from "@/lib/hooks/use-user-tier";
+import { hasTierAccess, useUserTier } from "@/lib/hooks/use-user-tier";
 import type { DASHBOARD_COURSES_QUERYResult } from "@/sanity.types";
+import { CourseCard } from "./CourseCard";
+import { type TierFilter, TierFilterTabs } from "./TierFilterTabs";
 
 // Infer course type from Sanity query result
 export type CourseListCourse = DASHBOARD_COURSES_QUERYResult[number];
@@ -24,6 +25,7 @@ export function CourseList({
   showSearch = true,
   emptyMessage = "No courses found",
 }: CourseListProps) {
+  const t = useTranslations("common.course");
   const userTier = useUserTier();
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,7 +67,7 @@ export function CourseList({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
               <Input
                 type="text"
-                placeholder="Search courses..."
+                placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-zinc-900/50 border-zinc-800 text-white placeholder:text-zinc-500 focus-visible:ring-violet-500"
@@ -80,8 +82,8 @@ export function CourseList({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => (
             <CourseCard
-              key={course.slug!.current!}
-              slug={{ current: course.slug!.current! }}
+              key={course._id}
+              slug={course.slug ? { current: course.slug.current ?? "" } : null}
               title={course.title}
               description={course.description}
               tier={course.tier}
@@ -107,7 +109,7 @@ export function CourseList({
               }}
               className="mt-2 text-sm text-violet-400 hover:text-violet-300 transition-colors"
             >
-              Clear filters
+              {t("clearFilters")}
             </button>
           )}
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { MessageCircle, Sparkles, PanelRightClose } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { MessageCircle, PanelRightClose, Sparkles } from "lucide-react";
+import { useUserTier } from "@/lib/hooks/use-user-tier";
 import { TutorChat } from "./TutorChat";
 import { TutorProvider, useTutor } from "./TutorContext";
 
@@ -120,16 +120,10 @@ function TutorPanel() {
 }
 
 export function TutorWidget() {
-  const { isLoaded, has } = useAuth();
-
-  // Wait for Clerk to load
-  if (!isLoaded) {
-    return null;
-  }
+  const userTier = useUserTier();
 
   // Only show widget for Ultra members
-  const isUltra = has?.({ plan: "ultra" });
-  if (!isUltra) {
+  if (userTier !== "ultra") {
     return null;
   }
 

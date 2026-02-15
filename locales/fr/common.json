@@ -1,0 +1,206 @@
+{
+  "language": {
+    "label": "Langue",
+    "en": "Anglais",
+    "fr": "Francais",
+    "ar": "Arabe"
+  },
+  "header": {
+    "courses": "Cours",
+    "pricing": "Tarifs",
+    "reviews": "Avis",
+    "dashboard": "Tableau de bord",
+    "myCourses": "Mes cours",
+    "account": "Compte",
+    "upgrade": "Ameliorer",
+    "signIn": "Se connecter",
+    "startLearning": "Commencer"
+  },
+  "admin": {
+    "label": "Admin",
+    "dashboard": "Tableau de bord",
+    "courses": "Cours",
+    "modules": "Modules",
+    "lessons": "Lecons",
+    "categories": "Categories",
+    "paymentRequests": "Demandes de paiement",
+    "openStudio": "Ouvrir Studio",
+    "openMenu": "Ouvrir le menu",
+    "logout": "Se deconnecter"
+  },
+  "tiers": {
+    "all": "Tous",
+    "free": "Gratuit",
+    "pro": "Pro",
+    "ultra": "Ultra"
+  },
+  "course": {
+    "searchPlaceholder": "Rechercher des cours...",
+    "clearFilters": "Effacer les filtres",
+    "backToDashboard": "Retour au tableau de bord",
+    "untitledCourse": "Cours sans titre",
+    "modules": "modules",
+    "lessons": "lecons",
+    "completed": "Termine",
+    "upgradeToUnlock": "Passez a un forfait superieur",
+    "untitledModule": "Module sans titre",
+    "untitledLesson": "Lecon sans titre",
+    "courseContent": "Contenu du cours",
+    "module": "Module",
+    "lesson": "lecon",
+    "lessonsWord": "lecons",
+    "completedWord": "termine",
+    "noModules": "Aucun module disponible pour le moment.",
+    "lessonNotes": "Notes de la lecon",
+    "previous": "Precedent",
+    "next": "Suivant"
+  },
+  "gated": {
+    "upgradeTo": "Passez a",
+    "unlockContent": "pour debloquer ce contenu",
+    "description": "Ce cours necessite un abonnement {tier}. Passez a un forfait superieur pour acceder a ce contenu et debloquer toutes les fonctionnalites ci-dessous.",
+    "includes": "inclut :",
+    "viewPricingPlans": "Voir les offres"
+  },
+  "pricing": {
+    "simpleTransparent": "Tarification simple et transparente",
+    "choosePath": "Choisissez votre parcours d'apprentissage",
+    "startFree": "Commencez gratuitement puis passez a la version superieure quand vous etes pret. Debloquez Pro pour le contenu avance ou Ultra pour l'apprentissage assiste par IA, des masterclasses exclusives et un acces 1:1.",
+    "includes": "{tier} inclut :",
+    "brand": "Mauri Academy",
+    "tiers": {
+      "free": {
+        "features": [
+          "Acces aux cours fondamentaux",
+          "Acces au Discord communautaire",
+          "Projets et exercices de base",
+          "Support par email"
+        ]
+      },
+      "pro": {
+        "features": [
+          "Tout ce qui est dans Gratuit",
+          "Tous les cours niveau Pro",
+          "Projets avances du monde reel",
+          "Support prioritaire",
+          "Certificats de fin de cours"
+        ]
+      },
+      "ultra": {
+        "features": [
+          "Tout ce qui est dans Pro",
+          "Assistant IA d'apprentissage",
+          "Contenu exclusif Ultra",
+          "Sessions mensuelles 1-a-1",
+          "Canal Discord prive",
+          "Acces anticipe aux nouveaux cours",
+          "Mises a jour a vie"
+        ]
+      }
+    },
+    "manualRequest": {
+      "title": "Demander une mise a niveau manuelle",
+      "description": "Effectuez votre paiement en externe, televersez une capture comme preuve, puis nous activerons Pro ou Ultra apres verification.",
+      "openButton": "Envoyer la preuve de paiement",
+      "closeModal": "Fermer la fenetre",
+      "close": "Fermer",
+      "modalTitle": "Envoyer la preuve de paiement",
+      "requestedTier": "Niveau demande",
+      "paymentMethod": "Methode de paiement",
+      "paymentMethodPlaceholder": "ex. virement bancaire, PayPal, UPI",
+      "referenceId": "ID transaction / reference",
+      "referenceIdPlaceholder": "Entrez l'ID de transaction",
+      "notes": "Notes (optionnel)",
+      "notesPlaceholder": "Informations supplementaires pour verification",
+      "proofImage": "Capture de preuve",
+      "chooseImage": "Choisir une image (PNG/JPG/WebP/GIF)",
+      "submitting": "Envoi...",
+      "submit": "Envoyer la demande",
+      "success": "Demande envoyee avec succes. Nous verifierons la preuve et mettrons a jour votre niveau.",
+      "errors": {
+        "uploadProofFirst": "Televersez d'abord une capture de votre preuve de paiement.",
+        "submitFailed": "Echec de l'envoi de la demande."
+      }
+    },
+    "questions": "Des questions ?",
+    "contactUs": "Contactez-nous",
+    "orCheckFaq": "ou consultez notre",
+    "faq": "FAQ",
+    "privacy": "Confidentialite",
+    "terms": "Conditions",
+    "contact": "Contact",
+    "copyright": "2024 Mauri Academy. Tous droits reserves."
+  },
+  "home": {
+    "learnRealProjects": "Apprenez a coder avec des projets concrets",
+    "masterCoding": "Maitrisez le code",
+    "modernWay": "de facon moderne",
+    "subtitle": "Rejoignez Mauri Academy et apprenez avec des cours, modules et lecons pratiques concus par des experts. Des bases gratuites jusqu'aux exclusivites Pro et Ultra.",
+    "goDashboard": "Aller au tableau de bord",
+    "myCourses": "Mes cours",
+    "startLearningFree": "Commencer gratuitement",
+    "browseCourses": "Parcourir les cours",
+    "courses": "Cours",
+    "lessons": "Lecons",
+    "students": "Etudiants",
+    "mostPopular": "Le plus populaire",
+    "coursesBuiltFor": "Des cours concus pour",
+    "realResults": "des resultats concrets",
+    "featuredDescription": "Chaque cours contient des modules et des lecons concus pour vous mener de zero a pret pour l'emploi.",
+    "viewAllCourses": "Voir tous les cours",
+    "studentsLoveIt": "Les etudiants adorent",
+    "readyToLevelUp": "Pret a passer au niveau superieur ?",
+    "journeyBegins": "Commencez avec les cours gratuits ou debloquez tout avec Pro et Ultra. Votre parcours commence maintenant.",
+    "viewPricing": "Voir les tarifs",
+    "tiers": {
+      "free": {
+        "description": "Parfait pour les debutants. Commencez votre parcours de codage avec des cours fondamentaux et un support communautaire.",
+        "features": [
+          "Acces aux cours fondamentaux",
+          "Acces au Discord communautaire",
+          "Projets et exercices de base",
+          "Support par email"
+        ]
+      },
+      "pro": {
+        "description": "Passez au niveau superieur avec du contenu avance, des projets concrets et un support prioritaire pour accelerer votre carriere.",
+        "features": [
+          "Tout ce qui est dans Gratuit",
+          "Tous les cours niveau Pro",
+          "Projets avances du monde reel",
+          "Support prioritaire",
+          "Certificats de fin de cours"
+        ]
+      },
+      "ultra": {
+        "description": "L'experience d'apprentissage ultime avec assistance IA, contenu exclusif et sessions personnalisees 1-a-1.",
+        "features": [
+          "Tout ce qui est dans Pro",
+          "Assistant IA d'apprentissage",
+          "Contenu exclusif Ultra",
+          "Sessions mensuelles 1-a-1",
+          "Canal Discord prive",
+          "Acces anticipe aux nouveaux cours",
+          "Mises a jour a vie"
+        ]
+      }
+    },
+    "testimonials": {
+      "0": {
+        "name": "Alex Chen",
+        "role": "Developpeur Junior",
+        "content": "Le style d'enseignement de Sonny est incroyable. Je suis passe de ne rien savoir a obtenir mon premier emploi de developpeur en 6 mois !"
+      },
+      "1": {
+        "name": "Sarah Miller",
+        "role": "Freelance",
+        "content": "Le niveau Ultra vaut chaque centime. Le contenu exclusif et les sessions 1-a-1 ont transforme ma carriere."
+      },
+      "2": {
+        "name": "James Wilson",
+        "role": "Etudiant en Informatique",
+        "content": "Le meilleur investissement que j'ai fait. Les cours Pro ont comble les lacunes que mes cours universitaires n'ont jamais couvertes."
+      }
+    }
+  }
+}

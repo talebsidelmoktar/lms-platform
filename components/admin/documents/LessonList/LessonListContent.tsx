@@ -1,14 +1,15 @@
 "use client";
 
-import { Suspense } from "react";
 import { useDocuments } from "@sanity/sdk-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Video, FileText, Link2 } from "lucide-react";
-import { Accordion } from "@/components/ui/accordion";
+import { FileText, Link2, Video } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { EmptyState } from "@/components/admin/shared";
-import { LessonItem } from "./LessonItem";
+import { Accordion } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CourseWithModulesAndLessons } from "./CourseWithModulesAndLessons";
+import { LessonItem } from "./LessonItem";
 import { OrphanLessons } from "./OrphanLessons";
 
 interface LessonListContentProps {
@@ -26,6 +27,7 @@ export function LessonListContent({
   isCreating,
   searchQuery,
 }: LessonListContentProps) {
+  const t = useTranslations("dashboard.admin.lessonList");
   const { data: lessons } = useDocuments({
     documentType: "lesson",
     projectId,
@@ -43,15 +45,14 @@ export function LessonListContent({
     return (
       <EmptyState
         emoji="🎬"
-        message="No lessons found"
-        actionLabel="Create your first lesson"
+        message={t("empty")}
+        actionLabel={t("createFirst")}
         onAction={onCreateLesson}
         isLoading={isCreating}
       />
     );
   }
 
-  // If searching, show flat list
   if (searchQuery) {
     return (
       <div className="space-y-1.5">
@@ -69,10 +70,8 @@ export function LessonListContent({
     );
   }
 
-  // Group by course > module when not searching
   return (
     <div className="space-y-4">
-      {/* Legend */}
       <div className="flex items-center gap-4 text-xs text-zinc-500 pb-2 border-b border-zinc-800">
         <span className="flex items-center gap-1.5">
           <Badge
@@ -81,7 +80,7 @@ export function LessonListContent({
           >
             <Video className="h-3 w-3" />
           </Badge>
-          Video
+          {t("legend.video")}
         </span>
         <span className="flex items-center gap-1.5">
           <Badge
@@ -90,7 +89,7 @@ export function LessonListContent({
           >
             <FileText className="h-3 w-3" />
           </Badge>
-          Content
+          {t("legend.content")}
         </span>
         <span className="flex items-center gap-1.5">
           <Badge
@@ -99,7 +98,7 @@ export function LessonListContent({
           >
             <Link2 className="h-3 w-3" />
           </Badge>
-          Slug
+          {t("legend.slug")}
         </span>
       </div>
 
@@ -120,11 +119,9 @@ export function LessonListContent({
         </Accordion>
       )}
 
-      {/* Show orphan lessons as flat list if no courses */}
       {(!courses || courses.length === 0) && (
         <OrphanLessons documents={lessons} />
       )}
     </div>
   );
 }
-

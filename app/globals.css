@@ -121,6 +121,10 @@
   }
 }
 
+.font-arabic {
+  font-family: var(--font-tajawal), var(--font-geist-sans), sans-serif;
+}
+
 /* Custom animations */
 @keyframes fade-in {
   from {

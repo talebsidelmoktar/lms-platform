@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface EmptyStateProps {
   emoji: string;
@@ -17,6 +18,7 @@ export function EmptyState({
   onAction,
   isLoading = false,
 }: EmptyStateProps) {
+  const t = useTranslations("dashboard.admin");
   return (
     <div className="p-12 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
       <div className="text-6xl mb-4">{emoji}</div>
@@ -33,10 +35,9 @@ export function EmptyState({
           ) : (
             <Plus className="h-4 w-4" />
           )}
-          {isLoading ? "Creating..." : actionLabel}
+          {isLoading ? t("creating") : actionLabel}
         </button>
       )}
     </div>
   );
 }
-
