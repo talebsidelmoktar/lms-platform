@@ -1,6 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
 import type { Tier } from "@/lib/constants";
-import { hasTierAccess, resolveTierFromSessionClaims } from "@/lib/user-tier";
+import { getCurrentUserTier } from "@/lib/auth/server";
+import { hasTierAccess } from "@/lib/user-tier";
 
 /**
  * Check if the current user has access to content at the specified tier.
@@ -13,12 +13,7 @@ import { hasTierAccess, resolveTierFromSessionClaims } from "@/lib/user-tier";
 export async function hasAccessToTier(
   requiredTier: Tier | null | undefined,
 ): Promise<boolean> {
-  const { has, sessionClaims } = await auth();
-  const metadataTier = resolveTierFromSessionClaims(sessionClaims);
-  const userTier =
-    metadataTier ??
-    (has({ plan: "ultra" }) ? "ultra" : has({ plan: "pro" }) ? "pro" : "free");
-
+  const userTier = await getCurrentUserTier();
   return hasTierAccess(userTier, requiredTier);
 }
 
@@ -26,11 +21,5 @@ export async function hasAccessToTier(
  * Get the user's current subscription tier.
  */
 export async function getUserTier(): Promise<Tier> {
-  const { has, sessionClaims } = await auth();
-  const metadataTier = resolveTierFromSessionClaims(sessionClaims);
-  if (metadataTier) return metadataTier;
-
-  if (has({ plan: "ultra" })) return "ultra";
-  if (has({ plan: "pro" })) return "pro";
-  return "free";
+  return getCurrentUserTier();
 }

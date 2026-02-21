@@ -1,4 +1,3 @@
-import { currentUser } from "@clerk/nextjs/server";
 import {
   ArrowRight,
   BookOpen,
@@ -17,6 +16,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { CourseCard } from "@/components/courses";
 import { Header } from "@/components/Header";
+import { getCurrentUser } from "@/lib/auth/server";
 import { Button } from "@/components/ui/button";
 import { sanityFetch } from "@/sanity/lib/live";
 import { FEATURED_COURSES_QUERY, STATS_QUERY } from "@/sanity/lib/queries";
@@ -29,7 +29,7 @@ export default async function Home() {
   const [{ data: courses }, { data: stats }, user] = await Promise.all([
     sanityFetch({ query: FEATURED_COURSES_QUERY }),
     sanityFetch({ query: STATS_QUERY }),
-    currentUser(),
+    getCurrentUser(),
   ]);
 
   const isSignedIn = !!user;

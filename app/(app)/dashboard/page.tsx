@@ -1,21 +1,16 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { CourseList } from "@/components/courses";
 import { Header } from "@/components/Header";
+import { requireCurrentUser } from "@/lib/auth/server";
 import { getUserTier } from "@/lib/course-access";
 import { sanityFetch } from "@/sanity/lib/live";
 import { DASHBOARD_COURSES_QUERY } from "@/sanity/lib/queries";
 
 export default async function DashboardPage() {
   const t = await getTranslations("dashboard");
-  const user = await currentUser();
-
-  if (!user) {
-    redirect("/");
-  }
+  const user = await requireCurrentUser("/");
 
   const [{ data: courses }, userTier] = await Promise.all([
     sanityFetch({
@@ -25,7 +20,7 @@ export default async function DashboardPage() {
     getUserTier(),
   ]);
 
-  const firstName = user.firstName ?? user.username ?? "there";
+  const firstName = user.fullName ?? user.username ?? "there";
 
   return (
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">

@@ -1,7 +1,7 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { getCurrentUserId } from "@/lib/auth/server";
 import { writeClient } from "@/sanity/lib/client";
 
 export async function toggleLessonCompletion(
@@ -9,7 +9,7 @@ export async function toggleLessonCompletion(
   lessonSlug: string,
   markComplete: boolean
 ): Promise<{ success: boolean; isCompleted: boolean }> {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
 
   if (!userId) {
     return { success: false, isCompleted: false };

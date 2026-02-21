@@ -1,10 +1,10 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
 import { CourseHero } from "./CourseHero";
 import { ModuleAccordion } from "./ModuleAccordion";
 import { CourseCompleteButton } from "./CourseCompleteButton";
 import { GatedFallback } from "./GatedFallback";
+import { useSupabaseSessionUser } from "@/lib/auth/client";
 import { useUserTier, hasTierAccess } from "@/lib/hooks/use-user-tier";
 import type { COURSE_WITH_MODULES_QUERYResult } from "@/sanity.types";
 import { Skeleton } from "../ui/skeleton";
@@ -15,7 +15,7 @@ interface CourseContentProps {
 }
 
 export function CourseContent({ course, userId }: CourseContentProps) {
-  const { isLoaded: isAuthLoaded } = useAuth();
+  const { isLoaded: isAuthLoaded } = useSupabaseSessionUser();
   const userTier = useUserTier();
 
   // Check if user has access to this course

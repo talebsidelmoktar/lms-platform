@@ -1,4 +1,3 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
@@ -6,26 +5,15 @@ import AdminBreadcrumb from "@/components/admin/layout/AdminBreadcrumb";
 import AdminHeader from "@/components/admin/layout/AdminHeader";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Providers } from "@/components/Providers";
+import { getCurrentUser } from "@/lib/auth/server";
 
 async function AdminLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("dashboard.admin");
-  const user = await currentUser();
-  const publicRole = user?.publicMetadata?.role;
-  const privateRole = (user?.privateMetadata as { role?: string } | undefined)
-    ?.role;
-  const unsafeRole = (user?.unsafeMetadata as { role?: string } | undefined)
-    ?.role;
-  const role =
-    typeof publicRole === "string"
-      ? publicRole
-      : typeof privateRole === "string"
-        ? privateRole
-        : typeof unsafeRole === "string"
-          ? unsafeRole
-          : undefined;
+  const user = await getCurrentUser();
+  const role = user?.role ?? null;
 
   if (!user) {
-    redirect("/sign-in");
+    redirect("/");
   }
 
   if (role !== "admin") {

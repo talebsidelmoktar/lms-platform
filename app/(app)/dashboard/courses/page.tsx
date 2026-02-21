@@ -1,19 +1,14 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { BookOpen } from "lucide-react";
-import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { CourseCard } from "@/components/courses";
 import { Header } from "@/components/Header";
+import { requireCurrentUser } from "@/lib/auth/server";
 import { sanityFetch } from "@/sanity/lib/live";
 import { DASHBOARD_COURSES_QUERY } from "@/sanity/lib/queries";
 
 export default async function MyCoursesPage() {
   const t = await getTranslations("dashboard");
-  const user = await currentUser();
-
-  if (!user) {
-    redirect("/");
-  }
+  const user = await requireCurrentUser("/");
 
   const { data: courses } = await sanityFetch({
     query: DASHBOARD_COURSES_QUERY,

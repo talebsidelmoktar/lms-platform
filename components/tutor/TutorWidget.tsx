@@ -1,6 +1,7 @@
 "use client";
 
 import { MessageCircle, PanelRightClose, Sparkles } from "lucide-react";
+import { useSupabaseSessionUser } from "@/lib/auth/client";
 import { useUserTier } from "@/lib/hooks/use-user-tier";
 import { TutorChat } from "./TutorChat";
 import { TutorProvider, useTutor } from "./TutorContext";
@@ -120,10 +121,11 @@ function TutorPanel() {
 }
 
 export function TutorWidget() {
+  const { isLoaded, user } = useSupabaseSessionUser();
   const userTier = useUserTier();
 
-  // Only show widget for Ultra members
-  if (userTier !== "ultra") {
+  // Only show widget for signed-in Ultra members.
+  if (!isLoaded || !user || userTier !== "ultra") {
     return null;
   }
 

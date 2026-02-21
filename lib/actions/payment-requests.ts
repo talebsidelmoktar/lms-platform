@@ -1,8 +1,8 @@
 "use server";
 
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { resolveRoleFromSessionClaims } from "@/lib/user-tier";
+import { getCurrentUser, getCurrentUserId, getCurrentUserRole } from "@/lib/auth/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { writeClient } from "@/sanity/lib/client";
 
 type RequestTier = "pro" | "ultra";
@@ -41,7 +41,7 @@ export async function submitPaymentRequest(
     };
   }
 
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) {
     return {
       success: false,
@@ -96,7 +96,7 @@ export async function submitPaymentRequest(
       contentType: file.type,
     });
 
-    const user = await currentUser();
+    const user = await getCurrentUser();
     const paymentMethod = `${formData.get("paymentMethod") ?? ""}`.trim();
     const referenceId = `${formData.get("referenceId") ?? ""}`.trim();
     const notes = `${formData.get("notes") ?? ""}`.trim();
@@ -104,7 +104,7 @@ export async function submitPaymentRequest(
     await writeClient.create({
       _type: "paymentRequest",
       clerkUserId: userId,
-      userEmail: user?.primaryEmailAddress?.emailAddress ?? null,
+      userEmail: user?.email ?? null,
       userName: user?.fullName ?? user?.username ?? null,
       requestedTier: requestedTierRaw,
       paymentMethod: paymentMethod || null,
@@ -145,13 +145,13 @@ export async function reviewPaymentRequest(
     };
   }
 
-  const { userId, sessionClaims } = await auth();
+  const userId = await getCurrentUserId();
 
   if (!userId) {
     return { success: false, error: "Unauthorized." };
   }
 
-  const role = resolveRoleFromSessionClaims(sessionClaims);
+  const role = await getCurrentUserRole();
   if (role !== "admin") {
     return { success: false, error: "Only admins can review requests." };
   }
@@ -184,12 +184,14 @@ export async function reviewPaymentRequest(
     }
 
     if (status === "approved") {
-      const client = await clerkClient();
-      await client.users.updateUserMetadata(request.clerkUserId, {
-        publicMetadata: {
-          tier: request.requestedTier,
-        },
-      });
+      const adminSupabase = createSupabaseAdminClient();
+      const { error: profileUpdateError } = await adminSupabase
+        .from("profiles")
+        .update({ tier: request.requestedTier })
+        .eq("id", request.clerkUserId);
+      if (profileUpdateError) {
+        throw profileUpdateError;
+      }
     }
 
     await writeClient

@@ -1,23 +1,38 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
+import type { NextRequest } from "next/server";
+import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 
 const LOCALE_PATTERN = /^\/(en|fr|ar)(?=\/|$)/;
 
-export default clerkMiddleware(async (auth, req) => {
+export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const localeMatch = pathname.match(LOCALE_PATTERN);
+  const locale = localeMatch?.[1] ?? null;
   const pathWithoutLocale = pathname.replace(LOCALE_PATTERN, "") || "/";
   const isProtectedRoute = /^(\/dashboard|\/lessons|\/admin)(\/|$)/.test(
     pathWithoutLocale,
   );
+  const isAuthRoute = /^(\/login)(\/|$)/.test(pathWithoutLocale);
 
-  if (isProtectedRoute) {
-    await auth.protect();
+  const { supabase, getResponse } = createSupabaseMiddlewareClient(req);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (isProtectedRoute && !user) {
+    const homeUrl = req.nextUrl.clone();
+    homeUrl.pathname = locale ? `/${locale}` : "/";
+    return NextResponse.redirect(homeUrl);
+  }
+
+  if (isAuthRoute && user) {
+    const dashboardUrl = req.nextUrl.clone();
+    dashboardUrl.pathname = locale ? `/${locale}/dashboard` : "/dashboard";
+    return NextResponse.redirect(dashboardUrl);
   }
 
   if (localeMatch) {
-    const locale = localeMatch[1];
     const rewriteUrl = req.nextUrl.clone();
     rewriteUrl.pathname = pathWithoutLocale;
 
@@ -32,6 +47,10 @@ export default clerkMiddleware(async (auth, req) => {
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 365,
     });
+    const supabaseResponse = getResponse();
+    for (const cookie of supabaseResponse.cookies.getAll()) {
+      response.cookies.set(cookie.name, cookie.value, cookie);
+    }
     return response;
   }
 
@@ -48,8 +67,8 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(redirectUrl);
   }
 
-  return NextResponse.next();
-});
+  return getResponse();
+}
 
 export const config = {
   matcher: [
