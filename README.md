@@ -57,7 +57,7 @@ Before diving into the code, set up accounts with these services:
 
 ### 🎁 USE THESE Links!
 
-> **⚠️ IMPORTANT:** Using these affiliate links helps keep this content FREE for everyone! Your support makes a huge difference.
+
 
 <table>
 <tr>
