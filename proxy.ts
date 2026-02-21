@@ -33,16 +33,17 @@ export default async function proxy(req: NextRequest) {
   }
 
   if (localeMatch) {
+    const localeStr = localeMatch[1];
     const rewriteUrl = req.nextUrl.clone();
     rewriteUrl.pathname = pathWithoutLocale;
 
     const requestHeaders = new Headers(req.headers);
-    requestHeaders.set("x-locale", locale);
+    requestHeaders.set("x-locale", localeStr);
 
     const response = NextResponse.rewrite(rewriteUrl, {
       request: { headers: requestHeaders },
     });
-    response.cookies.set("academy-language", locale, {
+    response.cookies.set("academy-language", localeStr, {
       path: "/",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 365,

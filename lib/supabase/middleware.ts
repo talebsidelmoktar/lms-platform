@@ -9,7 +9,7 @@ export function createSupabaseMiddlewareClient(req: NextRequest) {
   const supabase = createServerClient(getSupabaseUrl(), getSupabaseAnonKey(), {
     cookies: {
       getAll: () => req.cookies.getAll(),
-      setAll: (cookiesToSet) => {
+      setAll: (cookiesToSet: { name: string; value: string; options?: object }[]) => {
         for (const { name, value, options } of cookiesToSet) {
           res.cookies.set(name, value, options);
         }
