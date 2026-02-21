@@ -9,7 +9,7 @@
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991?logo=openai)](https://openai.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 
-> **Learn to build production-ready LMS platforms** with modern architecture, AI-powered features, and bespoke CMS solutions.
+> **Learn to build production-ready LMS platforms** with modern architecture, AI-powered features, and bespoke CMS solutions
 
 ---
 
