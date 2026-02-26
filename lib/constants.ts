@@ -6,20 +6,20 @@ export const TIER_OPTIONS = [
 
 export type Tier = (typeof TIER_OPTIONS)[number]["value"];
 
-type TierColor = "emerald" | "violet" | "cyan";
+type TierColor = "sky" | "blue" | "indigo";
 
 const TIER_COLOR_MAP: Record<TierColor, { border: string; text: string }> = {
-  emerald: {
-    border: "border-emerald-500/20",
-    text: "text-emerald-400",
+  sky: {
+    border: "border-sky-500/20",
+    text: "text-sky-400",
   },
-  violet: {
-    border: "border-violet-500/30",
-    text: "text-violet-400",
+  blue: {
+    border: "border-blue-500/30",
+    text: "text-blue-400",
   },
-  cyan: {
-    border: "border-cyan-500/20",
-    text: "text-cyan-400",
+  indigo: {
+    border: "border-indigo-500/20",
+    text: "text-indigo-400",
   },
 };
 
@@ -38,19 +38,19 @@ export const TIER_STYLES: Record<
   }
 > = {
   free: {
-    gradient: "from-emerald-500 to-teal-600",
-    border: "border-emerald-500/30",
-    text: "text-emerald-400",
-    badge: "bg-emerald-500/90 text-white",
+    gradient: "from-sky-500 to-blue-600",
+    border: "border-sky-500/30",
+    text: "text-sky-400",
+    badge: "bg-sky-500/90 text-white",
   },
   pro: {
-    gradient: "from-violet-500 to-fuchsia-600",
-    border: "border-violet-500/30",
-    text: "text-violet-400",
-    badge: "bg-violet-500/90 text-white",
+    gradient: "from-blue-500 to-indigo-600",
+    border: "border-blue-500/30",
+    text: "text-blue-400",
+    badge: "bg-blue-500/90 text-white",
   },
   ultra: {
-    gradient: "from-cyan-400 to-blue-600",
+    gradient: "from-cyan-400 to-sky-600",
     border: "border-cyan-500/30",
     text: "text-cyan-400",
     badge: "bg-cyan-500/90 text-white",
@@ -60,7 +60,7 @@ export const TIER_STYLES: Record<
 export const TIER_FEATURES = [
   {
     tier: "Free",
-    color: "emerald",
+    color: "sky",
     features: [
       "Access to foundational courses",
       "Community Discord access",
@@ -70,7 +70,7 @@ export const TIER_FEATURES = [
   },
   {
     tier: "Pro",
-    color: "violet",
+    color: "blue",
     features: [
       "Everything in Free",
       "All Pro-tier courses",
@@ -81,7 +81,7 @@ export const TIER_FEATURES = [
   },
   {
     tier: "Ultra",
-    color: "cyan",
+    color: "indigo",
     features: [
       "Everything in Pro",
       "AI Learning Assistant",

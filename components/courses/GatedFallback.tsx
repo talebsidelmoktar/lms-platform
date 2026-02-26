@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { CheckCircle2, Lock, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -9,7 +9,7 @@ import { TIER_FEATURES, TIER_STYLES, type Tier } from "@/lib/constants";
 // Muted gradient variants for background overlays
 const TIER_GRADIENT_MUTED: Record<Tier, string> = {
   free: "from-emerald-500/20 to-teal-600/20",
-  pro: "from-violet-500/20 to-fuchsia-600/20",
+  pro: "from-sky-500/20 to-blue-600/20",
   ultra: "from-cyan-400/20 to-blue-600/20",
 };
 
@@ -89,7 +89,7 @@ export function GatedFallback({ requiredTier }: GatedFallbackProps) {
         <Link href="/pricing">
           <Button
             size="lg"
-            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-xl shadow-violet-600/30 px-8"
+            className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-xl shadow-sky-600/30 px-8"
           >
             <Sparkles className="w-4 h-4 mr-2" />
             {t("viewPricingPlans")}
@@ -99,3 +99,4 @@ export function GatedFallback({ requiredTier }: GatedFallbackProps) {
     </div>
   );
 }
+

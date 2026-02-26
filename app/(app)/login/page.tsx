@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Mail, Phone, ShieldCheck } from "lucide-react";
@@ -13,6 +13,11 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 
 type EmailMode = "signin" | "signup";
 type PhoneStep = "send" | "verify";
+
+interface AvailabilityResponse {
+  emailExists: boolean;
+  phoneExists: boolean;
+}
 
 export default function LoginPage() {
   const locale = useLocale();
@@ -39,6 +44,38 @@ export default function LoginPage() {
   function redirectToDashboard() {
     const dashboardPath = getPathname({ href: "/dashboard", locale });
     window.location.href = dashboardPath;
+  }
+
+  function redirectToVerify(options: {
+    method: "email" | "phone";
+    email?: string;
+    phone?: string;
+  }) {
+    const params = new URLSearchParams({ method: options.method });
+    if (options.email) params.set("email", options.email);
+    if (options.phone) params.set("phone", options.phone);
+    const verifyPath = getPathname({
+      href: `/login/verify?${params.toString()}`,
+      locale,
+    });
+    window.location.href = verifyPath;
+  }
+
+  async function checkAvailability(input: {
+    email?: string;
+    phone?: string;
+  }): Promise<AvailabilityResponse> {
+    const response = await fetch("/api/auth/check-availability", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+
+    if (!response.ok) {
+      throw new Error(t("errors.availabilityCheckFailed"));
+    }
+
+    return (await response.json()) as AvailabilityResponse;
   }
 
   async function onEmailSubmit(e: React.FormEvent) {
@@ -72,10 +109,25 @@ export default function LoginPage() {
         return;
       }
 
+      const signupPhone = phone.trim();
+      const availability = await checkAvailability({
+        email: normalizedEmail,
+        phone: signupPhone || undefined,
+      });
+
+      if (availability.emailExists) {
+        throw new Error(t("errors.emailAlreadyRegistered"));
+      }
+
+      if (signupPhone && availability.phoneExists) {
+        throw new Error(t("errors.phoneAlreadyRegistered"));
+      }
+
       const { error: signUpError } = await supabaseBrowser.auth.signUp({
         email: normalizedEmail,
         password: normalizedPassword,
         options: {
+          emailRedirectTo: `${window.location.origin}${getPathname({ href: "/dashboard", locale })}`,
           data: {
             full_name: fullName.trim() || null,
           },
@@ -85,7 +137,7 @@ export default function LoginPage() {
       if (signUpError) throw signUpError;
 
       setNotice(t("notice.signupSuccess"));
-      redirectToDashboard();
+      redirectToVerify({ method: "email", email: normalizedEmail });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : t("errors.generic");
@@ -111,13 +163,18 @@ export default function LoginPage() {
         throw new Error(t("errors.phoneRequiredForOtp"));
       }
 
+      const availability = await checkAvailability({ phone: normalizedPhone });
+      if (!availability.phoneExists) {
+        throw new Error(t("errors.phoneNotFoundForOtp"));
+      }
+
       const { error: otpError } = await supabaseBrowser.auth.signInWithOtp({
         phone: normalizedPhone,
       });
       if (otpError) throw otpError;
 
       setNotice(t("phone.codeSent"));
-      setPhoneStep("verify");
+      redirectToVerify({ method: "phone", phone: normalizedPhone });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : t("errors.generic");
@@ -157,9 +214,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-violet-600/15 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-sky-600/15 rounded-full blur-[120px] animate-pulse" />
         <div
-          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-fuchsia-600/10 rounded-full blur-[100px] animate-pulse"
+          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] animate-pulse"
           style={{ animationDelay: "1s" }}
         />
         <div
@@ -178,7 +235,7 @@ export default function LoginPage() {
       <main className="relative z-10 px-6 lg:px-12 py-16 max-w-7xl mx-auto">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-600/30">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-600/30">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -302,7 +359,7 @@ export default function LoginPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-lg shadow-violet-600/25"
+                    className="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-sky-600/25"
                   >
                     {isSubmitting
                       ? t("email.submitting")
@@ -328,7 +385,7 @@ export default function LoginPage() {
                       <Button
                         type="button"
                         variant="outline"
-                        className="flex-1 border-zinc-700 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                        className="flex-1 border-zinc-700 bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white"
                         onClick={() => {
                           setPhoneStep("send");
                           setOtp("");
@@ -360,3 +417,6 @@ export default function LoginPage() {
     </div>
   );
 }
+
+
+

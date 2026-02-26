@@ -69,14 +69,16 @@ function AdminHeader() {
           href="/admin"
           className="flex items-center gap-2.5 font-semibold lg:mr-8"
         >
-          <Image
-            src="/logo-tight.png"
-            alt="Mauri Academy"
-            width={784}
-            height={1313}
-            className="h-12 w-auto object-contain shrink-0"
-            priority
-          />
+          <div className="relative h-11 w-[155px] overflow-visible shrink-0 -ml-3 md:-ml-2">
+            <Image
+              src="/mauri-logo.png"
+              alt="Mauri Academy"
+              width={300}
+              height={100}
+              className="h-11 w-auto object-contain origin-left scale-[1.45]"
+              priority
+            />
+          </div>
           <span className="text-lg text-white hidden sm:inline">
             {t("label")}
           </span>
@@ -93,7 +95,7 @@ function AdminHeader() {
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors",
                   active
-                    ? "bg-violet-500/20 text-violet-300"
+                    ? "bg-sky-500/20 text-sky-300"
                     : "text-zinc-400 hover:text-white hover:bg-zinc-800/50",
                 )}
               >
@@ -154,7 +156,7 @@ function AdminHeader() {
                     className={cn(
                       "flex items-center gap-2 cursor-pointer",
                       active
-                        ? "text-violet-300 bg-violet-500/10"
+                        ? "text-sky-300 bg-sky-500/10"
                         : "text-zinc-300",
                     )}
                   >

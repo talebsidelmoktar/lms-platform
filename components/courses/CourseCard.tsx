@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { CheckCircle2, Layers, Lock, Play } from "lucide-react";
 import Image from "next/image";
@@ -55,7 +55,7 @@ export function CourseCard({
 
   return (
     <Link href={linkHref} className="group block">
-      <div className="relative rounded-2xl bg-zinc-900/50 border border-zinc-800 overflow-hidden hover:border-zinc-700 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/5">
+      <div className="relative rounded-2xl bg-zinc-900/50 border border-zinc-800 overflow-hidden hover:border-zinc-700 transition-all duration-300 hover:shadow-lg hover:shadow-sky-500/5">
         {/* Course thumbnail/header */}
         <div
           className={`h-36 bg-gradient-to-br ${styles.gradient} flex items-center justify-center relative overflow-hidden`}
@@ -68,7 +68,7 @@ export function CourseCard({
               className="object-cover"
             />
           ) : (
-            <div className="text-6xl opacity-50">📚</div>
+            <div className="text-6xl opacity-50">ðŸ“š</div>
           )}
           <div className="absolute inset-0 bg-black/20" />
 
@@ -103,7 +103,7 @@ export function CourseCard({
 
         {/* Course content */}
         <div className="p-5">
-          <h3 className="text-lg font-bold mb-2 text-white group-hover:text-violet-400 transition-colors line-clamp-2">
+          <h3 className="text-lg font-bold mb-2 text-white group-hover:text-sky-400 transition-colors line-clamp-2">
             {title ?? t("untitledCourse")}
           </h3>
 
@@ -146,3 +146,4 @@ export function CourseCard({
     </Link>
   );
 }
+

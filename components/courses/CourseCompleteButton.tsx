@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { CheckCircle2, Circle, Loader2, Trophy } from "lucide-react";
@@ -76,8 +76,8 @@ export function CourseCompleteButton({
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl">
       <div className="flex items-center gap-3 flex-1">
-        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-violet-500/20 shrink-0">
-          <span className="text-base font-bold text-violet-400">
+        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-sky-500/20 shrink-0">
+          <span className="text-base font-bold text-sky-400">
             {progressPercent}%
           </span>
         </div>
@@ -110,3 +110,4 @@ export function CourseCompleteButton({
     </div>
   );
 }
+

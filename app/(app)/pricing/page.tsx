@@ -1,4 +1,4 @@
-import { CheckCircle2, Code2, Sparkles } from "lucide-react";
+﻿import { CheckCircle2, Code2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Header } from "@/components/Header";
@@ -11,17 +11,17 @@ export default async function PricingPage() {
   const tierFeatures = [
     {
       tierLabel: tiersT("free"),
-      color: "emerald" as const,
+      color: "sky" as const,
       features: t.raw("tiers.free.features") as string[],
     },
     {
       tierLabel: tiersT("pro"),
-      color: "violet" as const,
+      color: "blue" as const,
       features: t.raw("tiers.pro.features") as string[],
     },
     {
       tierLabel: tiersT("ultra"),
-      color: "cyan" as const,
+      color: "indigo" as const,
       features: t.raw("tiers.ultra.features") as string[],
     },
   ];
@@ -30,13 +30,13 @@ export default async function PricingPage() {
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">
       {/* Animated gradient mesh background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-violet-600/15 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[120px] animate-pulse" />
         <div
-          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-fuchsia-600/10 rounded-full blur-[100px] animate-pulse"
+          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-sky-600/10 rounded-full blur-[100px] animate-pulse"
           style={{ animationDelay: "1s" }}
         />
         <div
-          className="absolute top-[40%] right-[20%] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[80px] animate-pulse"
+          className="absolute top-[40%] right-[20%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[80px] animate-pulse"
           style={{ animationDelay: "2s" }}
         />
       </div>
@@ -56,14 +56,14 @@ export default async function PricingPage() {
       <main className="relative z-10 px-6 lg:px-12 py-12 max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 mb-6">
-            <Sparkles className="w-4 h-4 text-violet-400" />
-            <span className="text-sm text-violet-300">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
+            <Sparkles className="w-4 h-4 text-blue-400" />
+            <span className="text-sm text-blue-300">
               {t("simpleTransparent")}
             </span>
           </div>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
-            <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
               {t("choosePath")}
             </span>
           </h1>
@@ -79,7 +79,7 @@ export default async function PricingPage() {
             return (
               <div
                 key={plan.tierLabel}
-                className={`p-6 rounded-xl bg-zinc-900/30 border ${colorClasses.border}`}
+                className={`p-6 rounded-xl bg-zinc-900/50 border ${colorClasses.border}`}
               >
                 <h3 className={`text-lg font-bold mb-4 ${colorClasses.text}`}>
                   {t("includes", { tier: plan.tierLabel })}
@@ -110,14 +110,14 @@ export default async function PricingPage() {
             {t("questions")}{" "}
             <Link
               href="#"
-              className="text-violet-400 hover:text-violet-300 underline underline-offset-4"
+              className="text-blue-400 hover:text-blue-300 underline underline-offset-4"
             >
               {t("contactUs")}
             </Link>{" "}
             {t("orCheckFaq")}{" "}
             <Link
               href="#"
-              className="text-violet-400 hover:text-violet-300 underline underline-offset-4"
+              className="text-blue-400 hover:text-blue-300 underline underline-offset-4"
             >
               {t("faq")}
             </Link>
@@ -126,10 +126,10 @@ export default async function PricingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 px-6 lg:px-12 py-12 border-t border-zinc-800/50 max-w-7xl mx-auto mt-20">
+      <footer className="relative z-10 px-6 lg:px-12 py-12 border-t border-zinc-800 max-w-7xl mx-auto mt-20">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
               <Code2 className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold">{t("brand")}</span>
@@ -151,3 +151,5 @@ export default async function PricingPage() {
     </div>
   );
 }
+
+

@@ -37,20 +37,20 @@ export default async function Home() {
     {
       tier: tiersT("free"),
       icon: Rocket,
-      color: "emerald",
-      gradient: "from-emerald-500 to-teal-600",
-      bgGlow: "bg-emerald-500/10",
-      borderColor: "border-emerald-500/20",
+      color: "sky",
+      gradient: "from-sky-500 to-blue-600",
+      bgGlow: "bg-sky-500/10",
+      borderColor: "border-sky-500/20",
       description: t("tiers.free.description"),
       features: t.raw("tiers.free.features") as string[],
     },
     {
       tier: tiersT("pro"),
       icon: Crown,
-      color: "violet",
-      gradient: "from-violet-500 to-fuchsia-600",
-      bgGlow: "bg-violet-500/10",
-      borderColor: "border-violet-500/30",
+      color: "blue",
+      gradient: "from-blue-500 to-indigo-600",
+      bgGlow: "bg-blue-500/10",
+      borderColor: "border-blue-500/30",
       description: t("tiers.pro.description"),
       features: t.raw("tiers.pro.features") as string[],
       popular: true,
@@ -58,10 +58,10 @@ export default async function Home() {
     {
       tier: tiersT("ultra"),
       icon: Trophy,
-      color: "cyan",
-      gradient: "from-cyan-400 to-blue-600",
-      bgGlow: "bg-cyan-500/10",
-      borderColor: "border-cyan-500/20",
+      color: "indigo",
+      gradient: "from-cyan-400 to-sky-600",
+      bgGlow: "bg-indigo-500/10",
+      borderColor: "border-indigo-500/20",
       description: t("tiers.ultra.description"),
       features: t.raw("tiers.ultra.features") as string[],
     },
@@ -71,19 +71,19 @@ export default async function Home() {
       name: t("testimonials.0.name"),
       role: t("testimonials.0.role"),
       content: t("testimonials.0.content"),
-      avatar: "🧑‍💻",
+      avatar: "ðŸ§‘â€ðŸ’»",
     },
     {
       name: t("testimonials.1.name"),
       role: t("testimonials.1.role"),
       content: t("testimonials.1.content"),
-      avatar: "👩‍💼",
+      avatar: "ðŸ‘©â€ðŸ’¼",
     },
     {
       name: t("testimonials.2.name"),
       role: t("testimonials.2.role"),
       content: t("testimonials.2.content"),
-      avatar: "🎓",
+      avatar: "ðŸŽ“",
     },
   ];
 
@@ -91,13 +91,13 @@ export default async function Home() {
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">
       {/* Animated gradient mesh background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-violet-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
         <div
-          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-fuchsia-600/15 rounded-full blur-[100px] animate-pulse"
+          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-sky-600/15 rounded-full blur-[100px] animate-pulse"
           style={{ animationDelay: "1s" }}
         />
         <div
-          className="absolute top-[40%] right-[20%] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[80px] animate-pulse"
+          className="absolute top-[40%] right-[20%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[80px] animate-pulse"
           style={{ animationDelay: "2s" }}
         />
       </div>
@@ -119,11 +119,11 @@ export default async function Home() {
           <div className="flex flex-col items-center text-center">
             {/* Badge */}
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 mb-8 animate-fade-in"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-8 animate-fade-in"
               style={{ animationDelay: "0.1s" }}
             >
-              <Sparkles className="w-4 h-4 text-violet-400" />
-              <span className="text-sm text-violet-300">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <span className="text-sm text-blue-300">
                 {t("learnRealProjects")}
               </span>
             </div>
@@ -134,7 +134,7 @@ export default async function Home() {
               style={{ animationDelay: "0.2s" }}
             >
               <span className="block text-white">{t("masterCoding")}</span>
-              <span className="block bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
                 {t("modernWay")}
               </span>
             </h1>
@@ -157,7 +157,7 @@ export default async function Home() {
                   <Link href="/dashboard">
                     <Button
                       size="lg"
-                      className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-xl shadow-violet-600/30 px-8 h-12 text-base font-semibold"
+                      className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-xl shadow-sky-600/30 px-8 h-12 text-base font-semibold"
                     >
                       <LayoutDashboard className="w-4 h-4 mr-2" />
                       {t("goDashboard")}
@@ -167,7 +167,7 @@ export default async function Home() {
                     <Button
                       variant="outline"
                       size="lg"
-                      className="border-zinc-700 bg-white/5 text-white px-8 h-12 text-base hover:bg-white/10 hover:text-white"
+                      className="border-zinc-700 bg-zinc-900 text-white px-8 h-12 text-base hover:bg-zinc-800 hover:text-white"
                     >
                       <BookOpen className="w-4 h-4 mr-2" />
                       {t("myCourses")}
@@ -179,7 +179,7 @@ export default async function Home() {
                   <Link href="/pricing">
                     <Button
                       size="lg"
-                      className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-xl shadow-violet-600/30 px-8 h-12 text-base font-semibold"
+                      className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-xl shadow-sky-600/30 px-8 h-12 text-base font-semibold"
                     >
                       <Play className="w-4 h-4 mr-2 fill-white" />
                       {t("startLearningFree")}
@@ -189,7 +189,7 @@ export default async function Home() {
                     <Button
                       variant="outline"
                       size="lg"
-                      className="border-zinc-700 bg-white/5 text-white px-8 h-12 text-base hover:bg-white/10 hover:text-white"
+                      className="border-zinc-700 bg-zinc-900 text-white px-8 h-12 text-base hover:bg-zinc-800 hover:text-white"
                     >
                       <BookOpen className="w-4 h-4 mr-2" />
                       {t("browseCourses")}
@@ -219,7 +219,7 @@ export default async function Home() {
               ].map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center">
                   <div className="flex items-center gap-2 mb-1">
-                    <stat.icon className="w-4 h-4 text-violet-400" />
+                    <stat.icon className="w-4 h-4 text-blue-400" />
                     <span className="text-2xl md:text-3xl font-bold text-white">
                       {stat.value}
                     </span>
@@ -237,10 +237,10 @@ export default async function Home() {
             {tierCards.map((plan) => (
               <div
                 key={plan.tier}
-                className={`relative p-8 rounded-2xl ${plan.bgGlow} border ${plan.borderColor} ${plan.popular ? "ring-2 ring-violet-500/50" : ""} transition-all duration-300 hover:scale-[1.02]`}
+                className={`relative p-8 rounded-2xl ${plan.bgGlow} border ${plan.borderColor} ${plan.popular ? "ring-2 ring-blue-500/50" : ""} transition-all duration-300 hover:scale-[1.02]`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-xs font-semibold">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-xs font-semibold">
                     {t("mostPopular")}
                   </div>
                 )}
@@ -258,7 +258,7 @@ export default async function Home() {
                       className="flex items-center gap-2 text-sm text-zinc-300"
                     >
                       <CheckCircle2
-                        className={`w-4 h-4 ${plan.color === "emerald" ? "text-emerald-400" : plan.color === "violet" ? "text-violet-400" : "text-cyan-400"}`}
+                        className={`w-4 h-4 ${plan.color === "sky" ? "text-sky-400" : plan.color === "blue" ? "text-blue-400" : "text-indigo-400"}`}
                       />
                       {feature}
                     </li>
@@ -274,7 +274,7 @@ export default async function Home() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               {t("coursesBuiltFor")}{" "}
-              <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-sky-400 to-blue-400 bg-clip-text text-transparent">
                 {t("realResults")}
               </span>
             </h2>
@@ -304,7 +304,7 @@ export default async function Home() {
             <Link href="/dashboard">
               <Button
                 variant="outline"
-                className="border-zinc-700 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                className="border-zinc-700 bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white"
               >
                 {t("viewAllCourses")}
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -321,7 +321,7 @@ export default async function Home() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               {t("studentsLoveIt")}{" "}
-              <span className="bg-gradient-to-r from-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                 {t("studentsLoveIt")}
               </span>
             </h2>
@@ -331,7 +331,7 @@ export default async function Home() {
             {testimonials.map((testimonial) => (
               <div
                 key={testimonial.name}
-                className="p-6 rounded-2xl bg-zinc-900/30 border border-zinc-800"
+                className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
@@ -360,12 +360,12 @@ export default async function Home() {
 
         {/* CTA Section */}
         <section className="px-6 lg:px-12 py-20 max-w-7xl mx-auto">
-          <div className="relative rounded-3xl bg-gradient-to-br from-violet-600/20 via-fuchsia-600/10 to-cyan-600/20 border border-white/10 p-12 md:p-20 text-center overflow-hidden">
+          <div className="relative rounded-3xl bg-gradient-to-br from-sky-600/20 via-blue-600/10 to-indigo-600/20 border border-white/10 p-12 md:p-20 text-center overflow-hidden">
             {/* Animated gradient border */}
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/20 via-fuchsia-500/20 to-cyan-500/20 blur-xl" />
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-sky-500/20 via-blue-500/20 to-indigo-500/20 blur-xl" />
 
             <div className="relative z-10">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-violet-500/30">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-sky-500/30">
                 <Rocket className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-3xl md:text-5xl font-bold mb-6">
@@ -377,7 +377,7 @@ export default async function Home() {
               <Link href="/pricing">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-xl shadow-violet-600/30 px-10 h-14 text-lg font-semibold"
+                  className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-xl shadow-sky-600/30 px-10 h-14 text-lg font-semibold"
                 >
                   {t("viewPricing")}
                   <ArrowRight className="w-5 h-5 ml-2" />
@@ -388,10 +388,10 @@ export default async function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="px-6 lg:px-12 py-12 border-t border-zinc-800/50 max-w-7xl mx-auto">
+        <footer className="px-6 lg:px-12 py-12 border-t border-zinc-800 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
                 <Code2 className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold">{pricingT("brand")}</span>
@@ -414,3 +414,4 @@ export default async function Home() {
     </div>
   );
 }
+

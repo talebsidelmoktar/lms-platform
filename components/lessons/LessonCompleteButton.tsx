@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { CheckCircle2, Circle, Loader2 } from "lucide-react";
@@ -36,7 +36,7 @@ export function LessonCompleteButton({
       className={
         isCompleted
           ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300"
-          : "bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0"
+          : "bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0"
       }
     >
       {isPending ? (
@@ -50,3 +50,4 @@ export function LessonCompleteButton({
     </Button>
   );
 }
+

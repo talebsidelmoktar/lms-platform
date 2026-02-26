@@ -103,7 +103,7 @@ export function Header() {
                   className={cn(
                     "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
                     isActive
-                      ? "bg-violet-500/10 text-violet-300"
+                      ? "bg-sky-500/10 text-sky-300"
                       : "text-zinc-400 hover:text-white hover:bg-zinc-800/50",
                   )}
                 >
@@ -169,7 +169,7 @@ export function Header() {
               </Button>
             </Link>
             <Link href="/pricing" className="hidden sm:block">
-              <Button className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-lg shadow-violet-600/25">
+              <Button className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-sky-600/25">
                 {t("startLearning")}
               </Button>
             </Link>
@@ -203,7 +203,7 @@ export function Header() {
                         href={link.href}
                         className={cn(
                           "flex items-center gap-2 cursor-pointer",
-                          isActive ? "text-violet-300" : "text-zinc-300",
+                          isActive ? "text-sky-300" : "text-zinc-300",
                         )}
                       >
                         <Icon className="w-4 h-4" />
@@ -225,7 +225,7 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button type="button" aria-label="User menu">
-                  <Avatar className="w-9 h-9 ring-2 ring-violet-500/20">
+                  <Avatar className="w-9 h-9 ring-2 ring-sky-500/20">
                     <AvatarImage
                       src={profile.avatarUrl ?? user?.user_metadata?.avatar_url ?? ""}
                       alt={user?.email ?? "User"}
@@ -251,7 +251,7 @@ export function Header() {
                     <div className="text-xs text-zinc-500">{user.phone}</div>
                   )}
                   <div className="mt-2 flex items-center gap-2">
-                    <span className="text-[10px] px-2 py-1 rounded bg-violet-500/15 text-violet-300 uppercase">
+                    <span className="text-[10px] px-2 py-1 rounded bg-sky-500/15 text-sky-300 uppercase">
                       {profile.tier}
                     </span>
                     <span className="text-[10px] px-2 py-1 rounded bg-zinc-800 text-zinc-300 uppercase">
@@ -277,14 +277,16 @@ export function Header() {
 
 function Logo() {
   return (
-    <Image
-      src="/logo-tight.png"
-      alt="Mauri Academy"
-      width={360}
-      height={100}
-      className="h-16 w-auto object-contain"
-      priority
-    />
+    <div className="relative h-14 w-[170px] overflow-visible -ml-5 md:-ml-3">
+      <Image
+        src="/mauri-logo.png"
+        alt="Mauri Academy"
+        width={100}
+        height={80}
+        className="h-14 w-auto object-contain origin-left scale-[1.45]"
+        priority
+      />
+    </div>
   );
 }
 

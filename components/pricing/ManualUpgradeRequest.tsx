@@ -81,7 +81,7 @@ export function ManualUpgradeRequest() {
           <p className="text-zinc-400 mb-6">{t("description")}</p>
           <Button
             onClick={() => setIsOpen(true)}
-            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0"
+            className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0"
           >
             {t("openButton")}
           </Button>
@@ -120,7 +120,7 @@ export function ManualUpgradeRequest() {
                     onClick={() => setRequestedTier("pro")}
                     className={
                       requestedTier === "pro"
-                        ? "bg-violet-600 hover:bg-violet-500"
+                        ? "bg-sky-600 hover:bg-sky-500"
                         : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800"
                     }
                   >
@@ -132,7 +132,7 @@ export function ManualUpgradeRequest() {
                     onClick={() => setRequestedTier("ultra")}
                     className={
                       requestedTier === "ultra"
-                        ? "bg-cyan-600 hover:bg-cyan-500"
+                        ? "bg-blue-600 hover:bg-blue-500"
                         : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800"
                     }
                   >
@@ -187,7 +187,7 @@ export function ManualUpgradeRequest() {
                 </Label>
                 <label
                   htmlFor="proofImage"
-                  className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-600 bg-zinc-900/70 p-4 text-zinc-300 cursor-pointer hover:border-violet-500/50"
+                  className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-600 bg-zinc-900/70 p-4 text-zinc-300 cursor-pointer hover:border-sky-500/50"
                 >
                   <Upload className="w-4 h-4" />
                   <span>{fileName || t("chooseImage")}</span>
@@ -235,7 +235,7 @@ export function ManualUpgradeRequest() {
                   type="button"
                   disabled={isPending}
                   onClick={onSubmit}
-                  className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white"
+                  className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white"
                 >
                   {isPending ? t("submitting") : t("submit")}
                 </Button>

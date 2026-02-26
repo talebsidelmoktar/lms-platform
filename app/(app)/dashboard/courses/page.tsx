@@ -1,4 +1,4 @@
-import { BookOpen } from "lucide-react";
+﻿import { BookOpen } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { CourseCard } from "@/components/courses";
 import { Header } from "@/components/Header";
@@ -45,9 +45,9 @@ export default async function MyCoursesPage() {
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">
       {/* Animated gradient mesh background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-violet-600/15 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-sky-600/15 rounded-full blur-[120px] animate-pulse" />
         <div
-          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-fuchsia-600/10 rounded-full blur-[100px] animate-pulse"
+          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] animate-pulse"
           style={{ animationDelay: "1s" }}
         />
         <div
@@ -94,7 +94,7 @@ export default async function MyCoursesPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-zinc-800 flex items-center justify-center mx-auto mb-4">
               <BookOpen className="w-8 h-8 text-zinc-500" />
             </div>
             <h3 className="text-xl font-semibold mb-2">
@@ -109,3 +109,6 @@ export default async function MyCoursesPage() {
     </div>
   );
 }
+
+
+

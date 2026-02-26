@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -108,7 +108,7 @@ export function LessonPageContent({ lesson, userId }: LessonPageContentProps) {
             {lesson.content && (
               <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 md:p-8 mb-6">
                 <div className="flex items-center gap-2 mb-6">
-                  <BookOpen className="w-5 h-5 text-violet-400" />
+                  <BookOpen className="w-5 h-5 text-sky-400" />
                   <h2 className="text-lg font-semibold">{t("lessonNotes")}</h2>
                 </div>
                 <LessonContent content={lesson.content} />
@@ -133,7 +133,7 @@ export function LessonPageContent({ lesson, userId }: LessonPageContentProps) {
 
               {nextLesson ? (
                 <Link href={`/lessons/${nextLesson.slug}`}>
-                  <Button className="bg-violet-600 hover:bg-violet-500 text-white">
+                  <Button className="bg-sky-600 hover:bg-sky-500 text-white">
                     <span className="hidden sm:inline">{nextLesson.title}</span>
                     <span className="sm:hidden">{t("next")}</span>
                     <ChevronRight className="w-4 h-4 ml-2" />
@@ -151,3 +151,4 @@ export function LessonPageContent({ lesson, userId }: LessonPageContentProps) {
     </div>
   );
 }
+

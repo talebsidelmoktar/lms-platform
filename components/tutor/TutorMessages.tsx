@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { UIMessage } from "ai";
 import { Sparkles, User, Search, Loader2, CheckCircle2 } from "lucide-react";
@@ -89,7 +89,7 @@ export function TutorMessages({ messages, isLoading }: TutorMessagesProps) {
                     ${
                       message.role === "assistant"
                         ? "bg-gradient-to-br from-cyan-400 to-blue-600"
-                        : "bg-gradient-to-br from-violet-500 to-fuchsia-600"
+                        : "bg-gradient-to-br from-sky-500 to-blue-600"
                     }
                   `}
                 >
@@ -305,3 +305,4 @@ function MessageContent({ content }: { content: string }) {
     </Markdown>
   );
 }
+

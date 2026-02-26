@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { CheckCircle2, Circle, Play } from "lucide-react";
@@ -50,7 +50,7 @@ export function LessonSidebar({
             href={`/courses/${courseSlug}`}
             className="text-sm text-zinc-400 hover:text-white transition-colors"
           >
-            ← Back to course
+            â† Back to course
           </Link>
           <h3 className="font-semibold text-white mt-2 line-clamp-2">
             {courseTitle ?? "Course"}
@@ -79,7 +79,7 @@ export function LessonSidebar({
                 >
                   <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-zinc-800/50 text-left">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <span className="flex items-center justify-center w-6 h-6 rounded bg-violet-500/20 text-violet-400 text-xs font-bold shrink-0">
+                      <span className="flex items-center justify-center w-6 h-6 rounded bg-sky-500/20 text-sky-400 text-xs font-bold shrink-0">
                         {moduleIndex + 1}
                       </span>
                       <div className="min-w-0 flex-1">
@@ -113,14 +113,14 @@ export function LessonSidebar({
                             className={cn(
                               "flex items-center gap-2.5 pl-2 pr-3 py-2 rounded-lg text-sm transition-colors",
                               isActive
-                                ? "bg-violet-500/20 text-violet-300"
+                                ? "bg-sky-500/20 text-sky-300"
                                 : "text-zinc-400 hover:text-white hover:bg-zinc-800/50",
                             )}
                           >
                             {isCompleted ? (
                               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                             ) : isActive ? (
-                              <Play className="w-4 h-4 text-violet-400 shrink-0 fill-violet-400" />
+                              <Play className="w-4 h-4 text-sky-400 shrink-0 fill-sky-400" />
                             ) : (
                               <Circle className="w-4 h-4 text-zinc-600 shrink-0" />
                             )}
@@ -141,3 +141,4 @@ export function LessonSidebar({
     </div>
   );
 }
+
