@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
 import type { Tier } from "@/lib/constants";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
@@ -42,19 +42,20 @@ export function useSupabaseSessionUser() {
   useEffect(() => {
     let isMounted = true;
 
-    async function loadSession() {
+    async function syncUserFromAuth() {
       const { data: sessionData } = await supabaseBrowser.auth.getSession();
-      if (!isMounted) return;
-      setUser(sessionData.session?.user ?? null);
-      setIsLoaded(true);
+      const { data: userData } = await supabaseBrowser.auth.getUser();
 
-      const { data } = await supabaseBrowser.auth.getUser();
+      if (!userData.user && sessionData.session) {
+        await supabaseBrowser.auth.signOut();
+      }
+
       if (!isMounted) return;
-      setUser(data.user ?? null);
+      setUser(userData.user ?? null);
       setIsLoaded(true);
     }
 
-    loadSession();
+    syncUserFromAuth();
 
     const {
       data: { subscription },
@@ -66,16 +67,17 @@ export function useSupabaseSessionUser() {
         return;
       }
 
-      if (session?.user) {
-        if (!isMounted) return;
-        setUser(session.user);
-        setIsLoaded(true);
-        return;
+      const { data: userData } = await supabaseBrowser.auth.getUser();
+      if (!userData.user && session) {
+        await supabaseBrowser.auth.signOut();
       }
 
-      const { data } = await supabaseBrowser.auth.getSession();
       if (!isMounted) return;
-      setUser(data.session?.user ?? null);
+      if (userData.user) {
+        setUser(userData.user);
+      } else {
+        setUser(null);
+      }
       setIsLoaded(true);
     });
 
@@ -88,7 +90,10 @@ export function useSupabaseSessionUser() {
   return { isLoaded, user };
 }
 
-export function useSupabaseProfile(user: User | null, isSessionLoaded: boolean) {
+export function useSupabaseProfile(
+  user: User | null,
+  isSessionLoaded: boolean,
+) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [profile, setProfile] = useState<SupabaseProfile>(mapProfileRow(null));
 
@@ -115,9 +120,14 @@ export function useSupabaseProfile(user: User | null, isSessionLoaded: boolean) 
           {
             id: user.id,
             email: user.email ?? null,
-            phone: user.phone ?? null,
-            full_name: (user.user_metadata?.full_name as string | undefined) ?? null,
-            avatar_url: (user.user_metadata?.avatar_url as string | undefined) ?? null,
+            phone:
+              user.phone ??
+              (user.user_metadata?.phone as string | undefined) ??
+              null,
+            full_name:
+              (user.user_metadata?.full_name as string | undefined) ?? null,
+            avatar_url:
+              (user.user_metadata?.avatar_url as string | undefined) ?? null,
           },
           { onConflict: "id" },
         );

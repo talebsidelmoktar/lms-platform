@@ -31,7 +31,10 @@ export async function getCurrentUser(): Promise<AppUser | null> {
       {
         id: user.id,
         email: user.email ?? null,
-        phone: user.phone ?? null,
+        phone:
+          user.phone ??
+          (user.user_metadata?.phone as string | undefined) ??
+          null,
         full_name:
           (user.user_metadata?.full_name as string | undefined) ?? null,
         avatar_url:

@@ -1,22 +1,21 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
 import { Mail, Phone, ShieldCheck } from "lucide-react";
-import { useLocale } from "next-intl";
-import { useTranslations } from "next-intl";
-import { getPathname } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { getPathname } from "@/i18n/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
 type EmailMode = "signin" | "signup";
 type PhoneStep = "send" | "verify";
+const SIGNUP_EMAIL_COOLDOWN_MS = 60_000;
 
 interface AvailabilityResponse {
   emailExists: boolean;
-  phoneExists: boolean;
 }
 
 export default function LoginPage() {
@@ -35,6 +34,7 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [signupRetryAt, setSignupRetryAt] = useState(0);
 
   const title = useMemo(
     () => (emailMode === "signup" ? t("title.signUp") : t("title.signIn")),
@@ -63,7 +63,6 @@ export default function LoginPage() {
 
   async function checkAvailability(input: {
     email?: string;
-    phone?: string;
   }): Promise<AvailabilityResponse> {
     const response = await fetch("/api/auth/check-availability", {
       method: "POST",
@@ -101,46 +100,63 @@ export default function LoginPage() {
       }
 
       if (emailMode === "signin") {
-        const { error: signInError } = await supabaseBrowser.auth.signInWithPassword(
-          { email: normalizedEmail, password: normalizedPassword },
-        );
+        const { error: signInError } =
+          await supabaseBrowser.auth.signInWithPassword({
+            email: normalizedEmail,
+            password: normalizedPassword,
+          });
         if (signInError) throw signInError;
         redirectToDashboard();
         return;
       }
 
       const signupPhone = phone.trim();
+      const dashboardPath = getPathname({ href: "/dashboard", locale });
+      const emailCallbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(dashboardPath)}`;
       const availability = await checkAvailability({
         email: normalizedEmail,
-        phone: signupPhone || undefined,
       });
+
+      if (Date.now() < signupRetryAt) {
+        const waitSeconds = Math.ceil((signupRetryAt - Date.now()) / 1000);
+        throw new Error(`Please wait ${waitSeconds}s before trying again.`);
+      }
 
       if (availability.emailExists) {
         throw new Error(t("errors.emailAlreadyRegistered"));
       }
 
-      if (signupPhone && availability.phoneExists) {
-        throw new Error(t("errors.phoneAlreadyRegistered"));
-      }
-
-      const { error: signUpError } = await supabaseBrowser.auth.signUp({
-        email: normalizedEmail,
-        password: normalizedPassword,
-        options: {
-          emailRedirectTo: `${window.location.origin}${getPathname({ href: "/dashboard", locale })}`,
-          data: {
-            full_name: fullName.trim() || null,
+      const { data: signUpData, error: signUpError } =
+        await supabaseBrowser.auth.signUp({
+          email: normalizedEmail,
+          password: normalizedPassword,
+          options: {
+            emailRedirectTo: emailCallbackUrl,
+            data: {
+              full_name: fullName.trim() || null,
+              phone: signupPhone || null,
+            },
           },
-        },
-      });
+        });
 
       if (signUpError) throw signUpError;
+      if ((signUpData.user?.identities?.length ?? 0) === 0) {
+        throw new Error(t("errors.emailAlreadyRegistered"));
+      }
+      setSignupRetryAt(0);
 
       setNotice(t("notice.signupSuccess"));
       redirectToVerify({ method: "email", email: normalizedEmail });
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : t("errors.generic");
+      let message = err instanceof Error ? err.message : t("errors.generic");
+      if (
+        err instanceof Error &&
+        err.message.toLowerCase().includes("rate limit")
+      ) {
+        setSignupRetryAt(Date.now() + SIGNUP_EMAIL_COOLDOWN_MS);
+        message =
+          "Email rate limit exceeded. Please wait 60 seconds and try again.";
+      }
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -163,11 +179,6 @@ export default function LoginPage() {
         throw new Error(t("errors.phoneRequiredForOtp"));
       }
 
-      const availability = await checkAvailability({ phone: normalizedPhone });
-      if (!availability.phoneExists) {
-        throw new Error(t("errors.phoneNotFoundForOtp"));
-      }
-
       const { error: otpError } = await supabaseBrowser.auth.signInWithOtp({
         phone: normalizedPhone,
       });
@@ -176,8 +187,7 @@ export default function LoginPage() {
       setNotice(t("phone.codeSent"));
       redirectToVerify({ method: "phone", phone: normalizedPhone });
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : t("errors.generic");
+      const message = err instanceof Error ? err.message : t("errors.generic");
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -203,8 +213,7 @@ export default function LoginPage() {
 
       redirectToDashboard();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : t("errors.generic");
+      const message = err instanceof Error ? err.message : t("errors.generic");
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -240,9 +249,7 @@ export default function LoginPage() {
             </div>
             <div>
               <h1 className="text-2xl font-black tracking-tight">{title}</h1>
-              <p className="text-sm text-zinc-400">
-                {t("subtitle")}
-              </p>
+              <p className="text-sm text-zinc-400">{t("subtitle")}</p>
             </div>
           </div>
 
@@ -297,7 +304,9 @@ export default function LoginPage() {
                     type="email"
                     autoComplete="email"
                   />
-                  <p className="text-xs text-zinc-500">{t("email.optionalHelp")}</p>
+                  <p className="text-xs text-zinc-500">
+                    {t("email.optionalHelp")}
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -313,7 +322,9 @@ export default function LoginPage() {
                         : "current-password"
                     }
                   />
-                  <p className="text-xs text-zinc-500">{t("email.passwordHelp")}</p>
+                  <p className="text-xs text-zinc-500">
+                    {t("email.passwordHelp")}
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -328,7 +339,9 @@ export default function LoginPage() {
                     placeholder={t("phone.phonePlaceholder")}
                     autoComplete="tel"
                   />
-                  <p className="text-xs text-zinc-500">{t("phone.phoneHelp")}</p>
+                  <p className="text-xs text-zinc-500">
+                    {t("phone.phoneHelp")}
+                  </p>
                 </div>
 
                 {phoneStep === "verify" && (
@@ -400,7 +413,9 @@ export default function LoginPage() {
                         disabled={isSubmitting}
                         className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-cyan-600/25"
                       >
-                        {isSubmitting ? t("phone.verifying") : t("phone.verify")}
+                        {isSubmitting
+                          ? t("phone.verifying")
+                          : t("phone.verify")}
                       </Button>
                     </div>
                   </form>
@@ -409,14 +424,9 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <p className="mt-6 text-xs text-zinc-500 text-center">
-            {t("tos")}
-          </p>
+          <p className="mt-6 text-xs text-zinc-500 text-center">{t("tos")}</p>
         </div>
       </main>
     </div>
   );
 }
-
-
-

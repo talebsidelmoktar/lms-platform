@@ -3,51 +3,33 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 interface AvailabilityBody {
   email?: string;
-  phone?: string;
 }
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as AvailabilityBody;
     const email = body.email?.trim().toLowerCase() ?? "";
-    const phone = body.phone?.trim() ?? "";
 
-    if (!email && !phone) {
+    if (!email) {
       return NextResponse.json(
-        { error: "At least one of email or phone is required." },
+        { error: "Email is required." },
         { status: 400 },
       );
     }
 
     const supabaseAdmin = createSupabaseAdminClient();
+    const { count, error } = await supabaseAdmin
+      .from("profiles")
+      .select("id", { head: true, count: "exact" })
+      .ilike("email", email);
 
-    const emailQuery = email
-      ? supabaseAdmin
-          .from("profiles")
-          .select("id", { head: true, count: "exact" })
-          .ilike("email", email)
-      : Promise.resolve({ count: 0, error: null });
-
-    const phoneQuery = phone
-      ? supabaseAdmin
-          .from("profiles")
-          .select("id", { head: true, count: "exact" })
-          .eq("phone", phone)
-      : Promise.resolve({ count: 0, error: null });
-
-    const [emailResult, phoneResult] = await Promise.all([emailQuery, phoneQuery]);
-
-    if (emailResult.error) {
-      return NextResponse.json({ error: emailResult.error.message }, { status: 500 });
-    }
-
-    if (phoneResult.error) {
-      return NextResponse.json({ error: phoneResult.error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({
-      emailExists: (emailResult.count ?? 0) > 0,
-      phoneExists: (phoneResult.count ?? 0) > 0,
+      emailExists: (count ?? 0) > 0,
+      phoneExists: false,
     });
   } catch (error) {
     const message =
@@ -55,4 +37,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

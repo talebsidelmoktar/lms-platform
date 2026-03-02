@@ -1,14 +1,14 @@
 ﻿"use client";
 
-import { useState } from "react";
 import { ArrowLeft, MailCheck, ShieldCheck, Smartphone } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { getPathname } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getPathname } from "@/i18n/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
 export default function VerifyPage() {
@@ -63,12 +63,14 @@ export default function VerifyPage() {
 
     try {
       if (!email) throw new Error(t("errors.emailRequiredForPasswordAuth"));
+      const dashboardPath = getPathname({ href: "/dashboard", locale });
+      const emailCallbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(dashboardPath)}`;
 
       const { error: resendError } = await supabaseBrowser.auth.resend({
         type: "signup",
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}${getPathname({ href: "/dashboard", locale })}`,
+          emailRedirectTo: emailCallbackUrl,
         },
       });
 
@@ -94,7 +96,9 @@ export default function VerifyPage() {
             </div>
             <div>
               <h1 className="text-2xl font-black tracking-tight">
-                {isPhoneVerification ? t("verify.phoneTitle") : t("verify.emailTitle")}
+                {isPhoneVerification
+                  ? t("verify.phoneTitle")
+                  : t("verify.emailTitle")}
               </h1>
               <p className="text-sm text-zinc-400">{t("verify.subtitle")}</p>
             </div>
@@ -166,6 +170,3 @@ export default function VerifyPage() {
     </div>
   );
 }
-
-
-
