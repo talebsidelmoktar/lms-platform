@@ -1,6 +1,6 @@
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
-import type { NextRequest } from "next/server";
 import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 
 const LOCALE_PATTERN = /^\/(en|fr|ar)(?=\/|$)/;
@@ -51,7 +51,8 @@ export default async function proxy(req: NextRequest) {
       });
       const supabaseResponse = getResponse();
       for (const cookie of supabaseResponse.cookies.getAll()) {
-        response.cookies.set(cookie.name, cookie.value, { path: "/" });
+        const { name, value, ...options } = cookie;
+        response.cookies.set(name, value, options);
       }
       return response;
     }
@@ -77,7 +78,9 @@ export default async function proxy(req: NextRequest) {
         error: "Internal Server Error",
         message:
           process.env.NODE_ENV === "development"
-            ? (error instanceof Error ? error.message : String(error))
+            ? error instanceof Error
+              ? error.message
+              : String(error)
             : undefined,
       }),
       {

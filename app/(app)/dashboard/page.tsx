@@ -46,7 +46,14 @@ export default async function DashboardPage() {
       />
 
       {/* Navigation */}
-      <Header />
+      <Header
+        initialUser={{
+          email: user.email,
+          phone: user.phone,
+          fullName: user.fullName,
+          avatarUrl: user.avatarUrl,
+        }}
+      />
 
       {/* Main Content */}
       <main className="relative z-10 px-6 lg:px-12 py-12 max-w-7xl mx-auto">
@@ -135,6 +142,3 @@ export default async function DashboardPage() {
     </div>
   );
 }
-
-
-

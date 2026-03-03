@@ -1,6 +1,12 @@
 "use client";
 
-import { BookOpen, LayoutDashboard, LogOut, Menu, Sparkles } from "lucide-react";
+import {
+  BookOpen,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Sparkles,
+} from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,16 +24,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Link, usePathname, useRouter, getPathname } from "@/i18n/navigation";
+import { getPathname, Link, usePathname } from "@/i18n/navigation";
 import { type AppLocale, routing } from "@/i18n/routing";
 import { useSupabaseProfile, useSupabaseSessionUser } from "@/lib/auth/client";
 import { useUserTier } from "@/lib/hooks/use-user-tier";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
-export function Header() {
+interface HeaderInitialUser {
+  email: string | null;
+  phone: string | null;
+  fullName: string | null;
+  avatarUrl: string | null;
+}
+
+export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
   const pathname = usePathname();
-  const router = useRouter();
   const locale = useLocale() as AppLocale;
   const t = useTranslations("common.header");
   const languageT = useTranslations("common.language");
@@ -35,8 +47,16 @@ export function Header() {
   const { isLoaded, user } = useSupabaseSessionUser();
   const { profile } = useSupabaseProfile(user, isLoaded);
   const userTier = useUserTier();
-  const isSignedIn = !!user;
+  const isSignedIn = Boolean(user ?? initialUser);
   const isUltra = userTier === "ultra";
+  const effectiveEmail = user?.email ?? initialUser?.email ?? null;
+  const effectivePhone = user?.phone ?? initialUser?.phone ?? null;
+  const effectiveName = profile.fullName ?? initialUser?.fullName ?? null;
+  const effectiveAvatarUrl =
+    profile.avatarUrl ??
+    user?.user_metadata?.avatar_url ??
+    initialUser?.avatarUrl ??
+    "";
 
   const loggedOutLinks = [
     { href: "/#courses", label: t("courses") },
@@ -53,15 +73,12 @@ export function Header() {
   ];
 
   const userInitial =
-    profile.fullName?.[0] ??
-    user?.email?.[0] ??
-    user?.phone?.[0] ??
-    "U";
+    effectiveName?.[0] ?? effectiveEmail?.[0] ?? effectivePhone?.[0] ?? "U";
 
   async function handleSignOut() {
     await supabaseBrowser.auth.signOut();
-    router.replace("/");
-    router.refresh();
+    const homePath = getPathname({ href: "/", locale });
+    window.location.href = `/auth/signout?next=${encodeURIComponent(homePath)}`;
   }
 
   return (
@@ -227,8 +244,8 @@ export function Header() {
                 <button type="button" aria-label="User menu">
                   <Avatar className="w-9 h-9 ring-2 ring-sky-500/20">
                     <AvatarImage
-                      src={profile.avatarUrl ?? user?.user_metadata?.avatar_url ?? ""}
-                      alt={user?.email ?? "User"}
+                      src={effectiveAvatarUrl}
+                      alt={effectiveEmail ?? "User"}
                     />
                     <AvatarFallback className="bg-zinc-800 text-zinc-200">
                       {String(userInitial).toUpperCase()}
@@ -242,13 +259,20 @@ export function Header() {
               >
                 <div className="rounded-lg border border-zinc-800 bg-zinc-950/60 p-3 mb-2">
                   <div className="text-sm font-semibold text-zinc-100">
-                    {profile.fullName ?? user?.email ?? user?.phone ?? "User"}
+                    {effectiveName ??
+                      effectiveEmail ??
+                      effectivePhone ??
+                      "User"}
                   </div>
-                  {user?.email && (
-                    <div className="text-xs text-zinc-400 mt-1">{user.email}</div>
+                  {effectiveEmail && (
+                    <div className="text-xs text-zinc-400 mt-1">
+                      {effectiveEmail}
+                    </div>
                   )}
-                  {user?.phone && (
-                    <div className="text-xs text-zinc-500">{user.phone}</div>
+                  {effectivePhone && (
+                    <div className="text-xs text-zinc-500">
+                      {effectivePhone}
+                    </div>
                   )}
                   <div className="mt-2 flex items-center gap-2">
                     <span className="text-[10px] px-2 py-1 rounded bg-sky-500/15 text-sky-300 uppercase">

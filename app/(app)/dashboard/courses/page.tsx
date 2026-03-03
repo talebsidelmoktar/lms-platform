@@ -65,7 +65,14 @@ export default async function MyCoursesPage() {
       />
 
       {/* Navigation */}
-      <Header />
+      <Header
+        initialUser={{
+          email: user.email,
+          phone: user.phone,
+          fullName: user.fullName,
+          avatarUrl: user.avatarUrl,
+        }}
+      />
 
       {/* Main Content */}
       <main className="relative z-10 px-6 lg:px-12 py-12 max-w-7xl mx-auto">
@@ -79,7 +86,9 @@ export default async function MyCoursesPage() {
             {startedCourses.map((course) => (
               <CourseCard
                 key={course._id}
-                slug={course.slug ? { current: course.slug.current ?? "" } : null}
+                slug={
+                  course.slug ? { current: course.slug.current ?? "" } : null
+                }
                 title={course.title}
                 description={course.description}
                 tier={course.tier}
@@ -109,6 +118,3 @@ export default async function MyCoursesPage() {
     </div>
   );
 }
-
-
-
