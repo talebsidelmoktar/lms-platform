@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { getPathname } from "@/i18n/navigation";
+import { buildEmailCallbackUrl } from "@/lib/auth/email-redirect";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
 type EmailMode = "signin" | "signup";
@@ -112,7 +113,10 @@ export default function LoginPage() {
 
       const signupPhone = phone.trim();
       const dashboardPath = getPathname({ href: "/dashboard", locale });
-      const emailCallbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(dashboardPath)}`;
+      const emailCallbackUrl = buildEmailCallbackUrl(
+        dashboardPath,
+        window.location.origin,
+      );
       const availability = await checkAvailability({
         email: normalizedEmail,
       });

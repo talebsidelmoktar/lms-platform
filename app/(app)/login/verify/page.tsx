@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getPathname } from "@/i18n/navigation";
+import { buildEmailCallbackUrl } from "@/lib/auth/email-redirect";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
 export default function VerifyPage() {
@@ -64,7 +65,10 @@ export default function VerifyPage() {
     try {
       if (!email) throw new Error(t("errors.emailRequiredForPasswordAuth"));
       const dashboardPath = getPathname({ href: "/dashboard", locale });
-      const emailCallbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(dashboardPath)}`;
+      const emailCallbackUrl = buildEmailCallbackUrl(
+        dashboardPath,
+        window.location.origin,
+      );
 
       const { error: resendError } = await supabaseBrowser.auth.resend({
         type: "signup",
