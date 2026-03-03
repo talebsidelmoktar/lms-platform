@@ -45,13 +45,10 @@ export function useSupabaseSessionUser() {
     async function syncUserFromAuth() {
       const { data: sessionData } = await supabaseBrowser.auth.getSession();
       const { data: userData } = await supabaseBrowser.auth.getUser();
-
-      if (!userData.user && sessionData.session) {
-        await supabaseBrowser.auth.signOut();
-      }
+      const resolvedUser = userData.user ?? sessionData.session?.user ?? null;
 
       if (!isMounted) return;
-      setUser(userData.user ?? null);
+      setUser(resolvedUser);
       setIsLoaded(true);
     }
 
@@ -68,16 +65,10 @@ export function useSupabaseSessionUser() {
       }
 
       const { data: userData } = await supabaseBrowser.auth.getUser();
-      if (!userData.user && session) {
-        await supabaseBrowser.auth.signOut();
-      }
+      const resolvedUser = userData.user ?? session?.user ?? null;
 
       if (!isMounted) return;
-      if (userData.user) {
-        setUser(userData.user);
-      } else {
-        setUser(null);
-      }
+      setUser(resolvedUser);
       setIsLoaded(true);
     });
 
