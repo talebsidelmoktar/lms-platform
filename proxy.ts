@@ -8,6 +8,10 @@ const LOCALE_PATTERN = /^\/(en|fr|ar)(?=\/|$)/;
 export default async function proxy(req: NextRequest) {
   try {
     const { pathname } = req.nextUrl;
+    const hasOAuthCode = req.nextUrl.searchParams.has("code");
+    const hasOtpToken =
+      req.nextUrl.searchParams.has("token_hash") &&
+      req.nextUrl.searchParams.has("type");
     const localeMatch = pathname.match(LOCALE_PATTERN);
     const locale = localeMatch?.[1] ?? null;
     const pathWithoutLocale = pathname.replace(LOCALE_PATTERN, "") || "/";
@@ -16,6 +20,25 @@ export default async function proxy(req: NextRequest) {
       pathWithoutLocale,
     );
     const isAuthRoute = /^(\/login)(\/|$)/.test(pathWithoutLocale);
+
+    // Some OAuth providers can bounce back to "/" with code params.
+    // Ensure those requests always hit the dedicated callback handler.
+    if (
+      pathWithoutLocale !== "/auth/callback" &&
+      (hasOAuthCode || hasOtpToken)
+    ) {
+      const callbackUrl = req.nextUrl.clone();
+      callbackUrl.pathname = locale
+        ? `/${locale}/auth/callback`
+        : "/auth/callback";
+      if (!callbackUrl.searchParams.has("next")) {
+        callbackUrl.searchParams.set(
+          "next",
+          locale ? `/${locale}/dashboard` : "/dashboard",
+        );
+      }
+      return NextResponse.redirect(callbackUrl);
+    }
 
     let getResponse = () => NextResponse.next();
     let user: unknown = null;

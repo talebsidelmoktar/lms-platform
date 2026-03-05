@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Image from "next/image";
 import { Mail, Phone, ShieldCheck } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
@@ -224,6 +225,28 @@ export default function LoginPage() {
     }
   }
 
+  async function onGoogleSignIn() {
+    setError(null);
+    setNotice(null);
+    setIsSubmitting(true);
+
+    try {
+      const dashboardPath = getPathname({ href: "/dashboard", locale });
+      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(dashboardPath)}`;
+
+      const { error: oauthError } = await supabaseBrowser.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo },
+      });
+
+      if (oauthError) throw oauthError;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t("errors.generic");
+      setError(message);
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">
       <div className="fixed inset-0 pointer-events-none">
@@ -245,190 +268,218 @@ export default function LoginPage() {
         }}
       />
 
-      <main className="relative z-10 px-6 lg:px-12 py-16 max-w-7xl mx-auto">
-        <div className="max-w-md mx-auto">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-600/30">
-              <ShieldCheck className="w-5 h-5 text-white" />
+      <main className="relative z-10 min-h-screen px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-center">
+        <div className="w-full max-w-md">
+          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/55 backdrop-blur-xl p-4 sm:p-5 shadow-2xl shadow-black/40">
+            <div className="flex justify-center mb-3">
+              <Image
+                src="/mauri-logo.png"
+                alt="Mauri Academy"
+                width={170}
+                height={56}
+                className="h-9 w-auto object-contain"
+                priority
+              />
             </div>
-            <div>
-              <h1 className="text-2xl font-black tracking-tight">{title}</h1>
-              <p className="text-sm text-zinc-400">{t("subtitle")}</p>
-            </div>
-          </div>
 
-          <div className="rounded-2xl bg-zinc-900/40 border border-zinc-800 p-6">
-            <div className="mt-1">
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <div>
-                  <p className="text-sm font-medium text-zinc-200">
-                    {emailMode === "signup"
-                      ? t("email.modeLabelSignUp")
-                      : t("email.modeLabelSignIn")}
-                  </p>
-                  <p className="text-xs text-zinc-500">{t("email.modeHelp")}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-zinc-500">
-                    {t("email.switchLabel")}
-                  </span>
-                  <Switch
-                    checked={emailMode === "signup"}
-                    onCheckedChange={(checked) =>
-                      setEmailMode(checked ? "signup" : "signin")
-                    }
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-600/30">
+                <ShieldCheck className="w-3.5 h-3.5 text-white" />
+              </div>
+              <h1 className="text-2xl font-black tracking-tight text-center">
+                {title}
+              </h1>
+            </div>
+            <p className="text-xs text-zinc-400 text-center mb-4">
+              {t("subtitle")}
+            </p>
+
+            <div className="flex items-center justify-between gap-3 mb-4 rounded-xl border border-zinc-800 bg-zinc-950/50 px-3 py-2">
+              <div>
+                <p className="text-sm font-medium text-zinc-200">
+                  {emailMode === "signup"
+                    ? t("email.modeLabelSignUp")
+                    : t("email.modeLabelSignIn")}
+                </p>
+                <p className="text-xs text-zinc-500">{t("email.modeHelp")}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-zinc-500">
+                  {t("email.switchLabel")}
+                </span>
+                <Switch
+                  checked={emailMode === "signup"}
+                  onCheckedChange={(checked) =>
+                    setEmailMode(checked ? "signup" : "signin")
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {emailMode === "signup" && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">{t("email.fullNameLabel")}</Label>
+                  <Input
+                    id="fullName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={t("email.fullNamePlaceholder")}
+                    autoComplete="name"
+                    className="h-10 rounded-xl border-zinc-700 bg-zinc-950/60"
                   />
                 </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  {t("email.emailLabel")}
+                </Label>
+                <Input
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t("email.emailPlaceholder")}
+                  type="email"
+                  autoComplete="email"
+                  className="h-10 rounded-xl border-zinc-700 bg-zinc-950/60"
+                />
               </div>
 
-              <div className="space-y-4">
-                {emailMode === "signup" && (
+              <div className="space-y-2">
+                <Label htmlFor="password">{t("email.passwordLabel")}</Label>
+                <Input
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  autoComplete={
+                    emailMode === "signup" ? "new-password" : "current-password"
+                  }
+                  className="h-10 rounded-xl border-zinc-700 bg-zinc-950/60"
+                />
+              </div>
+
+              {notice && (
+                <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+                  {notice}
+                </div>
+              )}
+              {error && (
+                <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={onEmailSubmit} className="space-y-3">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="h-10 w-full rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-sky-600/25"
+                >
+                  {isSubmitting
+                    ? t("email.submitting")
+                    : emailMode === "signup"
+                      ? t("email.submitSignUp")
+                      : t("email.submitSignIn")}
+                </Button>
+              </form>
+
+              <div className="pt-1">
+                <p className="text-center text-[10px] uppercase tracking-[0.18em] text-zinc-500 mb-2">
+                  Or continue with
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isSubmitting}
+                  onClick={onGoogleSignIn}
+                  className="h-10 w-full rounded-xl border-emerald-500/40 bg-emerald-600/20 text-emerald-100 hover:bg-emerald-600/30 hover:text-white"
+                >
+                  <span className="mr-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-zinc-900">
+                    G
+                  </span>
+                  Continue with Google
+                </Button>
+              </div>
+
+              <details className="pt-3 border-t border-zinc-800/80">
+                <summary className="cursor-pointer text-sm text-zinc-400 hover:text-zinc-200">
+                  {t("phone.phoneLabel")}
+                </summary>
+                <div className="mt-3 space-y-3">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName">{t("email.fullNameLabel")}</Label>
+                    <Label htmlFor="phone" className="flex items-center gap-2">
+                      <Phone className="w-4 h-4" />
+                      {t("phone.phoneLabel")}
+                    </Label>
                     <Input
-                      id="fullName"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder={t("email.fullNamePlaceholder")}
-                      autoComplete="name"
+                      id="phone"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder={t("phone.phonePlaceholder")}
+                      autoComplete="tel"
+                      className="h-10 rounded-xl border-zinc-700 bg-zinc-950/60"
                     />
                   </div>
-                )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    {t("email.emailLabel")}
-                  </Label>
-                  <Input
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t("email.emailPlaceholder")}
-                    type="email"
-                    autoComplete="email"
-                  />
-                  <p className="text-xs text-zinc-500">
-                    {t("email.optionalHelp")}
-                  </p>
-                </div>
+                  {phoneStep === "verify" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="otp">{t("phone.otpLabel")}</Label>
+                      <Input
+                        id="otp"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        placeholder={t("phone.otpPlaceholder")}
+                        inputMode="numeric"
+                        className="h-10 rounded-xl border-zinc-700 bg-zinc-950/60"
+                      />
+                    </div>
+                  )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="password">{t("email.passwordLabel")}</Label>
-                  <Input
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type="password"
-                    autoComplete={
-                      emailMode === "signup"
-                        ? "new-password"
-                        : "current-password"
-                    }
-                  />
-                  <p className="text-xs text-zinc-500">
-                    {t("email.passwordHelp")}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    {t("phone.phoneLabel")}
-                  </Label>
-                  <Input
-                    id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={t("phone.phonePlaceholder")}
-                    autoComplete="tel"
-                  />
-                  <p className="text-xs text-zinc-500">
-                    {t("phone.phoneHelp")}
-                  </p>
-                </div>
-
-                {phoneStep === "verify" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp">{t("phone.otpLabel")}</Label>
-                    <Input
-                      id="otp"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      placeholder={t("phone.otpPlaceholder")}
-                      inputMode="numeric"
-                    />
-                  </div>
-                )}
-
-                {notice && (
-                  <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-                    {notice}
-                  </div>
-                )}
-                {error && (
-                  <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-200">
-                    {error}
-                  </div>
-                )}
-
-                <form onSubmit={onEmailSubmit} className="space-y-3">
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-sky-600/25"
-                  >
-                    {isSubmitting
-                      ? t("email.submitting")
-                      : emailMode === "signup"
-                        ? t("email.submitSignUp")
-                        : t("email.submitSignIn")}
-                  </Button>
-                </form>
-
-                {phoneStep === "send" ? (
-                  <form onSubmit={onSendOtp} className="space-y-3">
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-cyan-600/25"
-                    >
-                      {isSubmitting ? t("phone.sending") : t("phone.sendCode")}
-                    </Button>
-                  </form>
-                ) : (
-                  <form onSubmit={onVerifyOtp} className="space-y-4">
-                    <div className="flex gap-3">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="flex-1 border-zinc-700 bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white"
-                        onClick={() => {
-                          setPhoneStep("send");
-                          setOtp("");
-                          setNotice(null);
-                          setError(null);
-                        }}
-                      >
-                        {t("phone.back")}
-                      </Button>
+                  {phoneStep === "send" ? (
+                    <form onSubmit={onSendOtp} className="space-y-3">
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-cyan-600/25"
+                        className="h-10 w-full rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-cyan-600/25"
                       >
-                        {isSubmitting
-                          ? t("phone.verifying")
-                          : t("phone.verify")}
+                        {isSubmitting ? t("phone.sending") : t("phone.sendCode")}
                       </Button>
-                    </div>
-                  </form>
-                )}
-              </div>
+                    </form>
+                  ) : (
+                    <form onSubmit={onVerifyOtp} className="space-y-4">
+                      <div className="flex gap-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="h-10 flex-1 border-zinc-700 bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white"
+                          onClick={() => {
+                            setPhoneStep("send");
+                            setOtp("");
+                            setNotice(null);
+                            setError(null);
+                          }}
+                        >
+                          {t("phone.back")}
+                        </Button>
+                        <Button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="h-10 flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-cyan-600/25"
+                        >
+                          {isSubmitting ? t("phone.verifying") : t("phone.verify")}
+                        </Button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              </details>
             </div>
           </div>
 
-          <p className="mt-6 text-xs text-zinc-500 text-center">{t("tos")}</p>
+          <p className="mt-3 text-[10px] text-zinc-500 text-center">{t("tos")}</p>
         </div>
       </main>
     </div>

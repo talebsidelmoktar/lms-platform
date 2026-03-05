@@ -12,7 +12,12 @@ export function createSupabaseBrowserClient() {
     );
   }
 
-  return createBrowserClient(url, anon);
+  return createBrowserClient(url, anon, {
+    auth: {
+      flowType: "pkce",
+      detectSessionInUrl: true,
+    },
+  });
 }
 
 export const supabaseBrowser = createSupabaseBrowserClient();
