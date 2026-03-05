@@ -82,7 +82,7 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
   }
 
   return (
-    <nav className="relative z-10 flex items-center justify-between px-6 lg:px-12 py-5 max-w-7xl mx-auto">
+    <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 lg:px-12 py-4 sm:py-5 max-w-7xl mx-auto">
       <div>
         <Link
           href={isSignedIn ? "/dashboard" : "/"}
@@ -133,7 +133,7 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
         )}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         <LanguageSwitcher
           value={locale}
           onChange={(nextLocale) => {
@@ -180,13 +180,13 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
             <Link href="/login">
               <Button
                 variant="ghost"
-                className="text-zinc-400 hover:text-white hover:bg-white/5"
+                className="h-9 px-2 sm:px-3 text-xs sm:text-sm text-zinc-400 hover:text-white hover:bg-white/5 shrink-0"
               >
                 {t("signIn")}
               </Button>
             </Link>
-            <Link href="/pricing" className="hidden sm:block">
-              <Button className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-sky-600/25">
+            <Link href="/pricing" className="hidden min-[430px]:block">
+              <Button className="h-9 px-2 sm:px-4 text-xs sm:text-sm bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-sky-600/25 shrink-0">
                 {t("startLearning")}
               </Button>
             </Link>
@@ -301,13 +301,13 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
 
 function Logo() {
   return (
-    <div className="relative h-14 w-[170px] overflow-visible -ml-5 md:-ml-3">
+    <div className="relative ml-3 h-11 w-[132px] sm:ml-1 sm:h-14 sm:w-[170px] overflow-hidden">
       <Image
         src="/mauri-logo.png"
         alt="Mauri Academy"
-        width={100}
-        height={80}
-        className="h-14 w-auto object-contain origin-left scale-[1.45]"
+        width={170}
+        height={56}
+        className="h-full w-full object-contain"
         priority
       />
     </div>
@@ -329,7 +329,7 @@ function LanguageSwitcher({
     <Select value={value} onValueChange={(v) => onChange(v as AppLocale)}>
       <SelectTrigger
         size="sm"
-        className="min-w-[130px] bg-zinc-900/60 border-zinc-700 text-zinc-200"
+        className="w-[84px] sm:min-w-[130px] bg-zinc-900/60 border-zinc-700 text-zinc-200 text-xs sm:text-sm"
         aria-label={label}
       >
         <SelectValue />

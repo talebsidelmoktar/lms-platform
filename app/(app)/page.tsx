@@ -71,19 +71,19 @@ export default async function Home() {
       name: t("testimonials.0.name"),
       role: t("testimonials.0.role"),
       content: t("testimonials.0.content"),
-      avatar: "ðŸ§‘â€ðŸ’»",
+      avatar: "SM",
     },
     {
       name: t("testimonials.1.name"),
       role: t("testimonials.1.role"),
       content: t("testimonials.1.content"),
-      avatar: "ðŸ‘©â€ðŸ’¼",
+      avatar: "AB",
     },
     {
       name: t("testimonials.2.name"),
       role: t("testimonials.2.role"),
       content: t("testimonials.2.content"),
-      avatar: "ðŸŽ“",
+      avatar: "KM",
     },
   ];
 
@@ -345,7 +345,7 @@ export default async function Home() {
                   &ldquo;{testimonial.content}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-xl">
+                  <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-semibold tracking-wide text-zinc-200">
                     {testimonial.avatar}
                   </div>
                   <div>
@@ -414,4 +414,3 @@ export default async function Home() {
     </div>
   );
 }
-

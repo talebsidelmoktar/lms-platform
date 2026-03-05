@@ -6,8 +6,11 @@ import type { Tier } from "@/lib/constants";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
 function normalizeTier(value: unknown): Tier {
-  if (value === "pro" || value === "ultra") {
-    return value;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "pro" || normalized === "ultra") {
+      return normalized;
+    }
   }
   return "free";
 }

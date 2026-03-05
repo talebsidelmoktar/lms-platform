@@ -80,19 +80,29 @@ export function CourseList({
       {/* Course Grid */}
       {filteredCourses.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCourses.map((course) => (
-            <CourseCard
-              key={course._id}
+          {filteredCourses.map((course) => {
+            const isLocked = !hasTierAccess(userTier, course.tier);
+            const lockedTier = course.tier ?? "pro";
+
+            return (
+              <CourseCard
+                key={course._id}
+                href={
+                  isLocked
+                    ? `/pricing?upgrade=${lockedTier}&source=locked-course`
+                  : undefined
+              }
               slug={course.slug ? { current: course.slug.current ?? "" } : null}
               title={course.title}
               description={course.description}
               tier={course.tier}
               thumbnail={course.thumbnail}
               moduleCount={course.moduleCount}
-              lessonCount={course.lessonCount}
-              isLocked={!hasTierAccess(userTier, course.tier)}
-            />
-          ))}
+                lessonCount={course.lessonCount}
+                isLocked={isLocked}
+              />
+            );
+          })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-center">

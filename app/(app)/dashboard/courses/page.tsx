@@ -1,6 +1,8 @@
 ﻿import { BookOpen } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { CourseCard } from "@/components/courses";
+import { getUserTier } from "@/lib/course-access";
+import { hasTierAccess } from "@/lib/user-tier";
 import { Header } from "@/components/Header";
 import { requireCurrentUser } from "@/lib/auth/server";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -10,10 +12,13 @@ export default async function MyCoursesPage() {
   const t = await getTranslations("dashboard");
   const user = await requireCurrentUser("/");
 
-  const { data: courses } = await sanityFetch({
-    query: DASHBOARD_COURSES_QUERY,
-    params: { userId: user.id },
-  });
+  const [{ data: courses }, userTier] = await Promise.all([
+    sanityFetch({
+      query: DASHBOARD_COURSES_QUERY,
+      params: { userId: user.id },
+    }),
+    getUserTier(),
+  ]);
 
   // Calculate completion for each course and filter to started ones
   type Course = (typeof courses)[number];
@@ -83,9 +88,18 @@ export default async function MyCoursesPage() {
 
         {startedCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {startedCourses.map((course) => (
+            {startedCourses.map((course) => {
+              const isLocked = !hasTierAccess(userTier, course.tier);
+              const lockedTier = course.tier ?? "pro";
+
+              return (
               <CourseCard
                 key={course._id}
+                href={
+                  isLocked
+                    ? `/pricing?upgrade=${lockedTier}&source=locked-course`
+                    : undefined
+                }
                 slug={
                   course.slug ? { current: course.slug.current ?? "" } : null
                 }
@@ -97,9 +111,11 @@ export default async function MyCoursesPage() {
                 lessonCount={course.totalLessons}
                 completedLessonCount={course.completedLessons}
                 isCompleted={course.completedBy?.includes(user.id) ?? false}
+                isLocked={isLocked}
                 showProgress
               />
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-16">

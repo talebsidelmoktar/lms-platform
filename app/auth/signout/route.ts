@@ -11,8 +11,9 @@ function getSafeNextPath(rawNext: string | null): string {
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const next = getSafeNextPath(requestUrl.searchParams.get("next"));
-
+  
   const supabase = await createSupabaseServerClient({ canSetCookies: true });
+
   await supabase.auth.signOut();
 
   return NextResponse.redirect(new URL(next, requestUrl.origin));

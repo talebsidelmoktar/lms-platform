@@ -4,8 +4,11 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppUser } from "./types";
 
 function normalizeTier(value: string | null | undefined): Tier {
-  if (value === "pro" || value === "ultra") {
-    return value;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "pro" || normalized === "ultra") {
+      return normalized;
+    }
   }
   return "free";
 }

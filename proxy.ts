@@ -11,15 +11,23 @@ export default async function proxy(req: NextRequest) {
     const localeMatch = pathname.match(LOCALE_PATTERN);
     const locale = localeMatch?.[1] ?? null;
     const pathWithoutLocale = pathname.replace(LOCALE_PATTERN, "") || "/";
+    const isStudioRoute = /^(\/studio)(\/|$)/.test(pathWithoutLocale);
     const isProtectedRoute = /^(\/dashboard|\/lessons|\/admin)(\/|$)/.test(
       pathWithoutLocale,
     );
     const isAuthRoute = /^(\/login)(\/|$)/.test(pathWithoutLocale);
 
-    const { supabase, getResponse } = createSupabaseMiddlewareClient(req);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let getResponse = () => NextResponse.next();
+    let user: unknown = null;
+
+    // Keep Sanity Studio isolated from app auth middleware to avoid 500s
+    // when Studio is accessed on deployments with different auth env/config.
+    if (!isStudioRoute) {
+      const middleware = createSupabaseMiddlewareClient(req);
+      getResponse = middleware.getResponse;
+      const result = await middleware.supabase.auth.getUser();
+      user = result.data.user;
+    }
 
     if (isProtectedRoute && !user) {
       const homeUrl = req.nextUrl.clone();
