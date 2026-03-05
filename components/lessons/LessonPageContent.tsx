@@ -6,6 +6,7 @@ import { GatedFallback } from "@/components/courses/GatedFallback";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { hasTierAccess, useUserTier } from "@/lib/hooks/use-user-tier";
+import type { Tier } from "@/lib/constants";
 import type { LESSON_BY_ID_QUERYResult } from "@/sanity.types";
 import { LessonCompleteButton } from "./LessonCompleteButton";
 import { LessonContent } from "./LessonContent";
@@ -15,15 +16,21 @@ import { MuxVideoPlayer } from "./MuxVideoPlayer";
 interface LessonPageContentProps {
   lesson: NonNullable<LESSON_BY_ID_QUERYResult>;
   userId: string | null;
+  serverUserTier?: Tier;
 }
 
-export function LessonPageContent({ lesson, userId }: LessonPageContentProps) {
+export function LessonPageContent({
+  lesson,
+  userId,
+  serverUserTier,
+}: LessonPageContentProps) {
   const userTier = useUserTier();
+  const effectiveUserTier = serverUserTier ?? userTier;
   const t = useTranslations("common.course");
 
   const courses = lesson.courses ?? [];
   const accessibleCourse = courses.find((course) =>
-    hasTierAccess(userTier, course.tier),
+    hasTierAccess(effectiveUserTier, course.tier),
   );
   const hasAccess = !!accessibleCourse;
   const activeCourse = accessibleCourse ?? courses[0];

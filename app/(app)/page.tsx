@@ -111,7 +111,19 @@ export default async function Home() {
       />
 
       {/* Navigation */}
-      <Header />
+      <Header
+        initialUser={
+          user
+            ? {
+                email: user.email,
+                phone: user.phone,
+                fullName: user.fullName,
+                avatarUrl: user.avatarUrl,
+                tier: user.tier,
+              }
+            : undefined
+        }
+      />
 
       {/* Hero Section */}
       <main className="relative z-10">

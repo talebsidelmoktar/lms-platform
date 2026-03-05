@@ -1,12 +1,14 @@
 "use client";
 
 import { MessageCircle, PanelRightClose, Sparkles } from "lucide-react";
+import { useLocale } from "next-intl";
 import { useSupabaseSessionUser } from "@/lib/auth/client";
 import { useUserTier } from "@/lib/hooks/use-user-tier";
+import type { Tier } from "@/lib/constants";
 import { TutorChat } from "./TutorChat";
 import { TutorProvider, useTutor } from "./TutorContext";
 
-function TutorPanel() {
+function TutorPanel({ isRtl }: { isRtl: boolean }) {
   const { isOpen, closeChat, toggleChat } = useTutor();
 
   return (
@@ -26,20 +28,20 @@ function TutorPanel() {
       {/* Slide-out Panel */}
       <div
         className={`
-          fixed top-0 right-0 z-50
+          fixed top-0 ${isRtl ? "left-0" : "right-0"} z-50
           h-full w-full sm:w-[640px] lg:w-[720px]
           transform transition-transform duration-300 ease-out
-          ${isOpen ? "translate-x-0" : "translate-x-full"}
+          ${isOpen ? "translate-x-0" : isRtl ? "-translate-x-full" : "translate-x-full"}
         `}
       >
         <div
-          className="
+          className={`
             h-full w-full
             bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950
-            border-l border-cyan-500/20
+            ${isRtl ? "border-r" : "border-l"} border-cyan-500/20
             shadow-2xl shadow-black/50
             flex flex-col
-          "
+          `}
         >
           {/* Header */}
           <div
@@ -93,7 +95,7 @@ function TutorPanel() {
         type="button"
         onClick={toggleChat}
         className={`
-          fixed bottom-6 right-6 z-50
+          fixed bottom-6 ${isRtl ? "left-6" : "right-6"} z-50
           w-16 h-16
           bg-gradient-to-br from-cyan-400 to-blue-600
           hover:from-cyan-300 hover:to-blue-500
@@ -120,18 +122,30 @@ function TutorPanel() {
   );
 }
 
-export function TutorWidget() {
+interface TutorWidgetProps {
+  initialUserId?: string | null;
+  initialUserTier?: Tier;
+}
+
+export function TutorWidget({
+  initialUserId = null,
+  initialUserTier,
+}: TutorWidgetProps) {
+  const locale = useLocale();
   const { isLoaded, user } = useSupabaseSessionUser();
   const userTier = useUserTier();
+  const isRtl = locale === "ar";
+  const effectiveUserId = user?.id ?? initialUserId;
+  const effectiveUserTier = initialUserTier ?? userTier;
 
   // Only show widget for signed-in Ultra members.
-  if (!isLoaded || !user || userTier !== "ultra") {
+  if ((!isLoaded && !initialUserId) || !effectiveUserId || effectiveUserTier !== "ultra") {
     return null;
   }
 
   return (
     <TutorProvider>
-      <TutorPanel />
+      <TutorPanel isRtl={isRtl} />
     </TutorProvider>
   );
 }

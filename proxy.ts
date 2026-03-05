@@ -19,6 +19,14 @@ export default async function proxy(req: NextRequest) {
 
     let getResponse = () => NextResponse.next();
     let user: unknown = null;
+    const withSupabaseCookies = (response: NextResponse) => {
+      const supabaseResponse = getResponse();
+      for (const cookie of supabaseResponse.cookies.getAll()) {
+        const { name, value, ...options } = cookie;
+        response.cookies.set(name, value, options);
+      }
+      return response;
+    };
 
     // Keep Sanity Studio isolated from app auth middleware to avoid 500s
     // when Studio is accessed on deployments with different auth env/config.
@@ -32,13 +40,13 @@ export default async function proxy(req: NextRequest) {
     if (isProtectedRoute && !user) {
       const homeUrl = req.nextUrl.clone();
       homeUrl.pathname = locale ? `/${locale}` : "/";
-      return NextResponse.redirect(homeUrl);
+      return withSupabaseCookies(NextResponse.redirect(homeUrl));
     }
 
     if (isAuthRoute && user) {
       const dashboardUrl = req.nextUrl.clone();
       dashboardUrl.pathname = locale ? `/${locale}/dashboard` : "/dashboard";
-      return NextResponse.redirect(dashboardUrl);
+      return withSupabaseCookies(NextResponse.redirect(dashboardUrl));
     }
 
     if (localeMatch) {
@@ -57,12 +65,7 @@ export default async function proxy(req: NextRequest) {
         sameSite: "lax",
         maxAge: 60 * 60 * 24 * 365,
       });
-      const supabaseResponse = getResponse();
-      for (const cookie of supabaseResponse.cookies.getAll()) {
-        const { name, value, ...options } = cookie;
-        response.cookies.set(name, value, options);
-      }
-      return response;
+      return withSupabaseCookies(response);
     }
 
     const cookieLocale = req.cookies.get("academy-language")?.value;
@@ -75,7 +78,7 @@ export default async function proxy(req: NextRequest) {
     if (effectiveLocale !== routing.defaultLocale && pathname !== "/") {
       const redirectUrl = req.nextUrl.clone();
       redirectUrl.pathname = `/${effectiveLocale}${pathname}`;
-      return NextResponse.redirect(redirectUrl);
+      return withSupabaseCookies(NextResponse.redirect(redirectUrl));
     }
 
     return getResponse();

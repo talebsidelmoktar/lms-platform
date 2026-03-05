@@ -76,6 +76,7 @@ export default async function MyCoursesPage() {
           phone: user.phone,
           fullName: user.fullName,
           avatarUrl: user.avatarUrl,
+          tier: user.tier,
         }}
       />
 

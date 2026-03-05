@@ -1,12 +1,15 @@
 import { SanityLive } from "@/sanity/lib/live";
 import { TutorWidget } from "@/components/tutor";
+import { getCurrentUser } from "@/lib/auth/server";
 
-function AppLayout({ children }: { children: React.ReactNode }) {
+async function AppLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+
   return (
     <>
       <div>{children}</div>
       <SanityLive />
-      <TutorWidget />
+      <TutorWidget initialUserId={user?.id ?? null} initialUserTier={user?.tier} />
     </>
   );
 }

@@ -28,7 +28,7 @@ import { getPathname, Link, usePathname } from "@/i18n/navigation";
 import { type AppLocale, routing } from "@/i18n/routing";
 import { useSupabaseProfile, useSupabaseSessionUser } from "@/lib/auth/client";
 import { useUserTier } from "@/lib/hooks/use-user-tier";
-import { supabaseBrowser } from "@/lib/supabase/client";
+import type { Tier } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface HeaderInitialUser {
@@ -36,6 +36,7 @@ interface HeaderInitialUser {
   phone: string | null;
   fullName: string | null;
   avatarUrl: string | null;
+  tier: Tier;
 }
 
 export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
@@ -47,8 +48,9 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
   const { isLoaded, user } = useSupabaseSessionUser();
   const { profile } = useSupabaseProfile(user, isLoaded);
   const userTier = useUserTier();
+  const effectiveTier = initialUser?.tier ?? userTier;
   const isSignedIn = Boolean(user ?? initialUser);
-  const isUltra = userTier === "ultra";
+  const isUltra = effectiveTier === "ultra";
   const effectiveEmail = user?.email ?? initialUser?.email ?? null;
   const effectivePhone = user?.phone ?? initialUser?.phone ?? null;
   const effectiveName = profile.fullName ?? initialUser?.fullName ?? null;
@@ -75,8 +77,7 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
   const userInitial =
     effectiveName?.[0] ?? effectiveEmail?.[0] ?? effectivePhone?.[0] ?? "U";
 
-  async function handleSignOut() {
-    await supabaseBrowser.auth.signOut();
+  function handleSignOut() {
     const homePath = getPathname({ href: "/", locale });
     window.location.href = `/auth/signout?next=${encodeURIComponent(homePath)}`;
   }
@@ -276,7 +277,7 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
                   )}
                   <div className="mt-2 flex items-center gap-2">
                     <span className="text-[10px] px-2 py-1 rounded bg-sky-500/15 text-sky-300 uppercase">
-                      {profile.tier}
+                      {effectiveTier}
                     </span>
                     <span className="text-[10px] px-2 py-1 rounded bg-zinc-800 text-zinc-300 uppercase">
                       {profile.role ?? "student"}

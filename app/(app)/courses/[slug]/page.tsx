@@ -1,6 +1,7 @@
 ﻿import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
-import { getCurrentUserId } from "@/lib/auth/server";
+import { getCurrentUser, getCurrentUserId } from "@/lib/auth/server";
+import { getUserTier } from "@/lib/course-access";
 import { CourseContent } from "@/components/courses";
 import { sanityFetch } from "@/sanity/lib/live";
 import { COURSE_WITH_MODULES_QUERY } from "@/sanity/lib/queries";
@@ -11,7 +12,11 @@ interface CoursePageProps {
 
 export default async function CoursePage({ params }: CoursePageProps) {
   const { slug } = await params;
-  const userId = await getCurrentUserId();
+  const [userId, user, userTier] = await Promise.all([
+    getCurrentUserId(),
+    getCurrentUser(),
+    getUserTier(),
+  ]);
 
   const { data: course } = await sanityFetch({
     query: COURSE_WITH_MODULES_QUERY,
@@ -46,11 +51,27 @@ export default async function CoursePage({ params }: CoursePageProps) {
       />
 
       {/* Navigation */}
-      <Header />
+      <Header
+        initialUser={
+          user
+            ? {
+                email: user.email,
+                phone: user.phone,
+                fullName: user.fullName,
+                avatarUrl: user.avatarUrl,
+                tier: user.tier,
+              }
+            : undefined
+        }
+      />
 
       {/* Main Content */}
       <main className="relative z-10 px-6 lg:px-12 py-12 max-w-7xl mx-auto">
-        <CourseContent course={course} userId={userId} />
+        <CourseContent
+          course={course}
+          userId={userId}
+          serverUserTier={userTier}
+        />
       </main>
     </div>
   );

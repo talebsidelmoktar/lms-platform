@@ -52,6 +52,7 @@ export default async function DashboardPage() {
           phone: user.phone,
           fullName: user.fullName,
           avatarUrl: user.avatarUrl,
+          tier: user.tier,
         }}
       />
 
@@ -133,6 +134,7 @@ export default async function DashboardPage() {
           <h2 className="text-2xl font-bold mb-6">{t("allCourses")}</h2>
           <CourseList
             courses={courses}
+            serverUserTier={userTier}
             showFilters
             showSearch
             emptyMessage={t("noCoursesAvailable")}

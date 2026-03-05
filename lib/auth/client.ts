@@ -46,13 +46,20 @@ export function useSupabaseSessionUser() {
     let isMounted = true;
 
     async function syncUserFromAuth() {
-      const { data: sessionData } = await supabaseBrowser.auth.getSession();
-      const { data: userData } = await supabaseBrowser.auth.getUser();
-      const resolvedUser = userData.user ?? sessionData.session?.user ?? null;
+      try {
+        const { data: sessionData } = await supabaseBrowser.auth.getSession();
+        const { data: userData } = await supabaseBrowser.auth.getUser();
+        const resolvedUser = userData.user ?? sessionData.session?.user ?? null;
 
-      if (!isMounted) return;
-      setUser(resolvedUser);
-      setIsLoaded(true);
+        if (!isMounted) return;
+        setUser(resolvedUser);
+      } catch {
+        if (!isMounted) return;
+        setUser(null);
+      } finally {
+        if (!isMounted) return;
+        setIsLoaded(true);
+      }
     }
 
     syncUserFromAuth();
@@ -67,12 +74,19 @@ export function useSupabaseSessionUser() {
         return;
       }
 
-      const { data: userData } = await supabaseBrowser.auth.getUser();
-      const resolvedUser = userData.user ?? session?.user ?? null;
+      try {
+        const { data: userData } = await supabaseBrowser.auth.getUser();
+        const resolvedUser = userData.user ?? session?.user ?? null;
 
-      if (!isMounted) return;
-      setUser(resolvedUser);
-      setIsLoaded(true);
+        if (!isMounted) return;
+        setUser(resolvedUser);
+      } catch {
+        if (!isMounted) return;
+        setUser(session?.user ?? null);
+      } finally {
+        if (!isMounted) return;
+        setIsLoaded(true);
+      }
     });
 
     return () => {

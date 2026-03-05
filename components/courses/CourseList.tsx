@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { hasTierAccess, useUserTier } from "@/lib/hooks/use-user-tier";
+import type { Tier } from "@/lib/constants";
 import type { DASHBOARD_COURSES_QUERYResult } from "@/sanity.types";
 import { CourseCard } from "./CourseCard";
 import { type TierFilter, TierFilterTabs } from "./TierFilterTabs";
@@ -14,6 +15,7 @@ export type CourseListCourse = DASHBOARD_COURSES_QUERYResult[number];
 
 interface CourseListProps {
   courses: CourseListCourse[];
+  serverUserTier?: Tier;
   showFilters?: boolean;
   showSearch?: boolean;
   emptyMessage?: string;
@@ -21,12 +23,14 @@ interface CourseListProps {
 
 export function CourseList({
   courses,
+  serverUserTier,
   showFilters = true,
   showSearch = true,
   emptyMessage = "No courses found",
 }: CourseListProps) {
   const t = useTranslations("common.course");
   const userTier = useUserTier();
+  const effectiveUserTier = serverUserTier ?? userTier;
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -81,7 +85,7 @@ export function CourseList({
       {filteredCourses.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => {
-            const isLocked = !hasTierAccess(userTier, course.tier);
+            const isLocked = !hasTierAccess(effectiveUserTier, course.tier);
             const lockedTier = course.tier ?? "pro";
 
             return (

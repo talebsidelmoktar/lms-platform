@@ -3,11 +3,13 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Header } from "@/components/Header";
 import { ManualUpgradeRequest } from "@/components/pricing/ManualUpgradeRequest";
+import { getCurrentUser } from "@/lib/auth/server";
 import { getTierColorClasses } from "@/lib/constants";
 
 export default async function PricingPage() {
   const t = await getTranslations("common.pricing");
   const tiersT = await getTranslations("common.tiers");
+  const user = await getCurrentUser();
   const tierFeatures = [
     {
       tierLabel: tiersT("free"),
@@ -50,7 +52,19 @@ export default async function PricingPage() {
       />
 
       {/* Navigation */}
-      <Header />
+      <Header
+        initialUser={
+          user
+            ? {
+                email: user.email,
+                phone: user.phone,
+                fullName: user.fullName,
+                avatarUrl: user.avatarUrl,
+                tier: user.tier,
+              }
+            : undefined
+        }
+      />
 
       {/* Main Content */}
       <main className="relative z-10 px-6 lg:px-12 py-12 max-w-7xl mx-auto">

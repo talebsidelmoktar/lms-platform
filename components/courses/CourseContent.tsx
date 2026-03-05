@@ -6,20 +6,27 @@ import { CourseCompleteButton } from "./CourseCompleteButton";
 import { GatedFallback } from "./GatedFallback";
 import { useSupabaseSessionUser } from "@/lib/auth/client";
 import { useUserTier, hasTierAccess } from "@/lib/hooks/use-user-tier";
+import type { Tier } from "@/lib/constants";
 import type { COURSE_WITH_MODULES_QUERYResult } from "@/sanity.types";
 import { Skeleton } from "../ui/skeleton";
 
 interface CourseContentProps {
   course: NonNullable<COURSE_WITH_MODULES_QUERYResult>;
   userId: string | null;
+  serverUserTier?: Tier;
 }
 
-export function CourseContent({ course, userId }: CourseContentProps) {
+export function CourseContent({
+  course,
+  userId,
+  serverUserTier,
+}: CourseContentProps) {
   const { isLoaded: isAuthLoaded } = useSupabaseSessionUser();
   const userTier = useUserTier();
+  const effectiveUserTier = serverUserTier ?? userTier;
 
   // Check if user has access to this course
-  const hasAccess = hasTierAccess(userTier, course.tier);
+  const hasAccess = hasTierAccess(effectiveUserTier, course.tier);
 
   // Calculate completion stats from actual lesson data
   let totalLessons = 0;
@@ -38,7 +45,7 @@ export function CourseContent({ course, userId }: CourseContentProps) {
     ? (course.completedBy?.includes(userId) ?? false)
     : false;
 
-  if (!isAuthLoaded) {
+  if (!isAuthLoaded && !serverUserTier) {
     return <Skeleton className="w-full h-full" />;
   }
 

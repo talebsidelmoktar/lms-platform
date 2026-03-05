@@ -1,6 +1,7 @@
 ﻿import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
-import { getCurrentUserId } from "@/lib/auth/server";
+import { getCurrentUser, getCurrentUserId } from "@/lib/auth/server";
+import { getUserTier } from "@/lib/course-access";
 import { LessonPageContent } from "@/components/lessons";
 import { sanityFetch } from "@/sanity/lib/live";
 import { LESSON_BY_SLUG_QUERY } from "@/sanity/lib/queries";
@@ -11,7 +12,11 @@ interface LessonPageProps {
 
 export default async function LessonPage({ params }: LessonPageProps) {
   const { slug } = await params;
-  const userId = await getCurrentUserId();
+  const [userId, user, userTier] = await Promise.all([
+    getCurrentUserId(),
+    getCurrentUser(),
+    getUserTier(),
+  ]);
 
   const { data: lesson } = await sanityFetch({
     query: LESSON_BY_SLUG_QUERY,
@@ -46,11 +51,27 @@ export default async function LessonPage({ params }: LessonPageProps) {
       />
 
       {/* Navigation */}
-      <Header />
+      <Header
+        initialUser={
+          user
+            ? {
+                email: user.email,
+                phone: user.phone,
+                fullName: user.fullName,
+                avatarUrl: user.avatarUrl,
+                tier: user.tier,
+              }
+            : undefined
+        }
+      />
 
       {/* Main Content */}
       <main className="relative z-10 px-6 lg:px-12 py-8 max-w-7xl mx-auto">
-        <LessonPageContent lesson={lesson} userId={userId} />
+        <LessonPageContent
+          lesson={lesson}
+          userId={userId}
+          serverUserTier={userTier}
+        />
       </main>
     </div>
   );
