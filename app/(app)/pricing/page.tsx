@@ -3,11 +3,13 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Header } from "@/components/Header";
 import { ManualUpgradeRequest } from "@/components/pricing/ManualUpgradeRequest";
+import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth/server";
 import { getTierColorClasses } from "@/lib/constants";
 
 export default async function PricingPage() {
   const t = await getTranslations("common.pricing");
+  const headerT = await getTranslations("common.header");
   const tiersT = await getTranslations("common.tiers");
   const user = await getCurrentUser();
   const tierFeatures = [
@@ -116,7 +118,25 @@ export default async function PricingPage() {
           })}
         </div>
 
-        <ManualUpgradeRequest />
+        {user ? (
+          <ManualUpgradeRequest />
+        ) : (
+          <div className="rounded-2xl bg-zinc-900/50 border border-zinc-800 p-6 md:p-10">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                {t("manualRequest.title")}
+              </h2>
+              <p className="text-zinc-400 mb-6">
+                {t("manualRequest.description")}
+              </p>
+              <Link href="/login">
+                <Button className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white border-0">
+                  {headerT("signIn")}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* FAQ or extra info */}
         <div className="mt-16 text-center">

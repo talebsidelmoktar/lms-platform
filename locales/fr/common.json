@@ -122,6 +122,12 @@
         "submitFailed": "Echec de l'envoi de la demande."
       }
     },
+    "paymentSubmitted": {
+      "title": "Preuve de paiement envoyee",
+      "description": "Votre preuve de paiement a ete envoyee avec succes. Nous confirmerons votre niveau sous peu apres verification.",
+      "note": "Notre equipe verifiera votre paiement et mettra a jour votre compte des que possible.",
+      "backToDashboard": "Retour au tableau de bord"
+    },
     "questions": "Des questions ?",
     "contactUs": "Contactez-nous",
     "orCheckFaq": "ou consultez notre",

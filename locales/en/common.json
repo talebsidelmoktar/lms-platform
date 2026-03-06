@@ -122,6 +122,12 @@
         "submitFailed": "Failed to submit request."
       }
     },
+    "paymentSubmitted": {
+      "title": "Payment proof uploaded",
+      "description": "Your payment proof was uploaded successfully. We will confirm your tier shortly after reviewing it.",
+      "note": "Our team will verify your payment and update your account as soon as possible.",
+      "backToDashboard": "Back to dashboard"
+    },
     "questions": "Questions?",
     "contactUs": "Contact us",
     "orCheckFaq": "or check out our",

@@ -1,9 +1,10 @@
 "use client";
 
 import { AlertCircle, CheckCircle2, Upload, X } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { getPathname } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +13,7 @@ import { submitPaymentRequest } from "@/lib/actions/payment-requests";
 type RequestTier = "pro" | "ultra";
 
 export function ManualUpgradeRequest() {
+  const locale = useLocale();
   const t = useTranslations("common.pricing.manualRequest");
   const tiersT = useTranslations("common.tiers");
   const [isOpen, setIsOpen] = useState(false);
@@ -68,6 +70,11 @@ export function ManualUpgradeRequest() {
         message: t("success"),
       });
       resetForm();
+      setIsOpen(false);
+      window.location.href = getPathname({
+        href: "/pricing/submitted",
+        locale,
+      });
     });
   };
 

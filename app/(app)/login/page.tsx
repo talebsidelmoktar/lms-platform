@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { Mail, Phone, ShieldCheck } from "lucide-react";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { getPathname } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 import { buildEmailCallbackUrl } from "@/lib/auth/email-redirect";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
@@ -272,14 +272,16 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="rounded-3xl border border-zinc-800 bg-zinc-900/55 backdrop-blur-xl p-4 sm:p-5 shadow-2xl shadow-black/40">
             <div className="flex justify-center mb-3">
-              <Image
-                src="/mauri-logo.png"
-                alt="Mauri Academy"
-                width={170}
-                height={56}
-                className="h-9 w-auto object-contain"
-                priority
-              />
+              <Link href="/" aria-label="Go to home page">
+                <Image
+                  src="/mauri-logo.png"
+                  alt="Mauri Academy"
+                  width={170}
+                  height={56}
+                  className="h-9 w-auto object-contain"
+                  priority
+                />
+              </Link>
             </div>
 
             <div className="flex items-center justify-center gap-2 mb-1">
