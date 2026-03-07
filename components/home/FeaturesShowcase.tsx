@@ -2,13 +2,12 @@ import {
   PlayCircle,
   BookOpenCheck,
   FileText,
-  FolderOpen,
+  Folder,
   Radio,
   MessageSquare,
   ClipboardCheck,
 } from "lucide-react";
 
-// Features showcase for homepage
 const features = [
   {
     icon: PlayCircle,
@@ -32,7 +31,7 @@ const features = [
     highlighted: false,
   },
   {
-    icon: FolderOpen,
+    icon: Folder,
     label: "تسجيلات الحصص المباشرة",
     iconBg: "bg-amber-100",
     iconColor: "text-amber-500",
@@ -76,7 +75,7 @@ export function FeaturesShowcase() {
               }`}
             >
               <span
-                className={`text-lg font-semibold font-arabic ${
+                className={`text-lg font-semibold ${
                   feature.highlighted ? "text-sky-600" : "text-sky-500"
                 }`}
               >
