@@ -8,6 +8,7 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 
+// Features showcase for homepage
 const features = [
   {
     icon: PlayCircle,
