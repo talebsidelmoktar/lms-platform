@@ -2,7 +2,7 @@ import {
   PlayCircle,
   BookOpenCheck,
   FileText,
-  FolderVideo,
+  FolderOpen,
   Radio,
   MessageSquare,
   ClipboardCheck,
@@ -31,7 +31,7 @@ const features = [
     highlighted: false,
   },
   {
-    icon: FolderVideo,
+    icon: FolderOpen,
     label: "تسجيلات الحصص المباشرة",
     iconBg: "bg-amber-100",
     iconColor: "text-amber-500",
