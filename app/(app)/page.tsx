@@ -16,6 +16,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { CourseCard } from "@/components/courses";
 import { Header } from "@/components/Header";
+import { FeaturesShowcase } from "@/components/home/FeaturesShowcase";
 import { getCurrentUser } from "@/lib/auth/server";
 import { Button } from "@/components/ui/button";
 import { sanityFetch } from "@/sanity/lib/live";
@@ -242,6 +243,9 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        {/* Features Showcase */}
+        <FeaturesShowcase />
 
         {/* Tiers Preview */}
         <section className="px-6 lg:px-12 py-20 max-w-7xl mx-auto">
