@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentUser, getCurrentUserId, getCurrentUserRole } from "@/lib/auth/server";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { setUserTierById } from "@/lib/db/users";
 import { writeClient } from "@/sanity/lib/client";
 
 type RequestTier = "pro" | "ultra";
@@ -184,14 +184,7 @@ export async function reviewPaymentRequest(
     }
 
     if (status === "approved") {
-      const adminSupabase = createSupabaseAdminClient();
-      const { error: profileUpdateError } = await adminSupabase
-        .from("profiles")
-        .update({ tier: request.requestedTier })
-        .eq("id", request.clerkUserId);
-      if (profileUpdateError) {
-        throw profileUpdateError;
-      }
+      await setUserTierById(request.clerkUserId, request.requestedTier);
     }
 
     await writeClient

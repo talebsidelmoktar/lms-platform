@@ -80,8 +80,36 @@ export function useSupabaseProfile(user: SessionUser | null, isSessionLoaded: bo
 
   useEffect(() => {
     if (!isSessionLoaded) return;
-    setProfile(mapProfileFromUser(user));
-    setIsLoaded(true);
+    let isMounted = true;
+
+    async function loadTier() {
+      const next = mapProfileFromUser(user);
+      if (!user?.id) {
+        if (!isMounted) return;
+        setProfile(next);
+        setIsLoaded(true);
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/me/tier", { credentials: "include" });
+        if (!res.ok) throw new Error("tier fetch failed");
+        const json = (await res.json()) as { tier?: Tier };
+        next.tier = normalizeTier(json.tier);
+      } catch {
+        // keep default "free"
+      }
+
+      if (!isMounted) return;
+      setProfile(next);
+      setIsLoaded(true);
+    }
+
+    loadTier();
+
+    return () => {
+      isMounted = false;
+    };
   }, [isSessionLoaded, user]);
 
   return { isLoaded, profile };

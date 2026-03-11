@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import type { Tier } from "@/lib/constants";
+import { getUserTierById } from "@/lib/db/users";
 import type { AppUser } from "./types";
 
 function normalizeTier(value: string | null | undefined): Tier {
@@ -20,8 +21,8 @@ export async function getCurrentUser(): Promise<AppUser | null> {
 
   if (!user) return null;
 
-  // This repo previously used Supabase `profiles` to store tier/role/avatar.
-  // With Better Auth + Neon, keep a minimal mapping for now.
+  const tier = await getUserTierById(user.id).catch(() => "free" as Tier);
+
   return {
     id: user.id,
     email: (user as { email?: string | null }).email ?? null,
@@ -29,7 +30,7 @@ export async function getCurrentUser(): Promise<AppUser | null> {
     fullName: (user as { name?: string | null }).name ?? null,
     username: null,
     avatarUrl: (user as { image?: string | null }).image ?? null,
-    tier: normalizeTier(null),
+    tier,
     role: null,
   };
 }
