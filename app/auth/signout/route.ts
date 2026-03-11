@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
+import { auth } from "@/auth";
 
 function getSafeNextPath(rawNext: string | null): string {
   if (!rawNext) return "/";
@@ -12,9 +13,7 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const next = getSafeNextPath(requestUrl.searchParams.get("next"));
   
-  const supabase = await createSupabaseServerClient({ canSetCookies: true });
-
-  await supabase.auth.signOut();
+  await auth.api.signOut({ headers: await headers() });
 
   return NextResponse.redirect(new URL(next, requestUrl.origin));
 }

@@ -1,6 +1,7 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import type { Tier } from "@/lib/constants";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppUser } from "./types";
 
 function normalizeTier(value: string | null | undefined): Tier {
@@ -14,55 +15,22 @@ function normalizeTier(value: string | null | undefined): Tier {
 }
 
 export async function getCurrentUser(): Promise<AppUser | null> {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const user = session?.user ?? null;
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
-  let { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, username, avatar_url, tier, role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (!profile) {
-    await supabase.from("profiles").upsert(
-      {
-        id: user.id,
-        email: user.email ?? null,
-        phone:
-          user.phone ??
-          (user.user_metadata?.phone as string | undefined) ??
-          null,
-        full_name:
-          (user.user_metadata?.full_name as string | undefined) ?? null,
-        avatar_url:
-          (user.user_metadata?.avatar_url as string | undefined) ?? null,
-      },
-      { onConflict: "id" },
-    );
-
-    const result = await supabase
-      .from("profiles")
-      .select("full_name, username, avatar_url, tier, role")
-      .eq("id", user.id)
-      .maybeSingle();
-    profile = result.data;
-  }
-
+  // This repo previously used Supabase `profiles` to store tier/role/avatar.
+  // With Better Auth + Neon, keep a minimal mapping for now.
   return {
     id: user.id,
-    email: user.email ?? null,
-    phone: user.phone ?? null,
-    fullName: (profile?.full_name as string | null | undefined) ?? null,
-    username: (profile?.username as string | null | undefined) ?? null,
-    avatarUrl: (profile?.avatar_url as string | null | undefined) ?? null,
-    tier: normalizeTier((profile?.tier as string | null | undefined) ?? null),
-    role: (profile?.role as string | null | undefined) ?? null,
+    email: (user as { email?: string | null }).email ?? null,
+    phone: (user as { phoneNumber?: string | null }).phoneNumber ?? null,
+    fullName: (user as { name?: string | null }).name ?? null,
+    username: null,
+    avatarUrl: (user as { image?: string | null }).image ?? null,
+    tier: normalizeTier(null),
+    role: null,
   };
 }
 

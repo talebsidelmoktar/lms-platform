@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getPathname } from "@/i18n/navigation";
-import { buildEmailCallbackUrl } from "@/lib/auth/email-redirect";
-import { supabaseBrowser } from "@/lib/supabase/client";
+import { getAuthClient } from "@/lib/better-auth/client";
 
 export default function VerifyPage() {
   const locale = useLocale();
@@ -30,6 +29,12 @@ export default function VerifyPage() {
     window.location.href = dashboardPath;
   }
 
+  function normalizeMrPhone(raw: string): string {
+    const digits = raw.replace(/[^\d]/g, "");
+    if (digits.startsWith("222") && digits.length === 11) return digits.slice(3);
+    return digits;
+  }
+
   async function onVerifyPhoneOtp(e: React.FormEvent) {
     e.preventDefault();
     setNotice(null);
@@ -38,16 +43,17 @@ export default function VerifyPage() {
 
     try {
       const token = otp.trim();
-      if (!phone) throw new Error(t("errors.phoneRequiredForOtp"));
+      const normalizedPhone = normalizeMrPhone(phone);
+      if (!normalizedPhone) throw new Error(t("errors.phoneRequiredForOtp"));
       if (!token) throw new Error(t("phone.otpPlaceholder"));
 
-      const { error: verifyError } = await supabaseBrowser.auth.verifyOtp({
-        phone,
-        token,
-        type: "sms",
+      const authClient = getAuthClient();
+      const result = await authClient.phoneNumber.verify({
+        phoneNumber: normalizedPhone,
+        code: token,
       });
 
-      if (verifyError) throw verifyError;
+      if (result.error) throw new Error(result.error.message);
       redirectToDashboard();
     } catch (err) {
       const message = err instanceof Error ? err.message : t("errors.generic");
@@ -64,22 +70,9 @@ export default function VerifyPage() {
 
     try {
       if (!email) throw new Error(t("errors.emailRequiredForPasswordAuth"));
-      const dashboardPath = getPathname({ href: "/dashboard", locale });
-      const emailCallbackUrl = buildEmailCallbackUrl(
-        dashboardPath,
-        window.location.origin,
+      throw new Error(
+        "Email verification is not configured for Better Auth in this project.",
       );
-
-      const { error: resendError } = await supabaseBrowser.auth.resend({
-        type: "signup",
-        email,
-        options: {
-          emailRedirectTo: emailCallbackUrl,
-        },
-      });
-
-      if (resendError) throw resendError;
-      setNotice(t("verify.emailResent"));
     } catch (err) {
       const message = err instanceof Error ? err.message : t("errors.generic");
       setError(message);

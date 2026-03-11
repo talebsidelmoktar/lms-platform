@@ -1,7 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
-import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 
 const LOCALE_PATTERN = /^\/(en|fr|ar)(?=\/|$)/;
 
@@ -16,16 +15,20 @@ export default async function proxy(req: NextRequest) {
     const locale = localeMatch?.[1] ?? null;
     const pathWithoutLocale = pathname.replace(LOCALE_PATTERN, "") || "/";
     const isStudioRoute = /^(\/studio)(\/|$)/.test(pathWithoutLocale);
-    const isProtectedRoute = /^(\/dashboard|\/lessons|\/admin)(\/|$)/.test(
-      pathWithoutLocale,
-    );
-    const isAuthRoute = /^(\/login)(\/|$)/.test(pathWithoutLocale);
+    const isApiRoute = /^(\/api)(\/|$)/.test(pathWithoutLocale);
+    const isBetterAuthRoute = /^(\/api\/auth)(\/|$)/.test(pathWithoutLocale);
 
     // Some OAuth providers can bounce back to "/" with code params.
     // Ensure those requests always hit the dedicated callback handler.
     if (
       pathWithoutLocale !== "/auth/callback" &&
-      (hasOAuthCode || hasOtpToken)
+      (hasOAuthCode || hasOtpToken) &&
+      // Never rewrite/redirect Better Auth API routes, especially the OAuth callback.
+      // Otherwise we create an infinite loop:
+      // /api/auth/callback/google -> /auth/callback -> /api/auth/callback/google -> ...
+      !isBetterAuthRoute &&
+      // Keep API routes stable; only redirect browser/page navigations.
+      !isApiRoute
     ) {
       const callbackUrl = req.nextUrl.clone();
       callbackUrl.pathname = locale
@@ -40,37 +43,11 @@ export default async function proxy(req: NextRequest) {
       return NextResponse.redirect(callbackUrl);
     }
 
-    let getResponse = () => NextResponse.next();
-    let user: unknown = null;
-    const withSupabaseCookies = (response: NextResponse) => {
-      const supabaseResponse = getResponse();
-      for (const cookie of supabaseResponse.cookies.getAll()) {
-        const { name, value, ...options } = cookie;
-        response.cookies.set(name, value, options);
-      }
-      return response;
-    };
-
-    // Keep Sanity Studio isolated from app auth middleware to avoid 500s
-    // when Studio is accessed on deployments with different auth env/config.
-    if (!isStudioRoute) {
-      const middleware = createSupabaseMiddlewareClient(req);
-      getResponse = middleware.getResponse;
-      const result = await middleware.supabase.auth.getUser();
-      user = result.data.user;
-    }
-
-    if (isProtectedRoute && !user) {
-      const homeUrl = req.nextUrl.clone();
-      homeUrl.pathname = locale ? `/${locale}` : "/";
-      return withSupabaseCookies(NextResponse.redirect(homeUrl));
-    }
-
-    if (isAuthRoute && user) {
-      const dashboardUrl = req.nextUrl.clone();
-      dashboardUrl.pathname = locale ? `/${locale}/dashboard` : "/dashboard";
-      return withSupabaseCookies(NextResponse.redirect(dashboardUrl));
-    }
+    // Supabase middleware protection was previously used here. This project now
+    // uses Better Auth (Node.js runtime) which can't be checked from Edge middleware.
+    // Route protection is enforced by server components (e.g. requireCurrentUser()).
+    const withSupabaseCookies = (response: NextResponse) => response;
+    if (isStudioRoute) return NextResponse.next();
 
     if (localeMatch) {
       const localeStr = localeMatch[1];
@@ -104,7 +81,7 @@ export default async function proxy(req: NextRequest) {
       return withSupabaseCookies(NextResponse.redirect(redirectUrl));
     }
 
-    return getResponse();
+    return NextResponse.next();
   } catch (error) {
     console.error("[proxy] Error:", error);
     return new NextResponse(

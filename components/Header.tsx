@@ -27,7 +27,6 @@ import {
 import { getPathname, Link, usePathname } from "@/i18n/navigation";
 import { type AppLocale, routing } from "@/i18n/routing";
 import { useSupabaseProfile, useSupabaseSessionUser } from "@/lib/auth/client";
-import { useUserTier } from "@/lib/hooks/use-user-tier";
 import type { Tier } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -47,16 +46,14 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
   const authT = useTranslations("auth");
   const { isLoaded, user } = useSupabaseSessionUser();
   const { profile } = useSupabaseProfile(user, isLoaded);
-  const userTier = useUserTier();
-  const effectiveTier = initialUser?.tier ?? userTier;
+  const effectiveTier = initialUser?.tier ?? profile.tier;
   const isSignedIn = Boolean(user ?? initialUser);
   const isUltra = effectiveTier === "ultra";
   const effectiveEmail = user?.email ?? initialUser?.email ?? null;
-  const effectivePhone = user?.phone ?? initialUser?.phone ?? null;
+  const effectivePhone = user?.phoneNumber ?? initialUser?.phone ?? null;
   const effectiveName = profile.fullName ?? initialUser?.fullName ?? null;
   const effectiveAvatarUrl =
     profile.avatarUrl ??
-    user?.user_metadata?.avatar_url ??
     initialUser?.avatarUrl ??
     "";
 

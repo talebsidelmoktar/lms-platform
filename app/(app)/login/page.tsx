@@ -9,16 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { getPathname, Link } from "@/i18n/navigation";
-import { buildEmailCallbackUrl } from "@/lib/auth/email-redirect";
-import { supabaseBrowser } from "@/lib/supabase/client";
+import { getAuthClient } from "@/lib/better-auth/client";
 
 type EmailMode = "signin" | "signup";
 type PhoneStep = "send" | "verify";
 const SIGNUP_EMAIL_COOLDOWN_MS = 60_000;
-
-interface AvailabilityResponse {
-  emailExists: boolean;
-}
 
 export default function LoginPage() {
   const locale = useLocale();
@@ -27,10 +22,9 @@ export default function LoginPage() {
   const [phoneStep, setPhoneStep] = useState<PhoneStep>("send");
 
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
 
-  const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,6 +36,12 @@ export default function LoginPage() {
     () => (emailMode === "signup" ? t("title.signUp") : t("title.signIn")),
     [emailMode, t],
   );
+
+  function normalizeMrPhone(raw: string): string {
+    const digits = raw.replace(/[^\d]/g, "");
+    if (digits.startsWith("222") && digits.length === 11) return digits.slice(3);
+    return digits;
+  }
 
   function redirectToDashboard() {
     const dashboardPath = getPathname({ href: "/dashboard", locale });
@@ -63,22 +63,6 @@ export default function LoginPage() {
     window.location.href = verifyPath;
   }
 
-  async function checkAvailability(input: {
-    email?: string;
-  }): Promise<AvailabilityResponse> {
-    const response = await fetch("/api/auth/check-availability", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    });
-
-    if (!response.ok) {
-      throw new Error(t("errors.availabilityCheckFailed"));
-    }
-
-    return (await response.json()) as AvailabilityResponse;
-  }
-
   async function onEmailSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -86,14 +70,31 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const normalizedEmail = email.trim();
+      const normalizedIdentifier = identifier.trim();
+      const normalizedEmail = normalizedIdentifier;
       const normalizedPassword = password.trim();
+      const normalizedPhone = normalizeMrPhone(normalizedIdentifier);
+      const isMrPhone = /^[234]\d{7}$/.test(normalizedPhone);
 
-      if (!normalizedEmail && !phone.trim()) {
+      if (!normalizedIdentifier) {
         throw new Error(t("errors.enterEmailOrPhone"));
       }
 
-      if (!normalizedEmail) {
+      // UX: single field. If user typed a phone number, treat this submit as "send OTP"
+      // and redirect to the OTP page, rather than requiring email/password.
+      if (isMrPhone) {
+        const authClient = getAuthClient();
+        const result = await authClient.phoneNumber.sendOtp({
+          phoneNumber: normalizedPhone,
+        });
+        if (result.error) throw new Error(result.error.message);
+
+        setNotice(t("phone.codeSent"));
+        redirectToVerify({ method: "phone", phone: normalizedPhone });
+        return;
+      }
+
+      if (!normalizedEmail || !normalizedEmail.includes("@")) {
         throw new Error(t("errors.emailRequiredForPasswordAuth"));
       }
 
@@ -102,56 +103,32 @@ export default function LoginPage() {
       }
 
       if (emailMode === "signin") {
-        const { error: signInError } =
-          await supabaseBrowser.auth.signInWithPassword({
-            email: normalizedEmail,
-            password: normalizedPassword,
-          });
-        if (signInError) throw signInError;
+        const authClient = getAuthClient();
+        const result = await authClient.signIn.email({
+          email: normalizedEmail,
+          password: normalizedPassword,
+        });
+        if (result.error) throw new Error(result.error.message);
         redirectToDashboard();
         return;
       }
-
-      const signupPhone = phone.trim();
-      const dashboardPath = getPathname({ href: "/dashboard", locale });
-      const emailCallbackUrl = buildEmailCallbackUrl(
-        dashboardPath,
-        window.location.origin,
-      );
-      const availability = await checkAvailability({
-        email: normalizedEmail,
-      });
 
       if (Date.now() < signupRetryAt) {
         const waitSeconds = Math.ceil((signupRetryAt - Date.now()) / 1000);
         throw new Error(`Please wait ${waitSeconds}s before trying again.`);
       }
 
-      if (availability.emailExists) {
-        throw new Error(t("errors.emailAlreadyRegistered"));
-      }
-
-      const { data: signUpData, error: signUpError } =
-        await supabaseBrowser.auth.signUp({
-          email: normalizedEmail,
-          password: normalizedPassword,
-          options: {
-            emailRedirectTo: emailCallbackUrl,
-            data: {
-              full_name: fullName.trim() || null,
-              phone: signupPhone || null,
-            },
-          },
-        });
-
-      if (signUpError) throw signUpError;
-      if ((signUpData.user?.identities?.length ?? 0) === 0) {
-        throw new Error(t("errors.emailAlreadyRegistered"));
-      }
+      const authClient = getAuthClient();
+      const signupResult = await authClient.signUp.email({
+        email: normalizedEmail,
+        password: normalizedPassword,
+        name: fullName.trim() || normalizedEmail.split("@")[0] || "User",
+      });
+      if (signupResult.error) throw new Error(signupResult.error.message);
       setSignupRetryAt(0);
 
       setNotice(t("notice.signupSuccess"));
-      redirectToVerify({ method: "email", email: normalizedEmail });
+      redirectToDashboard();
     } catch (err) {
       let message = err instanceof Error ? err.message : t("errors.generic");
       if (
@@ -175,19 +152,20 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      if (!phone.trim() && !email.trim()) {
+      if (!identifier.trim()) {
         throw new Error(t("errors.enterEmailOrPhone"));
       }
 
-      const normalizedPhone = phone.trim();
-      if (!normalizedPhone) {
+      const normalizedPhone = normalizeMrPhone(identifier.trim());
+      if (!/^[234]\d{7}$/.test(normalizedPhone)) {
         throw new Error(t("errors.phoneRequiredForOtp"));
       }
 
-      const { error: otpError } = await supabaseBrowser.auth.signInWithOtp({
-        phone: normalizedPhone,
+      const authClient = getAuthClient();
+      const result = await authClient.phoneNumber.sendOtp({
+        phoneNumber: normalizedPhone,
       });
-      if (otpError) throw otpError;
+      if (result.error) throw new Error(result.error.message);
 
       setNotice(t("phone.codeSent"));
       redirectToVerify({ method: "phone", phone: normalizedPhone });
@@ -206,15 +184,15 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const normalizedPhone = phone.trim();
+      const normalizedPhone = normalizeMrPhone(identifier.trim());
       const token = otp.trim();
 
-      const { error: verifyError } = await supabaseBrowser.auth.verifyOtp({
-        phone: normalizedPhone,
-        token,
-        type: "sms",
+      const authClient = getAuthClient();
+      const result = await authClient.phoneNumber.verify({
+        phoneNumber: normalizedPhone,
+        code: token,
       });
-      if (verifyError) throw verifyError;
+      if (result.error) throw new Error(result.error.message);
 
       redirectToDashboard();
     } catch (err) {
@@ -232,14 +210,28 @@ export default function LoginPage() {
 
     try {
       const dashboardPath = getPathname({ href: "/dashboard", locale });
-      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(dashboardPath)}`;
-
-      const { error: oauthError } = await supabaseBrowser.auth.signInWithOAuth({
+      const callbackURL = new URL(dashboardPath, window.location.origin).toString();
+      const authClient = getAuthClient();
+      const result = await authClient.signIn.social({
         provider: "google",
-        options: { redirectTo },
+        callbackURL,
+        disableRedirect: true,
       });
 
-      if (oauthError) throw oauthError;
+      if (result.error) throw new Error(result.error.message);
+      // Some client setups return the provider URL rather than hard-redirecting.
+      // Always follow the returned URL to ensure we complete the OAuth flow.
+      const url = result.data?.url;
+      if (!url) throw new Error("No redirect URL returned from Better Auth.");
+      try {
+        const u = new URL(url);
+        console.info("[auth] google auth url", {
+          redirect_uri: u.searchParams.get("redirect_uri"),
+        });
+      } catch {
+        // ignore parse failures
+      }
+      window.location.href = url;
     } catch (err) {
       const message = err instanceof Error ? err.message : t("errors.generic");
       setError(message);
@@ -336,14 +328,13 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Label htmlFor="email" className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  {t("email.emailLabel")}
+                  {`${t("email.emailLabel")} / ${t("phone.phoneLabel")}`}
                 </Label>
                 <Input
                   id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t("email.emailPlaceholder")}
-                  type="email"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder={`${t("email.emailPlaceholder")} / ${t("phone.phonePlaceholder")}`}
                   autoComplete="email"
                   className="h-10 rounded-xl border-zinc-700 bg-zinc-950/60"
                 />
@@ -411,19 +402,12 @@ export default function LoginPage() {
                   {t("phone.phoneLabel")}
                 </summary>
                 <div className="mt-3 space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="flex items-center gap-2">
-                      <Phone className="w-4 h-4" />
-                      {t("phone.phoneLabel")}
-                    </Label>
-                    <Input
-                      id="phone"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder={t("phone.phonePlaceholder")}
-                      autoComplete="tel"
-                      className="h-10 rounded-xl border-zinc-700 bg-zinc-950/60"
-                    />
+                  <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/40 px-3 py-2 text-xs text-zinc-400 flex items-start gap-2">
+                    <Phone className="w-4 h-4 mt-0.5 shrink-0 text-zinc-300" />
+                    <div className="leading-relaxed">
+                      <div className="text-zinc-200">{t("phone.phoneLabel")}</div>
+                      <div className="text-zinc-500">{t("phone.phoneHelp")}</div>
+                    </div>
                   </div>
 
                   {phoneStep === "verify" && (
