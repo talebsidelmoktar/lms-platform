@@ -8,31 +8,36 @@ import {
   Play,
   Rocket,
   Sparkles,
-  Star,
   Trophy,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import type { CSSProperties } from "react";
 import { CourseCard } from "@/components/courses";
 import { Header } from "@/components/Header";
-import { getCurrentUser } from "@/lib/auth/server";
 import { Button } from "@/components/ui/button";
+import { TestimonialsSection } from "@/components/ui/testimonials-section";
+import { getCurrentUser } from "@/lib/auth/server";
+import type { Tier } from "@/lib/constants";
+import { hasTierAccess } from "@/lib/user-tier";
 import { sanityFetch } from "@/sanity/lib/live";
-import { FEATURED_COURSES_QUERY, STATS_QUERY } from "@/sanity/lib/queries";
+import { ALL_COURSES_QUERY, STATS_QUERY } from "@/sanity/lib/queries";
 
 export default async function Home() {
   const t = await getTranslations("common.home");
+  const headerT = await getTranslations("common.header");
   const pricingT = await getTranslations("common.pricing");
   const tiersT = await getTranslations("common.tiers");
   // Fetch featured courses, stats, and check auth status
   const [{ data: courses }, { data: stats }, user] = await Promise.all([
-    sanityFetch({ query: FEATURED_COURSES_QUERY }),
+    sanityFetch({ query: ALL_COURSES_QUERY }),
     sanityFetch({ query: STATS_QUERY }),
     getCurrentUser(),
   ]);
 
   const isSignedIn = !!user;
+  const userTier = (user?.tier ?? "free") as Tier;
   const tierCards = [
     {
       tier: tiersT("free"),
@@ -86,6 +91,16 @@ export default async function Home() {
       avatar: "KM",
     },
   ];
+
+  const testimonialsForSection = testimonials.map(
+    ({ name, role, content }) => ({
+      author: { name, title: role },
+      text: content,
+    }),
+  );
+
+  type CSSVars = CSSProperties & Record<`--${string}`, string>;
+  const coursesMarqueeStyle: CSSVars = { "--courses-marquee-duration": "38s" };
 
   return (
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">
@@ -296,20 +311,43 @@ export default async function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {courses.map((course) => (
-              <CourseCard
-                key={course._id}
-                slug={
-                  course.slug ? { current: course.slug.current ?? "" } : null
-                }
-                title={course.title}
-                description={course.description}
-                tier={course.tier}
-                thumbnail={course.thumbnail}
-                moduleCount={course.moduleCount}
-                lessonCount={course.lessonCount}
-              />
-            ))}
+            <div className="md:col-span-3">
+              <div className="courses-marquee overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+                <div
+                  className="animate-courses-marquee flex gap-6 py-2"
+                  style={coursesMarqueeStyle}
+                >
+                  {[...courses, ...courses].map((course, index) => {
+                    const requiredTier = (course.tier ?? "free") as Tier;
+                    const isLocked = !hasTierAccess(userTier, requiredTier);
+                    const href = isLocked ? "/pricing" : undefined;
+
+                    return (
+                      <div
+                        key={`${course._id}-${index}`}
+                        className="w-[260px] sm:w-[300px] lg:w-[320px] shrink-0"
+                      >
+                        <CourseCard
+                          href={href}
+                          isLocked={isLocked}
+                          slug={
+                            course.slug
+                              ? { current: course.slug.current ?? "" }
+                              : null
+                          }
+                          title={course.title}
+                          description={course.description}
+                          tier={course.tier}
+                          thumbnail={course.thumbnail}
+                          moduleCount={course.moduleCount}
+                          lessonCount={course.lessonCount}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="text-center mt-10">
@@ -326,49 +364,13 @@ export default async function Home() {
         </section>
 
         {/* Testimonials */}
-        <section
+        <TestimonialsSection
           id="testimonials"
-          className="px-6 lg:px-12 py-20 max-w-7xl mx-auto"
-        >
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              {t("studentsLoveIt")}{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                {t("studentsLoveIt")}
-              </span>
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial) => (
-              <div
-                key={testimonial.name}
-                className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800"
-              >
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={`star-${testimonial.name}-${i}`}
-                      className="w-4 h-4 text-amber-400 fill-amber-400"
-                    />
-                  ))}
-                </div>
-                <p className="text-zinc-300 mb-6 leading-relaxed">
-                  &ldquo;{testimonial.content}&rdquo;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-semibold tracking-wide text-zinc-200">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm">{testimonial.name}</p>
-                    <p className="text-xs text-zinc-500">{testimonial.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+          badge={headerT("reviews")}
+          title={t("studentsLoveIt")}
+          description={t("testimonialsDescription")}
+          testimonials={testimonialsForSection}
+        />
 
         {/* CTA Section */}
         <section className="px-6 lg:px-12 py-20 max-w-7xl mx-auto">

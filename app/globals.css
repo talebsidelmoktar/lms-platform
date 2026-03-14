@@ -142,6 +142,49 @@
   opacity: 0;
 }
 
+@keyframes testimonials-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-testimonials-scroll {
+  animation: testimonials-scroll var(--testimonials-scroll-duration, 15s) linear
+    infinite;
+}
+
+@keyframes courses-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-courses-marquee {
+  animation: courses-marquee var(--courses-marquee-duration, 40s) linear
+    infinite;
+}
+
+.courses-marquee:hover .animate-courses-marquee {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-testimonials-scroll {
+    animation: none;
+    transform: none;
+  }
+  .animate-courses-marquee {
+    animation: none;
+    transform: none;
+  }
+}
+
 /* Clerk Pricing Table text styling */
 .cl-pricingTableCardPeriodToggle label,
 .cl-pricingTableCardPeriodToggle span {

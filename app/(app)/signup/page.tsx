@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
@@ -12,41 +12,25 @@ import { Label } from "@/components/ui/label";
 import { getPathname, Link } from "@/i18n/navigation";
 import { getAuthClient } from "@/lib/better-auth/client";
 
-export default function LoginPage() {
+const SIGNUP_EMAIL_COOLDOWN_MS = 60_000;
+
+export default function SignUpPage() {
   const locale = useLocale();
   const t = useTranslations("auth.login");
   const isArabic = locale === "ar";
 
-  const [identifier, setIdentifier] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  function normalizeMrPhone(raw: string): string {
-    const digits = raw.replace(/[^\d]/g, "");
-    if (digits.startsWith("222") && digits.length === 11)
-      return digits.slice(3);
-    return digits;
-  }
+  const [notice, setNotice] = useState<string | null>(null);
+  const [signupRetryAt, setSignupRetryAt] = useState(0);
 
   function redirectToDashboard() {
     const dashboardPath = getPathname({ href: "/dashboard", locale });
     window.location.href = dashboardPath;
-  }
-
-  function redirectToVerify(options: {
-    method: "email" | "phone";
-    phone?: string;
-  }) {
-    const params = new URLSearchParams({ method: options.method });
-    if (options.phone) params.set("phone", options.phone);
-    const verifyPath = getPathname({
-      href: `/login/verify?${params.toString()}`,
-      locale,
-    });
-    window.location.href = verifyPath;
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -56,30 +40,10 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const normalizedIdentifier = identifier.trim();
-      const normalizedEmail = normalizedIdentifier;
+      const normalizedEmail = email.trim();
       const normalizedPassword = password.trim();
-      const normalizedPhone = normalizeMrPhone(normalizedIdentifier);
-      const isMrPhone = /^[234]\d{7}$/.test(normalizedPhone);
 
-      if (!normalizedIdentifier) {
-        throw new Error(t("errors.enterEmailOrPhone"));
-      }
-
-      // If user typed a Mauritanian phone number, send OTP and redirect to verification.
-      if (isMrPhone) {
-        const authClient = getAuthClient();
-        const result = await authClient.phoneNumber.sendOtp({
-          phoneNumber: normalizedPhone,
-        });
-        if (result.error) throw new Error(result.error.message);
-
-        setNotice(t("phone.codeSent"));
-        redirectToVerify({ method: "phone", phone: normalizedPhone });
-        return;
-      }
-
-      if (!normalizedEmail.includes("@")) {
+      if (!normalizedEmail || !normalizedEmail.includes("@")) {
         throw new Error(t("errors.emailRequiredForPasswordAuth"));
       }
 
@@ -87,15 +51,32 @@ export default function LoginPage() {
         throw new Error(t("errors.passwordRequiredForEmail"));
       }
 
+      if (Date.now() < signupRetryAt) {
+        const waitSeconds = Math.ceil((signupRetryAt - Date.now()) / 1000);
+        throw new Error(`Please wait ${waitSeconds}s before trying again.`);
+      }
+
       const authClient = getAuthClient();
-      const result = await authClient.signIn.email({
+      const result = await authClient.signUp.email({
         email: normalizedEmail,
         password: normalizedPassword,
+        name: fullName.trim() || normalizedEmail.split("@")[0] || "User",
       });
       if (result.error) throw new Error(result.error.message);
+
+      setSignupRetryAt(0);
+      setNotice(t("notice.signupSuccess"));
       redirectToDashboard();
     } catch (err) {
-      const message = err instanceof Error ? err.message : t("errors.generic");
+      let message = err instanceof Error ? err.message : t("errors.generic");
+      if (
+        err instanceof Error &&
+        err.message.toLowerCase().includes("rate limit")
+      ) {
+        setSignupRetryAt(Date.now() + SIGNUP_EMAIL_COOLDOWN_MS);
+        message =
+          "Email rate limit exceeded. Please wait 60 seconds and try again.";
+      }
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -152,7 +133,7 @@ export default function LoginPage() {
             <div className="space-y-5">
               <div className="text-center">
                 <h1 className="text-2xl font-bold text-white">
-                  {t("title.signIn")}
+                  {t("title.signUp")}
                 </h1>
                 <p className="mt-1 text-sm text-zinc-400">{t("subtitle")}</p>
               </div>
@@ -193,19 +174,34 @@ export default function LoginPage() {
               <form onSubmit={onSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label
-                    htmlFor="identifier"
+                    htmlFor="fullName"
                     className="block text-sm font-medium text-zinc-200"
                   >
-                    <span className="inline-flex items-center gap-2">
-                      <Mail className="w-4 h-4" />
-                      {`${t("email.emailLabel")} / ${t("phone.phoneLabel")}`}
-                    </span>
+                    {t("email.fullNameLabel")}
                   </Label>
                   <Input
-                    id="identifier"
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder={`${t("email.emailPlaceholder")} / ${t("phone.phonePlaceholder")}`}
+                    id="fullName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={t("email.fullNamePlaceholder")}
+                    autoComplete="name"
+                    className="h-11 rounded-md border-zinc-700 bg-zinc-950/40 text-white placeholder:text-zinc-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-zinc-200"
+                  >
+                    {t("email.emailLabel")}
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t("email.emailPlaceholder")}
                     autoComplete="email"
                     className="h-11 rounded-md border-zinc-700 bg-zinc-950/40 text-white placeholder:text-zinc-500"
                   />
@@ -222,7 +218,7 @@ export default function LoginPage() {
                     id="password"
                     value={password}
                     onChange={setPassword}
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                     placeholder={t("email.passwordLabel")}
                     className="h-11 rounded-md border-zinc-700 bg-zinc-950/40 text-white placeholder:text-zinc-500"
                   />
@@ -240,7 +236,7 @@ export default function LoginPage() {
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-2">
-                      <span>{t("email.submitSignIn")}</span>
+                      <span>{t("email.submitSignUp")}</span>
                       {isArabic ? (
                         <ArrowLeft className="h-4 w-4" />
                       ) : (
@@ -253,12 +249,12 @@ export default function LoginPage() {
 
               <div className="text-center pt-2">
                 <p className="text-sm text-zinc-400">
-                  {t("ui.noAccount")}{" "}
+                  {t("ui.haveAccount")}{" "}
                   <Link
-                    href="/signup"
+                    href="/login"
                     className="font-medium text-sky-300 hover:text-sky-200"
                   >
-                    {t("ui.createAccount")}
+                    {t("ui.signInLink")}
                   </Link>
                 </p>
               </div>

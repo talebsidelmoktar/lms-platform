@@ -299,12 +299,12 @@ export function Header({ initialUser }: { initialUser?: HeaderInitialUser }) {
 
 function Logo() {
   return (
-    <div className="relative ml-3 h-11 w-[132px] sm:ml-1 sm:h-14 sm:w-[170px] overflow-hidden">
+    <div className="relative h-12 w-[150px] sm:h-16 sm:w-[190px] overflow-hidden">
       <Image
         src="/mauri-logo.png"
         alt="Mauri Academy"
-        width={170}
-        height={56}
+        width={195}
+        height={70}
         className="h-full w-full object-contain"
         priority
       />
