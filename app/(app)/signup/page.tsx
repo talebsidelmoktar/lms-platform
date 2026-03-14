@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
@@ -20,7 +20,7 @@ export default function SignUpPage() {
   const isArabic = locale === "ar";
 
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,6 +33,26 @@ export default function SignUpPage() {
     window.location.href = dashboardPath;
   }
 
+  function normalizeMrPhone(raw: string): string {
+    const digits = raw.replace(/[^\d]/g, "");
+    if (digits.startsWith("222") && digits.length === 11)
+      return digits.slice(3);
+    return digits;
+  }
+
+  function redirectToVerify(options: {
+    method: "email" | "phone";
+    phone?: string;
+  }) {
+    const params = new URLSearchParams({ method: options.method });
+    if (options.phone) params.set("phone", options.phone);
+    const verifyPath = getPathname({
+      href: `/login/verify?${params.toString()}`,
+      locale,
+    });
+    window.location.href = verifyPath;
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -40,10 +60,50 @@ export default function SignUpPage() {
     setIsSubmitting(true);
 
     try {
-      const normalizedEmail = email.trim();
+      const normalizedIdentifier = identifier.trim();
+      const normalizedEmail = normalizedIdentifier;
       const normalizedPassword = password.trim();
+      const normalizedPhone = normalizeMrPhone(normalizedIdentifier);
+      const isMrPhone = /^[234]\d{7}$/.test(normalizedPhone);
 
-      if (!normalizedEmail || !normalizedEmail.includes("@")) {
+      if (!normalizedIdentifier) {
+        throw new Error(t("errors.enterEmailOrPhone"));
+      }
+
+      // Phone sign-up: send OTP and let Better Auth create the account on verification.
+      if (isMrPhone) {
+        if (!normalizedPassword) {
+          throw new Error(t("errors.passwordRequiredForEmail"));
+        }
+
+        const authClient = getAuthClient();
+        const result = await authClient.phoneNumber.sendOtp({
+          phoneNumber: normalizedPhone,
+        });
+        if (result.error) throw new Error(result.error.message);
+
+        try {
+          const key = `phone-signup:${normalizedPhone}`;
+          sessionStorage.setItem(
+            key,
+            JSON.stringify({
+              name: fullName.trim() || null,
+              password: normalizedPassword || null,
+            }),
+          );
+        } catch {
+          // ignore storage failures (private mode, etc.)
+        }
+
+        setNotice(t("phone.codeSent"));
+        redirectToVerify({
+          method: "phone",
+          phone: normalizedPhone,
+        });
+        return;
+      }
+
+      if (!normalizedEmail.includes("@")) {
         throw new Error(t("errors.emailRequiredForPasswordAuth"));
       }
 
@@ -191,17 +251,19 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label
-                    htmlFor="email"
+                    htmlFor="identifier"
                     className="block text-sm font-medium text-zinc-200"
                   >
-                    {t("email.emailLabel")}
+                    <span className="inline-flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      {`${t("email.emailLabel")} / ${t("phone.phoneLabel")}`}
+                    </span>
                   </Label>
                   <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t("email.emailPlaceholder")}
+                    id="identifier"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    placeholder={`${t("email.emailPlaceholder")} / ${t("phone.phonePlaceholder")}`}
                     autoComplete="email"
                     className="h-11 rounded-md border-zinc-700 bg-zinc-950/40 text-white placeholder:text-zinc-500"
                   />

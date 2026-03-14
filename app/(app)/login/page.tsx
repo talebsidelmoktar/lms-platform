@@ -36,7 +36,7 @@ export default function LoginPage() {
     window.location.href = dashboardPath;
   }
 
-  function redirectToVerify(options: {
+  function _redirectToVerify(options: {
     method: "email" | "phone";
     phone?: string;
   }) {
@@ -66,16 +66,19 @@ export default function LoginPage() {
         throw new Error(t("errors.enterEmailOrPhone"));
       }
 
-      // If user typed a Mauritanian phone number, send OTP and redirect to verification.
+      // Phone sign-in: use password + phone number (no OTP on login).
       if (isMrPhone) {
+        if (!normalizedPassword) {
+          throw new Error(t("errors.passwordRequiredForEmail"));
+        }
+
         const authClient = getAuthClient();
-        const result = await authClient.phoneNumber.sendOtp({
+        const result = await authClient.signIn.phoneNumber({
           phoneNumber: normalizedPhone,
+          password: normalizedPassword,
         });
         if (result.error) throw new Error(result.error.message);
-
-        setNotice(t("phone.codeSent"));
-        redirectToVerify({ method: "phone", phone: normalizedPhone });
+        redirectToDashboard();
         return;
       }
 

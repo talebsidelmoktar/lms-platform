@@ -42,17 +42,18 @@ function withAltLocalOrigins(baseUrl: string) {
 function getChinguisoftConfig() {
   const validationKey = (process.env.CHINGUISOFT_VALIDATION_KEY ?? "")
     .trim()
-    .replace(/^[\"']|[\"']$/g, "")
+    .replace(/^["']|["']$/g, "")
     .replace(/[{}]/g, "");
   const validationToken = (process.env.CHINGUISOFT_VALIDATION_TOKEN ?? "")
     .trim()
-    .replace(/^[\"']|[\"']$/g, "");
+    .replace(/^["']|["']$/g, "");
 
   const rawLang = (process.env.CHINGUISOFT_LANG?.trim() || "ar").toLowerCase();
   const lang = rawLang === "fr" ? "fr" : "ar";
 
   const debugLogCode =
-    (process.env.CHINGUISOFT_DEBUG_LOG_CODE?.trim() ?? "").toLowerCase() === "true";
+    (process.env.CHINGUISOFT_DEBUG_LOG_CODE?.trim() ?? "").toLowerCase() ===
+    "true";
 
   return { validationKey, validationToken, lang, debugLogCode };
 }
@@ -79,8 +80,73 @@ export const auth = betterAuth({
       expiresIn: 600, // 10 minutes, matches Chinguisoft message
       phoneNumberValidator: async (phoneNumber) => {
         const digits = phoneNumber.replace(/[^\d]/g, "");
-        const local = digits.startsWith("222") && digits.length === 11 ? digits.slice(3) : digits;
+        const local =
+          digits.startsWith("222") && digits.length === 11
+            ? digits.slice(3)
+            : digits;
         return /^[234]\d{7}$/.test(local);
+      },
+      callbackOnVerification: async (data, ctx) => {
+        if (!ctx) return;
+
+        const body = (ctx as unknown as { body?: unknown }).body;
+        const desiredName =
+          typeof body === "object" &&
+          body !== null &&
+          "desiredName" in body &&
+          typeof (body as { desiredName?: unknown }).desiredName === "string"
+            ? (body as { desiredName: string }).desiredName.slice(0, 80).trim()
+            : "";
+
+        const desiredPassword =
+          typeof body === "object" &&
+          body !== null &&
+          "desiredPassword" in body &&
+          typeof (body as { desiredPassword?: unknown }).desiredPassword ===
+            "string"
+            ? (body as { desiredPassword: string }).desiredPassword
+                .slice(0, 200)
+                .trim()
+            : "";
+
+        if (desiredName) {
+          try {
+            await ctx.context.internalAdapter.updateUser(data.user.id, {
+              name: desiredName,
+            });
+          } catch (err) {
+            console.warn(
+              "[auth] callbackOnVerification update name failed",
+              err,
+            );
+          }
+        }
+
+        if (desiredPassword) {
+          try {
+            const accounts = await ctx.context.internalAdapter.findAccounts(
+              data.user.id,
+            );
+            const credentialAccount = accounts.find(
+              (a) => a.providerId === "credential" && a.password,
+            );
+            if (!credentialAccount) {
+              const passwordHash =
+                await ctx.context.password.hash(desiredPassword);
+              await ctx.context.internalAdapter.linkAccount({
+                userId: data.user.id,
+                providerId: "credential",
+                accountId: data.user.id,
+                password: passwordHash,
+              });
+            }
+          } catch (err) {
+            console.warn(
+              "[auth] callbackOnVerification set password failed",
+              err,
+            );
+          }
+        }
       },
       signUpOnVerification: {
         getTempEmail(phoneNumber) {
@@ -137,7 +203,10 @@ export const auth = betterAuth({
         // Do not log secrets. OTP logging is off by default; enable only temporarily.
         const text = await response.text().catch(() => "");
         try {
-          const json = JSON.parse(text) as { code?: number | string; balance?: number };
+          const json = JSON.parse(text) as {
+            code?: number | string;
+            balance?: number;
+          };
           const safe = {
             phoneNumber,
             balance: json.balance,

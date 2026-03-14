@@ -31,7 +31,8 @@ export default function VerifyPage() {
 
   function normalizeMrPhone(raw: string): string {
     const digits = raw.replace(/[^\d]/g, "");
-    if (digits.startsWith("222") && digits.length === 11) return digits.slice(3);
+    if (digits.startsWith("222") && digits.length === 11)
+      return digits.slice(3);
     return digits;
   }
 
@@ -48,12 +49,39 @@ export default function VerifyPage() {
       if (!token) throw new Error(t("phone.otpPlaceholder"));
 
       const authClient = getAuthClient();
+
+      const payloadKey = `phone-signup:${normalizedPhone}`;
+      const payload = (() => {
+        try {
+          const raw = sessionStorage.getItem(payloadKey);
+          if (!raw) return null;
+          return JSON.parse(raw) as {
+            name?: string | null;
+            password?: string | null;
+          };
+        } catch {
+          return null;
+        }
+      })();
+
+      const desiredName = payload?.name?.toString().slice(0, 80).trim() ?? "";
+      const desiredPassword =
+        payload?.password?.toString().trim().slice(0, 200) ?? "";
+
       const result = await authClient.phoneNumber.verify({
         phoneNumber: normalizedPhone,
         code: token,
+        ...(desiredName ? { desiredName } : {}),
+        ...(desiredPassword ? { desiredPassword } : {}),
       });
 
       if (result.error) throw new Error(result.error.message);
+
+      try {
+        sessionStorage.removeItem(payloadKey);
+      } catch {
+        // ignore
+      }
       redirectToDashboard();
     } catch (err) {
       const message = err instanceof Error ? err.message : t("errors.generic");
