@@ -8,11 +8,23 @@ function requireEnv(name: string): string {
   if (!value || value.trim().length === 0) {
     throw new Error(`Missing environment variable: ${name}`);
   }
-  return value;
+  return value.trim().replace(/^["']|["']$/g, "");
 }
 
 function uniqueStrings(values: string[]) {
   return Array.from(new Set(values.map((v) => v.trim()).filter(Boolean)));
+}
+
+function requireUrlOrigin(name: string): string {
+  const raw = requireEnv(name);
+  try {
+    return new URL(raw).origin;
+  } catch (err) {
+    throw new Error(
+      `Invalid URL in environment variable: ${name}. Expected a full URL like https://example.com`,
+      { cause: err },
+    );
+  }
 }
 
 function withAltLocalOrigins(baseUrl: string) {
@@ -63,8 +75,11 @@ export const auth = betterAuth({
     connectionString: requireEnv("DATABASE_URL"),
     ssl: { rejectUnauthorized: false },
   }),
-  baseURL: requireEnv("BETTER_AUTH_URL").replace(/\/$/, ""),
-  trustedOrigins: withAltLocalOrigins(requireEnv("BETTER_AUTH_URL")),
+  // Better Auth appends `/api/auth` automatically when the base URL has no path.
+  // Using the URL origin avoids subtle production issues when the env var accidentally includes a path
+  // (e.g. locale prefix or `/api/auth`).
+  baseURL: requireUrlOrigin("BETTER_AUTH_URL"),
+  trustedOrigins: withAltLocalOrigins(requireUrlOrigin("BETTER_AUTH_URL")),
   socialProviders: {
     google: {
       clientId: requireEnv("GOOGLE_CLIENT_ID"),

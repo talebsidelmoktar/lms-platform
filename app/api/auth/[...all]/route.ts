@@ -8,9 +8,20 @@ async function logAuthResponse(req: Request, res: Response) {
     const path = url.pathname;
 
     if (path.includes("/api/auth/sign-in/social")) {
+      const location = res.headers.get("location") ?? undefined;
+      let redirectUri: string | undefined;
+      if (location) {
+        try {
+          const providerUrl = new URL(location);
+          redirectUri = providerUrl.searchParams.get("redirect_uri") ?? undefined;
+        } catch {
+          // ignore
+        }
+      }
       console.info("[better-auth] sign-in/social ->", {
         status: res.status,
-        location: res.headers.get("location") ?? undefined,
+        location,
+        redirectUri,
       });
     }
 
