@@ -6,3 +6,4 @@ export { ModuleAccordion } from "./ModuleAccordion";
 export { GatedFallback } from "./GatedFallback";
 export { CourseCompleteButton } from "./CourseCompleteButton";
 export { CourseContent } from "./CourseContent";
+export { CoursesSlider } from "./CoursesSlider";

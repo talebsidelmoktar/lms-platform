@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Tajawal } from "next/font/google";
+import { Geist_Mono, Inter, Tajawal } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["600", "700", "800"],
 });
 
 const geistMono = Geist_Mono({
@@ -38,7 +39,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={isArabic ? "rtl" : "ltr"}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${tajawal.variable} ${isArabic ? "font-arabic" : ""} antialiased`}
+        className={`${inter.variable} ${geistMono.variable} ${tajawal.variable} ${isArabic ? "font-arabic" : ""} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           {children}

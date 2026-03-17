@@ -2,7 +2,6 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
-  Code2,
   Crown,
   LayoutDashboard,
   Play,
@@ -11,20 +10,22 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import type { CSSProperties } from "react";
-import { CourseCard } from "@/components/courses";
+import { getLocale } from "next-intl/server";
+import { CoursesSlider } from "@/components/courses";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { TestimonialsSection } from "@/components/ui/testimonials-section";
 import { getCurrentUser } from "@/lib/auth/server";
 import type { Tier } from "@/lib/constants";
-import { hasTierAccess } from "@/lib/user-tier";
 import { sanityFetch } from "@/sanity/lib/live";
 import { ALL_COURSES_QUERY, STATS_QUERY } from "@/sanity/lib/queries";
 
 export default async function Home() {
+  const locale = await getLocale();
+  const isArabic = locale === "ar";
   const t = await getTranslations("common.home");
   const headerT = await getTranslations("common.header");
   const pricingT = await getTranslations("common.pricing");
@@ -98,10 +99,6 @@ export default async function Home() {
       text: content,
     }),
   );
-
-  type CSSVars = CSSProperties & Record<`--${string}`, string>;
-  const coursesMarqueeStyle: CSSVars = { "--courses-marquee-duration": "38s" };
-
   return (
     <div className="min-h-screen bg-[#09090b] text-white overflow-hidden">
       {/* Animated gradient mesh background */}
@@ -140,7 +137,7 @@ export default async function Home() {
         }
       />
 
-      {/* Hero Section */}
+        {/* Hero Section */}
       <main className="relative z-10">
         <section className="px-6 lg:px-12 pt-16 pb-24 max-w-7xl mx-auto">
           <div className="flex flex-col items-center text-center">
@@ -157,7 +154,7 @@ export default async function Home() {
 
             {/* Headline */}
             <h1
-              className="text-5xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight leading-[0.95] mb-8 animate-fade-in"
+              className={`text-4xl md:text-6xl lg:text-6xl ${isArabic ? "font-bold" : "font-extrabold"} tracking-tight leading-[1.02] mb-7 animate-fade-in`}
               style={{ animationDelay: "0.2s" }}
             >
               <span className="block text-white">{t("masterCoding")}</span>
@@ -168,7 +165,7 @@ export default async function Home() {
 
             {/* Subheadline */}
             <p
-              className="text-lg md:text-xl text-zinc-400 max-w-2xl mb-10 leading-relaxed animate-fade-in"
+              className="text-base md:text-lg text-zinc-400 max-w-2xl mb-9 leading-relaxed animate-fade-in"
               style={{ animationDelay: "0.3s" }}
             >
               {t("subtitle")}
@@ -310,45 +307,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-3">
-              <div className="courses-marquee overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-                <div
-                  className="animate-courses-marquee flex gap-6 py-2"
-                  style={coursesMarqueeStyle}
-                >
-                  {[...courses, ...courses].map((course, index) => {
-                    const requiredTier = (course.tier ?? "free") as Tier;
-                    const isLocked = !hasTierAccess(userTier, requiredTier);
-                    const href = isLocked ? "/pricing" : undefined;
-
-                    return (
-                      <div
-                        key={`${course._id}-${index}`}
-                        className="w-[260px] sm:w-[300px] lg:w-[320px] shrink-0"
-                      >
-                        <CourseCard
-                          href={href}
-                          isLocked={isLocked}
-                          slug={
-                            course.slug
-                              ? { current: course.slug.current ?? "" }
-                              : null
-                          }
-                          title={course.title}
-                          description={course.description}
-                          tier={course.tier}
-                          thumbnail={course.thumbnail}
-                          moduleCount={course.moduleCount}
-                          lessonCount={course.lessonCount}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
+          <CoursesSlider courses={courses} userTier={userTier} />
 
           <div className="text-center mt-10">
             <Link href="/dashboard">
@@ -405,10 +364,13 @@ export default async function Home() {
         <footer className="px-6 lg:px-12 py-12 border-t border-zinc-800 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
-                <Code2 className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold">{pricingT("brand")}</span>
+              <Image
+                src="/mauri-logo.png"
+                alt={pricingT("brand")}
+                width={240}
+                height={72}
+                className="h-10 md:h-11 w-auto"
+              />
             </div>
             <div className="flex items-center gap-8 text-sm text-zinc-500">
               <Link href="#" className="hover:text-white transition-colors">
