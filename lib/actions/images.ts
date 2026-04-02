@@ -1,6 +1,7 @@
 "use server";
 
 import { writeClient } from "@/sanity/lib/client";
+import { getCurrentUserRole } from "@/lib/auth/server";
 
 interface UploadImageResult {
   assetId: string | null;
@@ -8,6 +9,11 @@ interface UploadImageResult {
 }
 
 export async function uploadImage(formData: FormData): Promise<UploadImageResult> {
+  const role = await getCurrentUserRole();
+  if (role !== "admin") {
+    return { assetId: null, error: "Forbidden." };
+  }
+
   const file = formData.get("file") as File | null;
 
   if (!file) {
@@ -54,6 +60,11 @@ export async function uploadImage(formData: FormData): Promise<UploadImageResult
 }
 
 export async function deleteImage(assetId: string): Promise<{ success: boolean; error?: string }> {
+  const role = await getCurrentUserRole();
+  if (role !== "admin") {
+    return { success: false, error: "Forbidden." };
+  }
+
   if (!assetId) {
     return { success: false, error: "No asset ID provided" };
   }

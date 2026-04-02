@@ -2,7 +2,12 @@ import { authHandler } from "@/auth";
 
 export const runtime = "nodejs";
 
+const AUTH_DEBUG =
+  process.env.NODE_ENV === "development" ||
+  (process.env.BETTER_AUTH_DEBUG ?? "").toLowerCase() === "true";
+
 async function logAuthResponse(req: Request, res: Response) {
+  if (!AUTH_DEBUG) return;
   try {
     const url = new URL(req.url);
     const path = url.pathname;
@@ -78,21 +83,23 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   // Log non-sensitive bits of the request body for debugging.
-  try {
-    const url = new URL(req.url);
-    if (url.pathname.includes("/api/auth/sign-in/social")) {
-      const cloned = req.clone();
-      const body = await cloned.json().catch(() => null);
-      if (body && typeof body === "object") {
-        console.info("[better-auth] sign-in/social request", {
-          provider: body.provider,
-          callbackURL: body.callbackURL,
-          disableRedirect: body.disableRedirect,
-        });
+  if (AUTH_DEBUG) {
+    try {
+      const url = new URL(req.url);
+      if (url.pathname.includes("/api/auth/sign-in/social")) {
+        const cloned = req.clone();
+        const body = await cloned.json().catch(() => null);
+        if (body && typeof body === "object") {
+          console.info("[better-auth] sign-in/social request", {
+            provider: body.provider,
+            callbackURL: body.callbackURL,
+            disableRedirect: body.disableRedirect,
+          });
+        }
       }
+    } catch {
+      // ignore
     }
-  } catch {
-    // ignore
   }
 
   const res = await authHandler.POST(req);

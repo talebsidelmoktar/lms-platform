@@ -35,6 +35,10 @@ const courseSearchSchema = z.object({
     ),
 });
 
+const SEARCH_DEBUG =
+  process.env.NODE_ENV === "development" ||
+  (process.env.SEARCH_COURSES_DEBUG ?? "").toLowerCase() === "true";
+
 interface Lesson {
   _id: string;
   title: string;
@@ -105,18 +109,20 @@ export const searchCoursesTool = tool({
     "Search through all courses, modules, and lessons by topic, skill, or learning goal. This searches course titles, descriptions, module content, and lesson content to find the most relevant learning material.",
   inputSchema: courseSearchSchema,
   execute: async ({ query }: z.infer<typeof courseSearchSchema>) => {
-    console.log("[SearchCourses] Query received:", query);
+    if (SEARCH_DEBUG) console.log("[SearchCourses] Query received:", query);
 
     // Fetch all courses with their full content using the same method as the rest of the app
     const { data: allCourses } = await sanityFetch({
       query: ALL_COURSES_WITH_CONTENT_QUERY,
     });
 
-    console.log("[SearchCourses] Courses fetched:", allCourses.length);
-    console.log(
-      "[SearchCourses] Course titles:",
-      allCourses.map((c: Course) => c.title)
-    );
+    if (SEARCH_DEBUG) {
+      console.log("[SearchCourses] Courses fetched:", allCourses.length);
+      console.log(
+        "[SearchCourses] Course titles:",
+        allCourses.map((c: Course) => c.title),
+      );
+    }
 
     // Split query into search terms
     const searchTerms = query
@@ -124,7 +130,7 @@ export const searchCoursesTool = tool({
       .split(/\s+/)
       .filter((term) => term.length > 1);
 
-    console.log("[SearchCourses] Search terms:", searchTerms);
+    if (SEARCH_DEBUG) console.log("[SearchCourses] Search terms:", searchTerms);
 
     if (searchTerms.length === 0) {
       return {
@@ -144,10 +150,12 @@ export const searchCoursesTool = tool({
       .sort((a, b) => b.score - a.score)
       .slice(0, 10);
 
-    console.log(
-      "[SearchCourses] Scored courses:",
-      scoredCourses.map((s) => ({ title: s.course.title, score: s.score }))
-    );
+    if (SEARCH_DEBUG) {
+      console.log(
+        "[SearchCourses] Scored courses:",
+        scoredCourses.map((s) => ({ title: s.course.title, score: s.score })),
+      );
+    }
 
     if (scoredCourses.length === 0) {
       return {

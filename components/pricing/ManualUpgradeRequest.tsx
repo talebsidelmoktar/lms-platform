@@ -26,6 +26,13 @@ export function ManualUpgradeRequest() {
     null,
   );
   const [isPending, startTransition] = useTransition();
+  const tierPriceLabel = useMemo(
+    () => ({
+      pro: "400 MRU",
+      ultra: "600 MRU",
+    }),
+    [],
+  );
 
   const fileName = useMemo(() => proofImage?.name ?? "", [proofImage]);
 
@@ -131,7 +138,7 @@ export function ManualUpgradeRequest() {
                         : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800"
                     }
                   >
-                    {tiersT("pro")}
+                    {tiersT("pro")} · {tierPriceLabel.pro}
                   </Button>
                   <Button
                     type="button"
@@ -143,7 +150,7 @@ export function ManualUpgradeRequest() {
                         : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800"
                     }
                   >
-                    {tiersT("ultra")}
+                    {tiersT("ultra")} · {tierPriceLabel.ultra}
                   </Button>
                 </div>
               </div>

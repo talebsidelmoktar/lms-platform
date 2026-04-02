@@ -138,10 +138,10 @@
     "copyright": "2024 Mauri Academy. Tous droits reserves."
   },
   "home": {
-    "learnRealProjects": "Apprenez a coder avec des projets concrets",
-    "masterCoding": "Construisez vos connaissances,",
-    "modernWay": "ouvrez des opportunites",
-    "subtitle": "Rejoignez Mauri Academy pour maitriser les matieres du lycee, la programmation et les technologies modernes grace a des cours structures et un apprentissage pratique.",
+    "learnRealProjects": "Apprenez n'importe quoi avec l'aide de l'IA",
+    "masterCoding": "Apprenez plus vite,",
+    "modernWay": "avec une guidance IA adaptee a vous",
+    "subtitle": "Nous proposons une variete de cours pour differents profils, y compris les eleves du lycee et les etudiants universitaires, avec des lecons structurees et une aide IA au besoin.",
     "goDashboard": "Aller au tableau de bord",
     "myCourses": "Mes cours",
     "startLearningFree": "Commencer gratuitement",
@@ -152,16 +152,16 @@
     "mostPopular": "Le plus populaire",
     "coursesBuiltFor": "Des cours concus pour",
     "realResults": "des resultats concrets",
-    "featuredDescription": "Chaque cours contient des modules et des lecons concus pour vous mener de zero a pret pour l'emploi.",
+    "featuredDescription": "Chaque cours est organise en modules clairs et en lecons courtes pour apprendre pas a pas.",
     "viewAllCourses": "Voir tous les cours",
     "studentsLoveIt": "Les etudiants adorent",
     "testimonialsDescription": "Des avis reels d'etudiants qui ont progresse et obtenu des resultats.",
     "readyToLevelUp": "Pret a passer au niveau superieur ?",
-    "journeyBegins": "Commencez avec les cours gratuits ou debloquez tout avec Pro et Ultra. Votre parcours commence maintenant.",
+    "journeyBegins": "Commencez gratuitement, puis debloquez plus avec Pro ou Ultra quand vous etes pret. Votre parcours d'apprentissage commence maintenant.",
     "viewPricing": "Voir les tarifs",
     "tiers": {
       "free": {
-        "description": "Parfait pour les debutants. Commencez votre parcours de codage avec des cours fondamentaux et un support communautaire.",
+        "description": "Parfait pour debuter. Apprenez les bases avec des lecons claires et un support communautaire.",
         "features": [
           "Acces aux cours fondamentaux",
           "Acces au Discord communautaire",
@@ -170,7 +170,7 @@
         ]
       },
       "pro": {
-        "description": "Passez au niveau superieur avec du contenu avance, des projets concrets et un support prioritaire pour accelerer votre carriere.",
+        "description": "Allez plus loin avec du contenu avance et un support prioritaire pour accelerer vos progres.",
         "features": [
           "Tout ce qui est dans Gratuit",
           "Tous les cours niveau Pro",
@@ -180,7 +180,7 @@
         ]
       },
       "ultra": {
-        "description": "L'experience d'apprentissage ultime avec assistance IA, contenu exclusif et sessions personnalisees 1-a-1.",
+        "description": "La meilleure experience avec assistance IA, contenu exclusif et sessions personnalisees 1-a-1.",
         "features": [
           "Tout ce qui est dans Pro",
           "Assistant IA d'apprentissage",

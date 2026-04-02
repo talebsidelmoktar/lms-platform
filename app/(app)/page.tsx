@@ -23,6 +23,31 @@ import type { Tier } from "@/lib/constants";
 import { sanityFetch } from "@/sanity/lib/live";
 import { ALL_COURSES_QUERY, STATS_QUERY } from "@/sanity/lib/queries";
 
+function PriceTag({
+  price,
+}: {
+  price: string;
+}) {
+  const match = price.match(/^\s*(\d+)\s*MRU\s*$/i);
+  const amount = match?.[1] ?? null;
+  const currency = amount ? "MRU" : null;
+
+  if (!amount) {
+    return (
+      <span className="text-sm font-semibold text-white/80">{price}</span>
+    );
+  }
+
+  return (
+    <div className="flex items-end gap-1">
+      <span className="text-xl font-black tabular-nums tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+        {amount}
+      </span>
+      <span className="text-xs font-semibold text-zinc-300">{currency}</span>
+    </div>
+  );
+}
+
 export default async function Home() {
   const locale = await getLocale();
   const isArabic = locale === "ar";
@@ -42,6 +67,7 @@ export default async function Home() {
   const tierCards = [
     {
       tier: tiersT("free"),
+      price: "0 MRU",
       icon: Rocket,
       color: "sky",
       gradient: "from-sky-500 to-blue-600",
@@ -52,6 +78,7 @@ export default async function Home() {
     },
     {
       tier: tiersT("pro"),
+      price: "400 MRU",
       icon: Crown,
       color: "blue",
       gradient: "from-blue-500 to-indigo-600",
@@ -63,6 +90,7 @@ export default async function Home() {
     },
     {
       tier: tiersT("ultra"),
+      price: "600 MRU",
       icon: Trophy,
       color: "indigo",
       gradient: "from-cyan-400 to-sky-600",
@@ -273,7 +301,10 @@ export default async function Home() {
                 >
                   <plan.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold mb-2">{plan.tier}</h3>
+                <div className="flex items-baseline justify-between gap-4 mb-2">
+                  <h3 className="text-2xl font-bold">{plan.tier}</h3>
+                  <PriceTag price={plan.price} />
+                </div>
                 <p className="text-zinc-400 text-sm mb-6">{plan.description}</p>
                 <ul className="space-y-3">
                   {plan.features.map((feature) => (

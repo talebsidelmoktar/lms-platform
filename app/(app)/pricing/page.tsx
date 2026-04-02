@@ -7,6 +7,24 @@ import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth/server";
 import { getTierColorClasses } from "@/lib/constants";
 
+function PriceTag({ price }: { price: string }) {
+  const match = price.match(/^\s*(\d+)\s*MRU\s*$/i);
+  const amount = match?.[1] ?? null;
+
+  if (!amount) {
+    return <div className="text-2xl font-black text-white mb-4">{price}</div>;
+  }
+
+  return (
+    <div className="flex items-end gap-1 mb-4">
+      <span className="text-5xl md:text-6xl font-black tabular-nums tracking-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+        {amount}
+      </span>
+      <span className="text-sm font-semibold text-zinc-400 mb-1">MRU</span>
+    </div>
+  );
+}
+
 export default async function PricingPage() {
   const t = await getTranslations("common.pricing");
   const headerT = await getTranslations("common.header");
@@ -16,16 +34,19 @@ export default async function PricingPage() {
     {
       tierLabel: tiersT("free"),
       color: "sky" as const,
+      price: "0 MRU",
       features: t.raw("tiers.free.features") as string[],
     },
     {
       tierLabel: tiersT("pro"),
       color: "blue" as const,
+      price: "400 MRU",
       features: t.raw("tiers.pro.features") as string[],
     },
     {
       tierLabel: tiersT("ultra"),
       color: "indigo" as const,
+      price: "600 MRU",
       features: t.raw("tiers.ultra.features") as string[],
     },
   ];
@@ -100,6 +121,7 @@ export default async function PricingPage() {
                 <h3 className={`text-lg font-bold mb-4 ${colorClasses.text}`}>
                   {t("includes", { tier: plan.tierLabel })}
                 </h3>
+                <PriceTag price={plan.price} />
                 <ul className="space-y-3">
                   {plan.features.map((feature) => (
                     <li

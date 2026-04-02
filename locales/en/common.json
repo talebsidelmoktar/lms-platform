@@ -138,10 +138,10 @@
     "copyright": "2024 Mauri Academy. All rights reserved."
   },
   "home": {
-    "learnRealProjects": "Learn to code with real-world projects",
-    "masterCoding": "Build knowledge,",
-    "modernWay": "unlock opportunities",
-    "subtitle": "Join Mauri Academy to master high school subjects, programming, and modern technologies through structured courses and hands-on learning.",
+    "learnRealProjects": "Learn anything with AI support",
+    "masterCoding": "Learn faster,",
+    "modernWay": "with AI guidance that adapts to you",
+    "subtitle": "We offer a variety of courses for different learners—including high school and university students—through structured lessons with AI guidance when you need it.",
     "goDashboard": "Go to Dashboard",
     "myCourses": "My Courses",
     "startLearningFree": "Start Learning Free",
@@ -152,16 +152,16 @@
     "mostPopular": "Most Popular",
     "coursesBuiltFor": "Courses built for",
     "realResults": "real results",
-    "featuredDescription": "Each course is packed with modules and lessons designed to take you from zero to job-ready.",
+    "featuredDescription": "Each course is organized into clear modules and short lessons to help you learn step by step.",
     "viewAllCourses": "View All Courses",
     "studentsLoveIt": "Students love it",
     "testimonialsDescription": "Real feedback from students who improved their skills and got results.",
     "readyToLevelUp": "Ready to level up your skills?",
-    "journeyBegins": "Start with free courses or unlock everything with Pro and Ultra. Your coding journey begins now.",
+    "journeyBegins": "Start free, then unlock more with Pro or Ultra when you're ready. Your learning journey begins now.",
     "viewPricing": "View Pricing",
     "tiers": {
       "free": {
-        "description": "Perfect for beginners. Start your coding journey with foundational courses and community support.",
+        "description": "Perfect to get started. Learn the basics with clear lessons and community support.",
         "features": [
           "Access to foundational courses",
           "Community Discord access",
@@ -170,7 +170,7 @@
         ]
       },
       "pro": {
-        "description": "Level up with advanced content, real-world projects, and priority support to accelerate your career.",
+        "description": "Go deeper with advanced content and priority support to accelerate your progress.",
         "features": [
           "Everything in Free",
           "All Pro-tier courses",
@@ -180,7 +180,7 @@
         ]
       },
       "ultra": {
-        "description": "The ultimate learning experience with AI assistance, exclusive content, and personalized 1-on-1 sessions.",
+        "description": "The best experience with AI assistance, exclusive content, and personalized 1-on-1 sessions.",
         "features": [
           "Everything in Pro",
           "AI Learning Assistant",

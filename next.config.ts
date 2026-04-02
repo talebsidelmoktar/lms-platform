@@ -1,6 +1,32 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
+function isSupabaseServiceRoleKey(key: string | undefined): boolean {
+  if (!key) return false;
+  const trimmed = key.trim();
+  // Supabase keys are JWT-like strings.
+  const parts = trimmed.split(".");
+  if (parts.length < 2) return false;
+
+  try {
+    const payloadPart = parts[1]
+      .replace(/-/g, "+")
+      .replace(/_/g, "/")
+      .padEnd(Math.ceil(parts[1].length / 4) * 4, "=");
+    const json = Buffer.from(payloadPart, "base64").toString("utf8");
+    const payload = JSON.parse(json) as { role?: unknown };
+    return payload.role === "service_role";
+  } catch {
+    return false;
+  }
+}
+
+if (isSupabaseServiceRoleKey(process.env.SUPABASE_ANON_KEY)) {
+  throw new Error(
+    "SUPABASE_ANON_KEY appears to be a service role key. Never expose a service role key to the client.",
+  );
+}
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   env: {

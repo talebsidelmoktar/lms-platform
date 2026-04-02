@@ -4,6 +4,7 @@ import type { UIMessage } from "ai";
 import { Sparkles, User, Search, Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Markdown from "react-markdown";
+import { sanitizeHref } from "@/lib/security/safe-url";
 import { useTutor } from "./TutorContext";
 
 interface TutorMessagesProps {
@@ -208,14 +209,13 @@ function MessageContent({ content }: { content: string }) {
       components={{
         // Custom link renderer - closes chat on internal links
         a: ({ href, children }) => {
-          if (!href) return <span>{children}</span>;
+          const safe = sanitizeHref(href);
+          if (!safe) return <span>{children}</span>;
 
-          const isInternalLink = href.startsWith("/");
-
-          if (isInternalLink) {
+          if (safe.kind === "internal" && safe.href.startsWith("/")) {
             return (
               <Link
-                href={href}
+                href={safe.href}
                 onClick={closeChat}
                 className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors"
               >
@@ -226,9 +226,9 @@ function MessageContent({ content }: { content: string }) {
 
           return (
             <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={safe.href}
+              target={safe.kind === "external" ? "_blank" : undefined}
+              rel={safe.kind === "external" ? "noopener noreferrer" : undefined}
               className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors"
             >
               {children}

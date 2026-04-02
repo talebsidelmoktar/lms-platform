@@ -2,8 +2,11 @@
 
 import Mux from "@mux/mux-node";
 import jwt from "jsonwebtoken";
+import { getCurrentUserRole, getCurrentUserTier } from "@/lib/auth/server";
+import type { Tier } from "@/lib/constants";
+import { hasTierAccess } from "@/lib/user-tier";
 import { formatSigningKey } from "@/lib/mux";
-import { writeClient } from "@/sanity/lib/client";
+import { client, writeClient } from "@/sanity/lib/client";
 
 const mux = new Mux({
   tokenId: process.env.MUX_TOKEN_ID,
@@ -17,6 +20,11 @@ interface CreateUploadResult {
 }
 
 export async function createMuxUploadUrl(): Promise<CreateUploadResult> {
+  const role = await getCurrentUserRole();
+  if (role !== "admin") {
+    return { uploadUrl: null, uploadId: null, error: "Forbidden." };
+  }
+
   if (!process.env.MUX_TOKEN_ID || !process.env.MUX_TOKEN_SECRET) {
     return {
       uploadUrl: null,
@@ -68,6 +76,17 @@ interface MuxAssetStatus {
 export async function getMuxUploadStatus(
   uploadId: string
 ): Promise<MuxAssetStatus> {
+  const role = await getCurrentUserRole();
+  if (role !== "admin") {
+    return {
+      status: null,
+      playbackId: null,
+      assetId: null,
+      sanityAssetId: null,
+      error: "Forbidden.",
+    };
+  }
+
   if (!process.env.MUX_TOKEN_ID || !process.env.MUX_TOKEN_SECRET) {
     return {
       status: null,
@@ -197,6 +216,30 @@ export async function getMuxSignedTokens(
   }
 
   try {
+    // Authorization check: only issue signed tokens if the current user has tier access
+    // to at least one course that includes the lesson/video.
+    const userTier = await getCurrentUserTier();
+    const requiredTiers = await getRequiredTiersForPlaybackId(playbackId);
+
+    if (requiredTiers.length === 0) {
+      return {
+        playbackToken: null,
+        thumbnailToken: null,
+        storyboardToken: null,
+        error: "Unknown video.",
+      };
+    }
+
+    const allowed = requiredTiers.some((tier) => hasTierAccess(userTier, tier));
+    if (!allowed) {
+      return {
+        playbackToken: null,
+        thumbnailToken: null,
+        storyboardToken: null,
+        error: "Forbidden.",
+      };
+    }
+
     const expirationTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
     const formattedKey = formatSigningKey(signingKey);
 
@@ -233,7 +276,12 @@ export async function getMuxSignedTokens(
       thumbnailToken: null,
       storyboardToken: null,
       error: errorMessage,
-      debug: error instanceof Error ? error.stack : String(error),
+      debug:
+        process.env.NODE_ENV === "development"
+          ? error instanceof Error
+            ? error.stack
+            : String(error)
+          : undefined,
     };
   }
 }
@@ -248,4 +296,32 @@ export async function getMuxSignedToken(
     error: result.error,
     debug: result.debug,
   };
+}
+
+function normalizeTier(value: unknown): Tier | null {
+  if (typeof value !== "string") return null;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "free" || normalized === "pro" || normalized === "ultra") {
+    return normalized as Tier;
+  }
+  return null;
+}
+
+async function getRequiredTiersForPlaybackId(playbackId: string): Promise<Tier[]> {
+  const result = await client.fetch<{
+    courseTiers?: Array<string | null> | null;
+  } | null>(
+    `*[_type == "lesson" && video.asset->playbackId == $playbackId][0]{
+      "courseTiers": *[_type == "course" && ^._id in modules[]->lessons[]->_id].tier
+    }`,
+    { playbackId },
+  );
+
+  const tiers = (result?.courseTiers ?? [])
+    .map((t) => normalizeTier(t))
+    .filter((t): t is Tier => Boolean(t));
+
+  // If no tier is set on the course, treat it as free (public).
+  // (Sanity schema sometimes omits tier for legacy content.)
+  return tiers.length > 0 ? tiers : (["free"] as Tier[]);
 }

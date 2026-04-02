@@ -35,19 +35,32 @@ function withAltLocalOrigins(baseUrl: string) {
     const https = new URL(url.toString());
     https.protocol = "https:";
 
+    const includeLocalhost =
+      process.env.NODE_ENV !== "production" ||
+      (process.env.BETTER_AUTH_TRUST_LOCALHOST ?? "").toLowerCase() === "true";
+
     const fallbacks = [
       url.toString().replace(/\/$/, ""),
       http.toString().replace(/\/$/, ""),
       https.toString().replace(/\/$/, ""),
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-      "https://localhost:3000",
-      "https://127.0.0.1:3000",
+      ...(includeLocalhost
+        ? [
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "https://localhost:3000",
+            "https://127.0.0.1:3000",
+          ]
+        : []),
     ];
 
     return uniqueStrings(fallbacks);
   } catch {
-    return uniqueStrings([baseUrl, "http://localhost:3000"]);
+    const includeLocalhost =
+      process.env.NODE_ENV !== "production" ||
+      (process.env.BETTER_AUTH_TRUST_LOCALHOST ?? "").toLowerCase() === "true";
+    return uniqueStrings(
+      includeLocalhost ? [baseUrl, "http://localhost:3000"] : [baseUrl],
+    );
   }
 }
 
@@ -73,7 +86,8 @@ function getChinguisoftConfig() {
 export const auth = betterAuth({
   database: new Pool({
     connectionString: requireEnv("DATABASE_URL"),
-    ssl: { rejectUnauthorized: false },
+    // Prefer verifying TLS in production. Override via PG_SSL_REJECT_UNAUTHORIZED=false if needed.
+    ssl: { rejectUnauthorized: resolvePgRejectUnauthorized() },
   }),
   // Better Auth appends `/api/auth` automatically when the base URL has no path.
   // Using the URL origin avoids subtle production issues when the env var accidentally includes a path
@@ -237,3 +251,10 @@ export const auth = betterAuth({
 });
 
 export const authHandler = toNextJsHandler(auth.handler);
+
+function resolvePgRejectUnauthorized(): boolean {
+  const raw = (process.env.PG_SSL_REJECT_UNAUTHORIZED ?? "").trim().toLowerCase();
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  return process.env.NODE_ENV === "production";
+}

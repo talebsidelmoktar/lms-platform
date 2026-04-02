@@ -13,12 +13,19 @@ export function getDbPool(): Pool {
     throw new Error("DATABASE_URL is missing.");
   }
 
+  const rejectUnauthorized = resolvePgRejectUnauthorized();
   globalThis.__neonPool = new Pool({
     connectionString,
-    // Neon requires SSL; using the Node TLS stack. (rejectUnauthorized=false is common for Neon.)
-    ssl: { rejectUnauthorized: false },
+    // Prefer verifying TLS in production. Override via PG_SSL_REJECT_UNAUTHORIZED=false if needed.
+    ssl: { rejectUnauthorized },
   });
 
   return globalThis.__neonPool;
 }
 
+function resolvePgRejectUnauthorized(): boolean {
+  const raw = (process.env.PG_SSL_REJECT_UNAUTHORIZED ?? "").trim().toLowerCase();
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  return process.env.NODE_ENV === "production";
+}

@@ -2,6 +2,7 @@
 import type { TypedObject } from "@portabletext/types";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
+import { sanitizeHref } from "@/lib/security/safe-url";
 
 const components: PortableTextComponents = {
   block: {
@@ -52,16 +53,21 @@ const components: PortableTextComponents = {
         {children}
       </code>
     ),
-    link: ({ children, value }) => (
-      <a
-        href={value?.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sky-400 hover:text-sky-300 underline underline-offset-2 transition-colors"
-      >
-        {children}
-      </a>
-    ),
+    link: ({ children, value }) => {
+      const safe = sanitizeHref(value?.href);
+      if (!safe) return <span>{children}</span>;
+
+      return (
+        <a
+          href={safe.href}
+          target={safe.kind === "external" ? "_blank" : undefined}
+          rel={safe.kind === "external" ? "noopener noreferrer" : undefined}
+          className="text-sky-400 hover:text-sky-300 underline underline-offset-2 transition-colors"
+        >
+          {children}
+        </a>
+      );
+    },
   },
   types: {
     image: ({ value }) => {
